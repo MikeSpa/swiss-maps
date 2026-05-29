@@ -16,6 +16,8 @@ interface Selection {
 }
 
 interface AppSidebarProps {
+  isOpen: boolean
+  onClose: () => void
   index: VotationEntry[]
   selectedDate: string | null
   onSelectDate: (date: string) => void
@@ -104,6 +106,8 @@ function StaendeBlock({ vorlage }: { vorlage: Vorlage }) {
 }
 
 export function AppSidebar({
+  isOpen,
+  onClose,
   index,
   selectedDate,
   onSelectDate,
@@ -118,7 +122,15 @@ export function AppSidebar({
   const selectedVorlage = votation?.vorlagen.find((v) => v.vorlagenId === selectedVorlageId)
 
   return (
-    <aside className="flex w-72 shrink-0 flex-col gap-4 overflow-y-auto border-r bg-background p-4">
+    <aside className={[
+      // Desktop: always visible inline
+      'md:relative md:flex md:w-72 md:shrink-0 md:translate-x-0',
+      // Mobile: fixed overlay that slides in
+      'fixed bottom-0 top-12 z-50 w-72',
+      'transition-transform duration-200 ease-in-out',
+      isOpen ? 'translate-x-0' : '-translate-x-full',
+      'flex flex-col gap-4 overflow-y-auto border-r bg-background p-4',
+    ].join(' ')}>
       {/* Date selector */}
       <div>
         <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
@@ -128,7 +140,7 @@ export function AppSidebar({
           {index.map((entry) => (
             <button
               key={entry.date}
-              onClick={() => onSelectDate(entry.date)}
+              onClick={() => { onSelectDate(entry.date); onClose() }}
               className={`rounded px-2.5 py-1 text-xs font-medium transition-colors ${
                 selectedDate === entry.date
                   ? 'bg-primary text-primary-foreground'
@@ -162,7 +174,7 @@ export function AppSidebar({
               return (
                 <button
                   key={v.vorlagenId}
-                  onClick={() => onSelectVorlage(v.vorlagenId)}
+                  onClick={() => { onSelectVorlage(v.vorlagenId); onClose() }}
                   className={`rounded-md border p-2.5 text-left text-xs transition-colors ${
                     active
                       ? 'border-primary bg-primary/5'

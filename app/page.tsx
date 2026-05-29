@@ -1,11 +1,5 @@
-import { AppHeader } from '@/components/app-header'
-import { MapShell } from '@/components/map-shell'
+import { AppLayout } from '@/components/app-layout'
 
 export default function Page() {
-  return (
-    <div className="flex h-svh flex-col">
-      <AppHeader />
-      <MapShell />
-    </div>
-  )
+  return <AppLayout />
 }

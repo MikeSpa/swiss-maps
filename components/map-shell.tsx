@@ -18,12 +18,17 @@ interface VotationEntry {
   file: string
 }
 
+interface MapShellProps {
+  sidebarOpen: boolean
+  onCloseSidebar: () => void
+}
+
 interface Selection {
   cantonNum: number
   cantonName: string
 }
 
-export function MapShell() {
+export function MapShell({ sidebarOpen, onCloseSidebar }: MapShellProps) {
   const [index, setIndex] = useState<VotationEntry[]>([])
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
   const [votation, setVotation] = useState<VotationData | null>(null)
@@ -76,8 +81,18 @@ export function MapShell() {
     selection && cantonResults ? (cantonResults[selection.cantonNum] ?? null) : null
 
   return (
-    <div className="flex flex-1 overflow-hidden">
+    <div className="relative flex flex-1 overflow-hidden">
+      {/* Mobile backdrop */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/30 md:hidden"
+          onClick={onCloseSidebar}
+        />
+      )}
+
       <AppSidebar
+        isOpen={sidebarOpen}
+        onClose={onCloseSidebar}
         index={index}
         selectedDate={selectedDate}
         onSelectDate={(date) => { setSelectedDate(date); setSelection(null) }}
