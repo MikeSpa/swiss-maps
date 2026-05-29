@@ -1,12 +1,8 @@
+'use client'
+
 import { CheckCircle, XCircle, Clock, ChevronRight, AlertCircle } from 'lucide-react'
-import {
-  type VotationData,
-  type Vorlage,
-  type Resultat,
-  getTitle,
-  VORLAGE_ART,
-  staendeYes,
-} from '@/lib/votation'
+import { useLanguage } from '@/contexts/language'
+import { type VotationData, type Vorlage, type Resultat, getTitle, staendeYes } from '@/lib/votation'
 
 interface VotationEntry {
   date: string
@@ -43,15 +39,15 @@ function ResultBar({ pct }: { pct: number }) {
   )
 }
 
-function ResultBlock({ label, result }: { label?: string; result: Resultat }) {
+function ResultBlock({ result }: { result: Resultat }) {
+  const { t } = useLanguage()
   const { jaStimmenInProzent: ja, stimmbeteiligungInProzent: turnout, gebietAusgezaehlt } = result
 
   if (ja === null) {
     return (
       <div className="rounded-md bg-muted/50 p-3">
-        {label && <p className="mb-1 text-xs text-muted-foreground">{label}</p>}
         <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
-          <Clock className="h-3 w-3" /> Pending
+          <Clock className="h-3 w-3" /> {t.sidebar.pending}
         </p>
       </div>
     )
@@ -60,26 +56,28 @@ function ResultBlock({ label, result }: { label?: string; result: Resultat }) {
   return (
     <div className="rounded-md bg-muted/50 p-3">
       <div className="mb-1.5 flex items-center justify-between">
-        {label && <p className="text-xs text-muted-foreground">{label}</p>}
         {gebietAusgezaehlt && (
-          <span className="ml-auto text-xs text-green-600">Final</span>
+          <span className="ml-auto text-xs text-green-600">{t.sidebar.final}</span>
         )}
       </div>
       <div className="flex items-baseline justify-between">
         <span className={`text-xl font-semibold tabular-nums ${ja >= 50 ? 'text-green-600' : 'text-red-500'}`}>
           {ja.toFixed(1)}%
         </span>
-        <span className="text-xs text-muted-foreground">Yes</span>
+        <span className="text-xs text-muted-foreground">{t.sidebar.yes}</span>
       </div>
       <ResultBar pct={ja} />
       {turnout !== null && (
-        <p className="mt-1.5 text-xs text-muted-foreground">Turnout: {turnout.toFixed(1)}%</p>
+        <p className="mt-1.5 text-xs text-muted-foreground">
+          {t.sidebar.turnout}: {turnout.toFixed(1)}%
+        </p>
       )}
     </div>
   )
 }
 
 function StaendeBlock({ vorlage }: { vorlage: Vorlage }) {
+  const { t } = useLanguage()
   if (!vorlage.doppeltesMehr) return null
   const { staende } = vorlage
   const yes = staendeYes(staende)
@@ -88,17 +86,17 @@ function StaendeBlock({ vorlage }: { vorlage: Vorlage }) {
 
   return (
     <div className="rounded-md bg-muted/50 p-3">
-      <p className="mb-1.5 text-xs text-muted-foreground">Cantonal votes (Ständemehr)</p>
+      <p className="mb-1.5 text-xs text-muted-foreground">{t.sidebar.cantonalVotes}</p>
       {pending ? (
         <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
-          <Clock className="h-3 w-3" /> Pending
+          <Clock className="h-3 w-3" /> {t.sidebar.pending}
         </p>
       ) : (
         <div className="flex items-center gap-2 text-sm">
-          <span className="font-medium text-green-600">{yes} Yes</span>
+          <span className="font-medium text-green-600">{yes} {t.sidebar.yes}</span>
           <span className="text-muted-foreground">/</span>
-          <span className="font-medium text-red-500">{no} No</span>
-          <span className="ml-auto text-xs text-muted-foreground">of 23</span>
+          <span className="font-medium text-red-500">{no} {t.sidebar.no}</span>
+          <span className="ml-auto text-xs text-muted-foreground">{t.sidebar.cantonalVotesOf}</span>
         </div>
       )}
     </div>
@@ -116,6 +114,7 @@ export function AppSidebar({
   selection,
   cantonResult,
 }: AppSidebarProps) {
+  const { lang, t } = useLanguage()
   const selectedVorlage = votation?.vorlagen.find((v) => v.vorlagenId === selectedVorlageId)
 
   return (
@@ -123,7 +122,7 @@ export function AppSidebar({
       {/* Date selector */}
       <div>
         <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-          Vote date
+          {t.sidebar.voteDate}
         </p>
         <div className="flex flex-wrap gap-1.5">
           {index.map((entry) => (
@@ -147,16 +146,16 @@ export function AppSidebar({
       {loadError ? (
         <div className="flex items-center gap-2 rounded-md bg-destructive/10 p-3 text-xs text-destructive">
           <AlertCircle className="h-3.5 w-3.5 shrink-0" />
-          {loadError}
+          {t.sidebar.error}
         </div>
       ) : !votation ? (
-        <p className="text-xs text-muted-foreground">Loading…</p>
+        <p className="text-xs text-muted-foreground">{t.sidebar.loading}</p>
       ) : (
         <>
           {/* Proposals */}
           <div className="flex flex-col gap-2">
             <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Proposals
+              {t.sidebar.proposals}
             </p>
             {votation.vorlagen.map((v) => {
               const active = v.vorlagenId === selectedVorlageId
@@ -182,9 +181,11 @@ export function AppSidebar({
                     </div>
                     <div>
                       <p className="font-medium leading-snug text-foreground">
-                        {getTitle(v.vorlagenTitel)}
+                        {getTitle(v.vorlagenTitel, lang)}
                       </p>
-                      <p className="mt-0.5 text-muted-foreground">{VORLAGE_ART[v.vorlagenArtId]}</p>
+                      <p className="mt-0.5 text-muted-foreground">
+                        {t.vorlageArt[v.vorlagenArtId]}
+                      </p>
                     </div>
                   </div>
                 </button>
@@ -198,7 +199,7 @@ export function AppSidebar({
               <hr className="border-border" />
               <div className="flex flex-col gap-2">
                 <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                  National result
+                  {t.sidebar.nationalResult}
                 </p>
                 <ResultBlock result={selectedVorlage.resultat} />
                 <StaendeBlock vorlage={selectedVorlage} />
@@ -212,12 +213,12 @@ export function AppSidebar({
               <hr className="border-border" />
               <div className="flex flex-col gap-2">
                 <p className="flex items-center gap-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                  Canton <ChevronRight className="h-3 w-3" /> {selection.cantonName}
+                  {t.sidebar.canton} <ChevronRight className="h-3 w-3" /> {selection.cantonName}
                 </p>
                 {cantonResult ? (
                   <ResultBlock result={cantonResult} />
                 ) : (
-                  <p className="text-xs text-muted-foreground">No data</p>
+                  <p className="text-xs text-muted-foreground">{t.sidebar.noData}</p>
                 )}
               </div>
             </>

@@ -6,6 +6,7 @@ import type { MapRef, MapLayerMouseEvent } from 'react-map-gl/maplibre'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import type { FeatureCollection } from 'geojson'
 import type { Resultat } from '@/lib/votation'
+import { useLanguage } from '@/contexts/language'
 
 const MAP_STYLE = 'https://demotiles.maplibre.org/style.json'
 const SWISS_BOUNDS: [[number, number], [number, number]] = [
@@ -78,6 +79,7 @@ export default function SwissMap({
   selectedCantonNum,
   cantonResults,
 }: SwissMapProps) {
+  const { t } = useLanguage()
   const mapRef = useRef<MapRef>(null)
   const hoveredIdRef = useRef<number | null>(null)
 
@@ -261,17 +263,17 @@ export default function SwissMap({
               {tooltip.ja_pct >= 0 ? (
                 <>
                   <span className={tooltip.ja_pct >= 50 ? 'text-green-600' : 'text-red-500'}>
-                    {tooltip.ja_pct.toFixed(1)}% Ja
+                    {tooltip.ja_pct.toFixed(1)}% {t.sidebar.yes}
                   </span>
                   {tooltip.turnout >= 0 && (
-                    <span className="ml-2">{tooltip.turnout.toFixed(1)}% Beteiligung</span>
+                    <span className="ml-2">{tooltip.turnout.toFixed(1)}% {t.map.turnout}</span>
                   )}
                   {tooltip.ausgezaehlt && (
                     <span className="ml-2 text-green-600">✓</span>
                   )}
                 </>
               ) : (
-                <span>Ausstehend</span>
+                <span>{t.map.pending}</span>
               )}
             </div>
           )}
@@ -283,7 +285,7 @@ export default function SwissMap({
           onClick={resetView}
           className="absolute left-3 top-3 z-10 rounded bg-white px-3 py-1.5 text-sm shadow-md hover:bg-gray-50"
         >
-          ← Schweiz
+          {t.map.backLabel}
         </button>
       )}
     </div>
