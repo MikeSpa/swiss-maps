@@ -8,6 +8,8 @@ import {
   type Resultat,
   fetchVotation,
   buildCantonResultMap,
+  buildDistrictResultMap,
+  buildMunicipalityResultMap,
 } from '@/lib/votation'
 
 interface VotationEntry {
@@ -62,6 +64,14 @@ export function MapShell() {
   const cantonResults: Record<number, Resultat> | null = selectedVorlage
     ? buildCantonResultMap(selectedVorlage)
     : null
+  const districtResults: Record<number, Resultat> | null =
+    selectedVorlage && selection
+      ? buildDistrictResultMap(selectedVorlage, selection.cantonNum)
+      : null
+  const municipalityResults: Record<number, Resultat> | null =
+    selectedVorlage && selection
+      ? buildMunicipalityResultMap(selectedVorlage, selection.cantonNum)
+      : null
   const cantonResult: Resultat | null =
     selection && cantonResults ? (cantonResults[selection.cantonNum] ?? null) : null
 
@@ -82,6 +92,8 @@ export function MapShell() {
         <MapLoader
           selectedCantonNum={selection?.cantonNum ?? null}
           cantonResults={cantonResults}
+          districtResults={districtResults}
+          municipalityResults={municipalityResults}
           onSelect={(cantonNum, cantonName) => setSelection({ cantonNum, cantonName })}
           onReset={() => setSelection(null)}
         />

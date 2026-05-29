@@ -82,10 +82,34 @@ export const VORLAGE_ART: Record<number, string> = {
   6: 'Stichfrage',
 }
 
-/** Map from kantonsnummer (number) → result for a given vorlage */
+/** Map from kantonsnummer → result for a given vorlage */
 export function buildCantonResultMap(vorlage: Vorlage): Record<number, Resultat> {
   return Object.fromEntries(
     vorlage.kantone.map((k) => [parseInt(k.geoLevelnummer, 10), k.resultat]),
+  )
+}
+
+/** Map from bezirksnummer → result for a given vorlage + selected canton */
+export function buildDistrictResultMap(
+  vorlage: Vorlage,
+  kantonNum: number,
+): Record<number, Resultat> {
+  const kanton = vorlage.kantone.find((k) => parseInt(k.geoLevelnummer, 10) === kantonNum)
+  if (!kanton) return {}
+  return Object.fromEntries(
+    kanton.bezirke.map((b) => [parseInt(b.geoLevelnummer, 10), b.resultat]),
+  )
+}
+
+/** Map from bfs_nummer → result for a given vorlage + selected canton */
+export function buildMunicipalityResultMap(
+  vorlage: Vorlage,
+  kantonNum: number,
+): Record<number, Resultat> {
+  const kanton = vorlage.kantone.find((k) => parseInt(k.geoLevelnummer, 10) === kantonNum)
+  if (!kanton) return {}
+  return Object.fromEntries(
+    kanton.gemeinden.map((g) => [parseInt(g.geoLevelnummer, 10), g.resultat]),
   )
 }
 
