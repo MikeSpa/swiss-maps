@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Map, { Layer, Source } from 'react-map-gl/maplibre'
 import type { MapRef, MapLayerMouseEvent } from 'react-map-gl/maplibre'
 import 'maplibre-gl/dist/maplibre-gl.css'
+import type { ExpressionSpecification } from 'maplibre-gl'
 import type { FeatureCollection } from 'geojson'
 import type { Resultat } from '@/lib/votation'
 import { useLanguage } from '@/contexts/language'
@@ -57,16 +58,16 @@ function mergeResults(
   }
 }
 
-const CHOROPLETH_COLOR = [
+const CHOROPLETH_COLOR: ExpressionSpecification = [
   'case',
   ['<', ['get', 'ja_pct'], 0],
   '#e2e8f0',
   ['interpolate', ['linear'], ['get', 'ja_pct'], 0, '#ef4444', 50, '#f8fafc', 100, '#22c55e'],
-] as const
+]
 
-const HOVER_OPACITY = [
+const HOVER_OPACITY: ExpressionSpecification = [
   'case', ['boolean', ['feature-state', 'hover'], false], 0.95, 0.8,
-] as const
+]
 
 interface TooltipState {
   x: number
