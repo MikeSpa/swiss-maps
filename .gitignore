@@ -44,13 +44,8 @@ pipeline/data/processed/*
 !pipeline/data/processed/.gitkeep
 
 # pipeline — generated geo output (regenerable from pipeline)
-public/geo/*.geojson
 public/geo/*.pmtiles
 !public/geo/.gitkeep
-
-# votation data — downloaded by pipeline/scripts/download_votations.py
-public/votations/*.json
-!public/votations/index.json
 
 # python
 __pycache__/
