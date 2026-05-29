@@ -59,6 +59,23 @@ uv run python scripts/download_boundaries.py
 uv run python scripts/export_geo.py
 ```
 
+## Votation data
+
+Votation JSON files are downloaded from opendata.swiss and served from `public/votations/`.
+`public/votations/index.json` (committed) lists the available dates.
+
+**Download all listed votations:**
+```bash
+uv run python scripts/download_votations.py
+```
+
+**Add a new votation date:**
+```bash
+uv run python scripts/download_votations.py --add 20260914
+```
+
+This downloads the file and adds the entry to `index.json`. Commit `index.json` afterwards.
+
 ## Notebooks
 
 `notebooks/01_explore_boundaries.ipynb` — one-time exploration to verify column names

@@ -1,9 +1,11 @@
-import { MapLoader } from '@/components/map-loader'
+import { AppHeader } from '@/components/app-header'
+import { MapShell } from '@/components/map-shell'
 
 export default function Page() {
   return (
-    <main className="h-svh w-full">
-      <MapLoader />
-    </main>
+    <div className="flex h-svh flex-col">
+      <AppHeader />
+      <MapShell />
+    </div>
   )
 }

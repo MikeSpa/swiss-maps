@@ -1,0 +1,91 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { AppSidebar } from './app-sidebar'
+import { MapLoader } from './map-loader'
+import {
+  type VotationData,
+  type Resultat,
+  fetchVotation,
+  buildCantonResultMap,
+} from '@/lib/votation'
+
+interface VotationEntry {
+  date: string
+  label: string
+  file: string
+}
+
+interface Selection {
+  cantonNum: number
+  cantonName: string
+}
+
+export function MapShell() {
+  const [index, setIndex] = useState<VotationEntry[]>([])
+  const [selectedDate, setSelectedDate] = useState<string | null>(null)
+  const [votation, setVotation] = useState<VotationData | null>(null)
+  const [loadError, setLoadError] = useState<string | null>(null)
+  const [selectedVorlageId, setSelectedVorlageId] = useState<number | null>(null)
+  const [selection, setSelection] = useState<Selection | null>(null)
+
+  // Load index
+  useEffect(() => {
+    fetch('/votations/index.json')
+      .then((r) => r.json())
+      .then((entries: VotationEntry[]) => {
+        setIndex(entries)
+        if (entries.length > 0) setSelectedDate(entries[0].date)
+      })
+      .catch(() => setLoadError('Could not load votation index.'))
+  }, [])
+
+  // Load votation data when date changes
+  useEffect(() => {
+    if (!selectedDate) return
+    const entry = index.find((e) => e.date === selectedDate)
+    if (!entry) return
+
+    setVotation(null)
+    setSelectedVorlageId(null)
+    setLoadError(null)
+
+    fetchVotation(entry.file)
+      .then((data) => {
+        setVotation(data)
+        if (data.vorlagen.length > 0) setSelectedVorlageId(data.vorlagen[0].vorlagenId)
+      })
+      .catch(() => setLoadError('Could not load votation data.'))
+  }, [selectedDate, index])
+
+  const selectedVorlage = votation?.vorlagen.find((v) => v.vorlagenId === selectedVorlageId)
+  const cantonResults: Record<number, Resultat> | null = selectedVorlage
+    ? buildCantonResultMap(selectedVorlage)
+    : null
+  const cantonResult: Resultat | null =
+    selection && cantonResults ? (cantonResults[selection.cantonNum] ?? null) : null
+
+  return (
+    <div className="flex flex-1 overflow-hidden">
+      <AppSidebar
+        index={index}
+        selectedDate={selectedDate}
+        onSelectDate={(date) => { setSelectedDate(date); setSelection(null) }}
+        votation={votation}
+        loadError={loadError}
+        selectedVorlageId={selectedVorlageId}
+        onSelectVorlage={setSelectedVorlageId}
+        selection={selection}
+        cantonResult={cantonResult}
+      />
+      <main className="relative flex-1 overflow-hidden">
+        <MapLoader
+          selectedCantonNum={selection?.cantonNum ?? null}
+          cantonResults={cantonResults}
+          onSelect={(cantonNum, cantonName) => setSelection({ cantonNum, cantonName })}
+          onReset={() => setSelection(null)}
+        />
+      </main>
+    </div>
+  )
+}
