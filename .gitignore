@@ -36,3 +36,20 @@ pnpm-debug.log*
 next-env.d.ts
 
 .ignore/
+
+# pipeline — raw downloads and intermediate files (large, regenerable)
+pipeline/data/raw/*
+pipeline/data/processed/*
+!pipeline/data/raw/.gitkeep
+!pipeline/data/processed/.gitkeep
+
+# pipeline — generated geo output (regenerable from pipeline)
+public/geo/*.geojson
+public/geo/*.pmtiles
+!public/geo/.gitkeep
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
