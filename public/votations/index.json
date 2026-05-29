@@ -8,5 +8,15 @@
     "date": "20260308",
     "label": "08.03.2026",
     "file": "/votations/20260308.json"
+  },
+  {
+    "date": "20251130",
+    "label": "30.11.2025",
+    "file": "/votations/20251130.json"
+  },
+  {
+    "date": "20250928",
+    "label": "28.09.2025",
+    "file": "/votations/20250928.json"
   }
 ]
