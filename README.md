@@ -12,11 +12,11 @@ Interactive visualization of Swiss federal votation results and demographic stat
 - Defaults to the most recent past votation (skips future dates with no data)
 
 **Demographics map (`/demographics`)**
-- Municipality-level choropleth for 30 indicators across 8 groups: population, age, vital statistics (birth/death/marriage/divorce), land use, economy (employment by sector), housing, social, and politics
+- 37 indicators across 10 groups: context (urban/periurban/rural typology), population, age, vital statistics (birth/death/marriage/divorce), land use, economy (employment by sector), housing, social, religion (2000 census), and politics
+- Urban/rural typology: categorical 3-class map (dark blue = urban, medium = periurban, light = rural) with swatch legend
+- Religion: Catholic %, Reformed %, Muslim %, no religion %, other — from 2000 census (last available at municipality level)
 - Party votes shown individually plus a computed left–right index (diverging red↔blue scale)
-- Sequential blue scale for all other indicators; all domains auto-computed at P5–P95 to avoid outlier stretch
-- Canton borders overlaid for geographic reference
-- Source: BFS Regionalportraits 2021 (reference year 2019)
+- Sequential blue scale for continuous indicators; P5–P95 domain per topic
 
 **Correlation scatter (in votation sidebar)**
 - Inline SVG scatter: X = any demographic indicator, Y = % yes votes
@@ -52,17 +52,21 @@ uv run python scripts/export_geo.py
 uv run python scripts/download_votations.py
 uv run python scripts/download_votations.py --add YYYYMMDD   # add a new date
 
-# Demographic indicators (BFS Regionalportraits)
-uv run python scripts/download_demographics.py
+# Demographic indicators — run all three, in order:
+uv run python scripts/download_demographics.py   # BFS Regionalportraits 2021 (30 indicators, 2019 data)
+uv run python scripts/download_typology.py       # swisstopo urban/periurban/rural classification
+uv run python scripts/download_religion.py       # BFS 2000 census religion data (2000 data only)
 ```
 
-The demographics script downloads the BFS Regionalportraits CSV, extracts 11 indicators for all ~2150 Swiss municipalities, aggregates canton-level means, and writes `public/demographics/index.json`. Re-run after `export_geo.py` to enable canton aggregates.
+See `pipeline/DATA_SOURCES.md` for a full breakdown of every dataset, indicator, reference year, and known limitations (income/unemployment/post-2000 religion are not available via API).
 
 ## Data sources
 
-- **Geography**: [swisstopo swissBOUNDARIES3D](https://www.swisstopo.admin.ch/en/landscape-model-swissboundaries3d) — official Swiss federal boundaries, OGD license
+- **Geography**: [swisstopo swissBOUNDARIES3D](https://www.swisstopo.admin.ch/en/landscape-model-swissboundaries3d) — OGD license
 - **Votation results**: [opendata.swiss](https://opendata.swiss) federal votation JSON API
-- **Demographics**: [BFS Regionalportraits 2021](https://opendata.swiss/en/dataset/regionalportrats-2021-kennzahlen-aller-gemeinden) — Federal Statistical Office commune key indicators
+- **Demographic indicators**: [BFS Regionalportraits 2021](https://opendata.swiss/en/dataset/regionalportrats-2021-kennzahlen-aller-gemeinden) — 30 indicators, ref. year 2019
+- **Religion**: BFS Volkszählung 2000 (PxWeb `px-x-4003000000_122`) — **2000 data only**, no municipality-level religion data exists post-2000
+- **Urban/rural typology**: swisstopo `g1a22` agglomeration shapefile — 3 classes (urban/periurban/rural)
 
 ## Tech stack
 

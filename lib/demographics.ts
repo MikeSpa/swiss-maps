@@ -8,8 +8,9 @@ export interface DemographicTopic {
   group: string
   label: Record<string, string>
   unit: string
-  color_scale: 'sequential' | 'diverging'
+  color_scale: 'sequential' | 'diverging' | 'categorical'
   domain: [number, number]
+  categories?: Record<string, Record<string, string>> | null
   source: string
   year: number
 }

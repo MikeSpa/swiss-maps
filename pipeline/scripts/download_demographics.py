@@ -30,6 +30,7 @@ NO_DATA = -9999  # sentinel stored in JSON for missing values
 # ── Groups ────────────────────────────────────────────────────────────────────
 
 GROUPS: list[dict] = [
+    {"id": "context",    "label": {"de": "Kontext", "fr": "Contexte", "it": "Contesto", "rm": "Context", "en": "Context"}},
     {"id": "population", "label": {"de": "Bevölkerung", "fr": "Population", "it": "Popolazione", "rm": "Populaziun", "en": "Population"}},
     {"id": "age",        "label": {"de": "Alter", "fr": "Âge", "it": "Età", "rm": "Vegliadetgna", "en": "Age"}},
     {"id": "vital",      "label": {"de": "Demographische Ereignisse", "fr": "Événements démographiques", "it": "Eventi demografici", "rm": "Eveniments demografics", "en": "Vital statistics"}},
@@ -37,8 +38,15 @@ GROUPS: list[dict] = [
     {"id": "economy",    "label": {"de": "Wirtschaft", "fr": "Économie", "it": "Economia", "rm": "Economia", "en": "Economy"}},
     {"id": "housing",    "label": {"de": "Wohnen", "fr": "Logement", "it": "Abitazioni", "rm": "Abitaziuns", "en": "Housing"}},
     {"id": "social",     "label": {"de": "Soziales", "fr": "Social", "it": "Sociale", "rm": "Social", "en": "Social"}},
+    {"id": "religion",   "label": {"de": "Religion (Volkszählung 2000)", "fr": "Religion (recensement 2000)", "it": "Religione (censimento 2000)", "rm": "Religiun (census 2000)", "en": "Religion (2000 census)"}},
     {"id": "politics",   "label": {"de": "Politik (NR-Wahlen 2019)", "fr": "Politique (CN 2019)", "it": "Politica (CN 2019)", "rm": "Politica (CN 2019)", "en": "Politics (2019 elections)"}},
 ]
+
+TYPOLOGY_CATEGORIES = {
+    "1": {"de": "Städtisch", "fr": "Urbain", "it": "Urbano", "rm": "Urban", "en": "Urban"},
+    "2": {"de": "Periurban", "fr": "Périurbain", "it": "Periurbano", "rm": "Periurban", "en": "Periurban"},
+    "3": {"de": "Ländlich", "fr": "Rural", "it": "Rurale", "rm": "Rural", "en": "Rural"},
+}
 
 # ── Direct indicators (read straight from the CSV) ────────────────────────────
 
@@ -301,6 +309,62 @@ def aggregate_cantons(
     return result
 
 
+# ── Supplementary source merging ──────────────────────────────────────────────
+
+def merge_typology(communes: dict[int, dict[str, float]]) -> list[dict] | None:
+    """Merge urban_rural typology (1/2/3) into communes. Returns topic spec or None."""
+    path = OUT_DIR / "typology.json"
+    if not path.exists():
+        print("  typology.json not found — run download_typology.py first")
+        return None
+    data: dict[str, int] = json.loads(path.read_text())
+    count = 0
+    for bfs_str, cls in data.items():
+        bfs = int(bfs_str)
+        if bfs in communes:
+            communes[bfs]["urban_rural"] = float(cls)
+            count += 1
+    print(f"  Typology: {count} communes merged")
+    return [{
+        "id": "urban_rural",
+        "group": "context",
+        "unit": "",
+        "color_scale": "categorical",
+        "domain": [1.0, 3.0],
+        "categories": TYPOLOGY_CATEGORIES,
+        "label": {"de": "Städtisch / Periurban / Ländlich", "fr": "Urbain / Périurbain / Rural",
+                  "it": "Urbano / Periurbano / Rurale", "rm": "Urban / Periurban / Rural",
+                  "en": "Urban / Periurban / Rural"},
+        "source": "swisstopo Agglomerationstypen 2022",
+        "year": 2022,
+    }]
+
+
+def merge_religion(communes: dict[int, dict[str, float]]) -> list[dict] | None:
+    """Merge religion percentages into communes. Returns list of topic specs or None."""
+    path = OUT_DIR / "religion.json"
+    if not path.exists():
+        print("  religion.json not found — run download_religion.py first")
+        return None
+    data = json.loads(path.read_text())
+    count = 0
+    for bfs_str, row in data["communes"].items():
+        bfs = int(bfs_str)
+        if bfs in communes:
+            for k, v in row.items():
+                communes[bfs][f"rel_{k}"] = v
+            count += 1
+    print(f"  Religion: {count} communes merged")
+    return [
+        {"id": "rel_catholic_pct",    "label": {"de": "Katholisch", "fr": "Catholique", "it": "Cattolico", "rm": "Catolic", "en": "Catholic"}},
+        {"id": "rel_reformed_pct",    "label": {"de": "Evangelisch-reformiert", "fr": "Protestant réformé", "it": "Protestante riformato", "rm": "Protestant-refurmà", "en": "Reformed Protestant"}},
+        {"id": "rel_no_religion_pct", "label": {"de": "Konfessionslos", "fr": "Sans appartenance religieuse", "it": "Senza appartenenza religiosa", "rm": "Senza confessiun", "en": "No religion"}},
+        {"id": "rel_muslim_pct",      "label": {"de": "Muslimisch", "fr": "Musulman", "it": "Musulmano", "rm": "Muslim", "en": "Muslim"}},
+        {"id": "rel_other_pct",       "label": {"de": "Andere Religion", "fr": "Autre religion", "it": "Altra religione", "rm": "Autra religiun", "en": "Other religion"}},
+        {"id": "rel_jewish_pct",      "label": {"de": "Jüdisch", "fr": "Juif", "it": "Ebraico", "rm": "Giudaic", "en": "Jewish"}},
+    ]
+
+
 # ── Domain computation ─────────────────────────────────────────────────────────
 
 def compute_domain(
@@ -342,8 +406,14 @@ def main() -> None:
     print("Computing derived indicators...")
     add_computed(communes, raw_extra)
 
+    print("Merging supplementary sources...")
+    typo_topics = merge_typology(communes) or []
+    reli_topics = merge_religion(communes) or []
+
     canton_map = load_canton_mapping()
-    all_topic_ids = [t["id"] for t in TOPICS + COMPUTED_TOPICS]
+    all_topic_ids = [t["id"] for t in TOPICS + COMPUTED_TOPICS] + \
+                    [t["id"] for t in typo_topics] + \
+                    [t["id"] for t in reli_topics]
 
     cantons: dict[int, dict[str, float]] = {}
     if canton_map:
@@ -352,18 +422,35 @@ def main() -> None:
 
     print("Computing colour domains...")
     topics_out = []
+
+    # Typology first (categorical — fixed domain, no P5/P95)
+    for t in typo_topics:
+        topics_out.append({
+            "id": t["id"], "group": t["group"], "label": t["label"],
+            "unit": t["unit"], "color_scale": t["color_scale"],
+            "domain": t["domain"], "categories": t.get("categories"),
+            "source": t["source"], "year": t["year"],
+        })
+
+    # Standard Regionalportraits indicators
     for t in TOPICS + COMPUTED_TOPICS:
         color_scale = t.get("color_scale", "sequential")
         domain = compute_domain(communes, t["id"], color_scale)
         topics_out.append({
-            "id": t["id"],
-            "group": t["group"],
-            "label": t["label"],
-            "unit": t["unit"],
-            "color_scale": color_scale,
-            "domain": domain,
-            "source": "BFS Regionalportraits 2021",
-            "year": 2019,
+            "id": t["id"], "group": t["group"], "label": t["label"],
+            "unit": t["unit"], "color_scale": color_scale,
+            "domain": domain, "categories": None,
+            "source": "BFS Regionalportraits 2021", "year": 2019,
+        })
+
+    # Religion indicators (sequential, domains from data)
+    for t in reli_topics:
+        domain = compute_domain(communes, t["id"])
+        topics_out.append({
+            "id": t["id"], "group": "religion", "label": t["label"],
+            "unit": "%", "color_scale": "sequential",
+            "domain": domain, "categories": None,
+            "source": "BFS Volkszählung 2000", "year": 2000,
         })
 
     output = {
