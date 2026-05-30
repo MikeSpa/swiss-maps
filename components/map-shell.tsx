@@ -42,7 +42,9 @@ export function MapShell({ sidebarOpen, onCloseSidebar }: MapShellProps) {
       .then((r) => r.json())
       .then((entries: VotationEntry[]) => {
         setIndex(entries)
-        if (entries.length > 0) setSelectedDate(entries[0].date)
+        const today = new Date().toISOString().slice(0, 10).replace(/-/g, '')
+        const defaultEntry = entries.find((e) => e.date <= today) ?? entries[entries.length - 1]
+        if (defaultEntry) setSelectedDate(defaultEntry.date)
       })
       .catch(() => setLoadError('Could not load votation index.'))
   }, [])
