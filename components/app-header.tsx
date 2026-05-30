@@ -1,5 +1,7 @@
 'use client'
 
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { Map, Menu } from 'lucide-react'
 import { LanguageSwitcher } from './language-switcher'
 import { useLanguage } from '@/contexts/language'
@@ -10,9 +12,10 @@ interface AppHeaderProps {
 
 export function AppHeader({ onToggleSidebar }: AppHeaderProps) {
   const { t } = useLanguage()
+  const pathname = usePathname()
+
   return (
     <header className="flex h-12 shrink-0 items-center gap-2 border-b bg-background px-3">
-      {/* Mobile sidebar toggle */}
       <button
         onClick={onToggleSidebar}
         className="rounded p-1.5 hover:bg-muted md:hidden"
@@ -25,12 +28,18 @@ export function AppHeader({ onToggleSidebar }: AppHeaderProps) {
       <span className="font-semibold tracking-tight">Swiss Maps</span>
 
       <nav className="ml-3 hidden gap-1 md:flex">
-        <a href="/" className="rounded px-3 py-1 text-sm font-medium text-foreground hover:bg-muted">
+        <Link
+          href="/"
+          className={`rounded px-3 py-1 text-sm font-medium hover:bg-muted ${pathname === '/' ? 'text-foreground' : 'text-muted-foreground'}`}
+        >
           {t.nav.votations}
-        </a>
-        <a href="#" className="rounded px-3 py-1 text-sm text-muted-foreground hover:bg-muted">
-          {t.nav.statistics}
-        </a>
+        </Link>
+        <Link
+          href="/demographics"
+          className={`rounded px-3 py-1 text-sm font-medium hover:bg-muted ${pathname === '/demographics' ? 'text-foreground' : 'text-muted-foreground'}`}
+        >
+          {t.nav.demographics}
+        </Link>
       </nav>
 
       <div className="ml-auto">

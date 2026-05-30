@@ -11,7 +11,16 @@ export const LANGS: { code: Lang; label: string }[] = [
 const de = {
   nav: {
     votations: 'Abstimmungen',
-    statistics: 'Statistiken',
+    demographics: 'Demografie',
+  },
+  demographics: {
+    title: 'Demografie',
+    topic: 'Thema',
+    source: 'Quelle',
+    loading: 'Wird geladen…',
+    error: 'Daten konnten nicht geladen werden.',
+    noData: 'Keine Daten',
+    backLabel: '← Schweiz',
   },
   sidebar: {
     voteDate: 'Abstimmung',
@@ -49,7 +58,16 @@ type Translations = typeof de
 const fr: Translations = {
   nav: {
     votations: 'Votations',
-    statistics: 'Statistiques',
+    demographics: 'Démographie',
+  },
+  demographics: {
+    title: 'Démographie',
+    topic: 'Thème',
+    source: 'Source',
+    loading: 'Chargement…',
+    error: 'Impossible de charger les données.',
+    noData: 'Aucune donnée',
+    backLabel: '← Suisse',
   },
   sidebar: {
     voteDate: 'Votation',
@@ -85,7 +103,16 @@ const fr: Translations = {
 const it: Translations = {
   nav: {
     votations: 'Votazioni',
-    statistics: 'Statistiche',
+    demographics: 'Demografia',
+  },
+  demographics: {
+    title: 'Demografia',
+    topic: 'Tema',
+    source: 'Fonte',
+    loading: 'Caricamento…',
+    error: 'Impossibile caricare i dati.',
+    noData: 'Nessun dato',
+    backLabel: '← Svizzera',
   },
   sidebar: {
     voteDate: 'Votazione',
@@ -121,7 +148,16 @@ const it: Translations = {
 const rm: Translations = {
   nav: {
     votations: 'Votaziuns',
-    statistics: 'Statisticas',
+    demographics: 'Demografica',
+  },
+  demographics: {
+    title: 'Demografica',
+    topic: 'Tema',
+    source: 'Funtauna',
+    loading: 'Chargament…',
+    error: 'Impussibel da chargiar las datas.',
+    noData: 'Nagins datas',
+    backLabel: '← Svizra',
   },
   sidebar: {
     voteDate: 'Votaziun',
@@ -157,7 +193,16 @@ const rm: Translations = {
 const en: Translations = {
   nav: {
     votations: 'Votations',
-    statistics: 'Statistics',
+    demographics: 'Demographics',
+  },
+  demographics: {
+    title: 'Demographics',
+    topic: 'Topic',
+    source: 'Source',
+    loading: 'Loading…',
+    error: 'Could not load demographic data.',
+    noData: 'No data',
+    backLabel: '← Switzerland',
   },
   sidebar: {
     voteDate: 'Vote date',
