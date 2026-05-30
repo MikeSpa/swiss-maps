@@ -37,6 +37,9 @@ const de = {
     turnout: 'Beteiligung',
     noData: 'Keine Daten',
     error: 'Daten konnten nicht geladen werden.',
+    correlation: 'Korrelation',
+    correlationHint: 'Kantonsebene · Klicken Sie auf einen Kanton für Gemeindedaten',
+    correlationHintMuni: 'Gemeindeebene',
   },
   map: {
     backLabel: '← Schweiz',
@@ -84,6 +87,9 @@ const fr: Translations = {
     turnout: 'Participation',
     noData: 'Aucune donnée',
     error: 'Impossible de charger les données.',
+    correlation: 'Corrélation',
+    correlationHint: 'Niveau cantonal · Cliquez sur un canton pour les communes',
+    correlationHintMuni: 'Niveau communal',
   },
   map: {
     backLabel: '← Suisse',
@@ -129,6 +135,9 @@ const it: Translations = {
     turnout: 'Partecipazione',
     noData: 'Nessun dato',
     error: 'Impossibile caricare i dati.',
+    correlation: 'Correlazione',
+    correlationHint: 'Livello cantonale · Clicca su un cantone per i comuni',
+    correlationHintMuni: 'Livello comunale',
   },
   map: {
     backLabel: '← Svizzera',
@@ -174,6 +183,9 @@ const rm: Translations = {
     turnout: 'Participaziun',
     noData: 'Nagins datas',
     error: 'Impussibel da chargiar las datas.',
+    correlation: 'Correlaziun',
+    correlationHint: 'Nivel chantunal · Cliccar sin in chantun per vischnancas',
+    correlationHintMuni: 'Nivel da vischnanca',
   },
   map: {
     backLabel: '← Svizra',
@@ -219,6 +231,9 @@ const en: Translations = {
     turnout: 'Turnout',
     noData: 'No data',
     error: 'Could not load votation data.',
+    correlation: 'Correlation',
+    correlationHint: 'Canton level · Click a canton for municipality data',
+    correlationHintMuni: 'Municipality level',
   },
   map: {
     backLabel: '← Switzerland',

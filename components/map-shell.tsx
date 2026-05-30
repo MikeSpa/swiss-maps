@@ -11,6 +11,7 @@ import {
   buildDistrictResultMap,
   buildMunicipalityResultMap,
 } from '@/lib/votation'
+import { fetchDemographics, type DemographicData } from '@/lib/demographics'
 
 interface VotationEntry {
   date: string
@@ -35,6 +36,12 @@ export function MapShell({ sidebarOpen, onCloseSidebar }: MapShellProps) {
   const [loadError, setLoadError] = useState<string | null>(null)
   const [selectedVorlageId, setSelectedVorlageId] = useState<number | null>(null)
   const [selection, setSelection] = useState<Selection | null>(null)
+  const [demoData, setDemoData] = useState<DemographicData | null>(null)
+
+  // Load demographics in background (non-blocking)
+  useEffect(() => {
+    fetchDemographics().then(setDemoData).catch(() => {})
+  }, [])
 
   // Load index
   useEffect(() => {
@@ -104,6 +111,9 @@ export function MapShell({ sidebarOpen, onCloseSidebar }: MapShellProps) {
         onSelectVorlage={setSelectedVorlageId}
         selection={selection}
         cantonResult={cantonResult}
+        cantonResults={cantonResults}
+        municipalityResults={municipalityResults}
+        demoData={demoData}
       />
       <main className="relative flex-1 overflow-hidden">
         <MapLoader

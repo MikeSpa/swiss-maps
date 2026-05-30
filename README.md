@@ -12,10 +12,17 @@ Interactive visualization of Swiss federal votation results and demographic stat
 - Defaults to the most recent past votation (skips future dates with no data)
 
 **Demographics map (`/demographics`)**
-- Municipality-level choropleth for 11 demographic indicators: foreign nationals %, age groups (0–19, 20–64, 65+), population density, social assistance rate, and party voter shares (SVP, SP, FDP, GPS, GLP)
-- Sequential blue color scale with P5–P95 domain per topic
+- Municipality-level choropleth for 30 indicators across 8 groups: population, age, vital statistics (birth/death/marriage/divorce), land use, economy (employment by sector), housing, social, and politics
+- Party votes shown individually plus a computed left–right index (diverging red↔blue scale)
+- Sequential blue scale for all other indicators; all domains auto-computed at P5–P95 to avoid outlier stretch
 - Canton borders overlaid for geographic reference
 - Source: BFS Regionalportraits 2021 (reference year 2019)
+
+**Correlation scatter (in votation sidebar)**
+- Inline SVG scatter: X = any demographic indicator, Y = % yes votes
+- Shows canton-level dots (26 points) by default; switches to municipality-level dots when a canton is selected
+- Linear regression line + Pearson r with plain-language interpretation
+- Topic picker groups match the demographics page
 
 **Shared**
 - Full i18n: DE / FR / IT / RM / EN (UI + votation titles from official data)

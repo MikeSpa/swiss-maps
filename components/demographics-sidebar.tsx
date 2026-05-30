@@ -2,7 +2,7 @@
 
 import { X } from 'lucide-react'
 import { useLanguage } from '@/contexts/language'
-import type { DemographicData, DemographicTopic } from '@/lib/demographics'
+import type { DemographicData, DemographicGroup, DemographicTopic } from '@/lib/demographics'
 
 interface DemographicsSidebarProps {
   isOpen: boolean
@@ -23,7 +23,16 @@ export function DemographicsSidebar({
 }: DemographicsSidebarProps) {
   const { lang, t } = useLanguage()
 
-  const selected = data?.topics.find((tp) => tp.id === selectedTopicId)
+  const selectedTopic = data?.topics.find((tp) => tp.id === selectedTopicId)
+
+  // Build grouped topic list
+  const grouped: { group: DemographicGroup; topics: DemographicTopic[] }[] = []
+  if (data) {
+    for (const group of data.groups) {
+      const topics = data.topics.filter((tp) => tp.group === group.id)
+      if (topics.length > 0) grouped.push({ group, topics })
+    }
+  }
 
   return (
     <aside
@@ -33,7 +42,6 @@ export function DemographicsSidebar({
         ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}
     >
-      {/* Mobile close button */}
       <div className="flex items-center justify-between border-b px-4 py-3 md:hidden">
         <span className="font-semibold">{t.demographics.title}</span>
         <button onClick={onClose} className="rounded p-1 hover:bg-muted">
@@ -47,19 +55,18 @@ export function DemographicsSidebar({
             {t.demographics.error}
           </p>
         )}
-
         {!data && !loadError && (
           <p className="m-4 text-sm text-muted-foreground">{t.demographics.loading}</p>
         )}
 
-        {data && (
-          <div className="p-4">
-            <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              {t.demographics.topic}
+        {grouped.map(({ group, topics }) => (
+          <div key={group.id} className="px-3 pt-4 first:pt-3">
+            <p className="mb-1 px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              {group.label[lang] ?? group.label['en']}
             </p>
             <ul className="space-y-0.5">
-              {data.topics.map((tp) => (
-                <TopicButton
+              {topics.map((tp) => (
+                <TopicRow
                   key={tp.id}
                   topic={tp}
                   lang={lang}
@@ -69,14 +76,14 @@ export function DemographicsSidebar({
               ))}
             </ul>
           </div>
-        )}
+        ))}
+        <div className="h-3" />
       </div>
 
-      {/* Source attribution */}
-      {data && selected && (
-        <div className="border-t px-4 py-3">
+      {selectedTopic && (
+        <div className="border-t px-4 py-2.5">
           <p className="text-xs text-muted-foreground">
-            {t.demographics.source}: {selected.source} ({selected.year})
+            {t.demographics.source}: {selectedTopic.source} ({selectedTopic.year})
           </p>
         </div>
       )}
@@ -84,7 +91,7 @@ export function DemographicsSidebar({
   )
 }
 
-function TopicButton({
+function TopicRow({
   topic,
   lang,
   active,
@@ -96,19 +103,15 @@ function TopicButton({
   onClick: () => void
 }) {
   const label = topic.label[lang] ?? topic.label['en'] ?? topic.id
-
   return (
     <li>
       <button
         onClick={onClick}
-        className={`w-full rounded px-3 py-2 text-left text-sm transition-colors hover:bg-muted ${
+        className={`w-full rounded px-2 py-1.5 text-left text-sm transition-colors hover:bg-muted ${
           active ? 'bg-primary/10 font-medium text-primary' : 'text-foreground'
         }`}
       >
-        <span className="block">{label}</span>
-        <span className="text-xs text-muted-foreground">
-          {topic.domain[0].toFixed(1)}–{topic.domain[1].toFixed(1)} {topic.unit}
-        </span>
+        {label}
       </button>
     </li>
   )

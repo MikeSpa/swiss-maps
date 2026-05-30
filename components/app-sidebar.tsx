@@ -3,6 +3,8 @@
 import { CheckCircle, XCircle, Clock, ChevronRight, AlertCircle } from 'lucide-react'
 import { useLanguage } from '@/contexts/language'
 import { type VotationData, type Vorlage, type Resultat, getTitle, staendeYes } from '@/lib/votation'
+import type { DemographicData } from '@/lib/demographics'
+import { VotationScatter } from './votation-scatter'
 
 interface VotationEntry {
   date: string
@@ -27,6 +29,9 @@ interface AppSidebarProps {
   onSelectVorlage: (id: number) => void
   selection: Selection | null
   cantonResult: Resultat | null
+  cantonResults: Record<number, Resultat> | null
+  municipalityResults: Record<number, Resultat> | null
+  demoData: DemographicData | null
 }
 
 function ResultBar({ pct }: { pct: number }) {
@@ -117,6 +122,9 @@ export function AppSidebar({
   onSelectVorlage,
   selection,
   cantonResult,
+  cantonResults,
+  municipalityResults,
+  demoData,
 }: AppSidebarProps) {
   const { lang, t } = useLanguage()
   const selectedVorlage = votation?.vorlagen.find((v) => v.vorlagenId === selectedVorlageId)
@@ -232,6 +240,24 @@ export function AppSidebar({
                 ) : (
                   <p className="text-xs text-muted-foreground">{t.sidebar.noData}</p>
                 )}
+              </div>
+            </>
+          )}
+
+          {/* Correlation scatter */}
+          {selectedVorlage && demoData && (
+            <>
+              <hr className="border-border" />
+              <div className="flex flex-col gap-2">
+                <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                  {t.sidebar.correlation}
+                </p>
+                <VotationScatter
+                  demoData={demoData}
+                  cantonResults={cantonResults}
+                  municipalityResults={municipalityResults}
+                  isMunicipalityLevel={selection !== null && municipalityResults !== null}
+                />
               </div>
             </>
           )}
