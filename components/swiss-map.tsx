@@ -58,11 +58,20 @@ function mergeResults(
   }
 }
 
+// No-data: light slate. Scale: strong red → slate-400 midpoint → strong green.
+// Midpoint is a visible neutral (not white) so 40% vs 60% are clearly distinct.
 const CHOROPLETH_COLOR: ExpressionSpecification = [
   'case',
   ['<', ['get', 'ja_pct'], 0],
-  '#e2e8f0',
-  ['interpolate', ['linear'], ['get', 'ja_pct'], 0, '#ef4444', 50, '#f8fafc', 100, '#22c55e'],
+  '#cbd5e1',
+  [
+    'interpolate', ['linear'], ['get', 'ja_pct'],
+    0,   '#b91c1c',
+    35,  '#f87171',
+    50,  '#94a3b8',
+    65,  '#4ade80',
+    100, '#15803d',
+  ],
 ]
 
 const HOVER_OPACITY: ExpressionSpecification = [
@@ -314,7 +323,7 @@ export default function SwissMap({
 
       {tooltip && (
         <div
-          className="pointer-events-none absolute z-10 min-w-36 rounded bg-white px-3 py-2 text-sm shadow-md"
+          className="pointer-events-none absolute z-10 min-w-36 rounded bg-popover px-3 py-2 text-sm text-popover-foreground shadow-md"
           style={{ left: tooltip.x + 12, top: tooltip.y - 40 }}
         >
           <p className="font-medium">{tooltip.name}</p>
@@ -339,7 +348,7 @@ export default function SwissMap({
       {selectedCantonNum !== null && (
         <button
           onClick={resetView}
-          className="absolute left-3 top-3 z-10 rounded bg-white px-3 py-1.5 text-sm shadow-md hover:bg-gray-50"
+          className="absolute left-3 top-3 z-10 rounded bg-popover px-3 py-1.5 text-sm text-popover-foreground shadow-md hover:bg-muted"
         >
           {t.map.backLabel}
         </button>
