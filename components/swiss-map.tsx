@@ -4,12 +4,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Map, { Layer, Source } from 'react-map-gl/maplibre'
 import type { MapRef, MapLayerMouseEvent } from 'react-map-gl/maplibre'
 import 'maplibre-gl/dist/maplibre-gl.css'
-import type { ExpressionSpecification } from 'maplibre-gl'
+import type { ExpressionSpecification, StyleSpecification } from 'maplibre-gl'
 import type { FeatureCollection } from 'geojson'
 import type { Resultat } from '@/lib/votation'
 import { useLanguage } from '@/contexts/language'
 
-const MAP_STYLE = 'https://demotiles.maplibre.org/style.json'
+const MAP_STYLE_URL = 'https://demotiles.maplibre.org/style.json'
 const SWISS_BOUNDS: [[number, number], [number, number]] = [
   [5.96, 45.82],
   [10.49, 47.81],
@@ -113,10 +113,35 @@ export default function SwissMap({
   const mapRef = useRef<MapRef>(null)
   const hoveredRef = useRef<HoveredFeature | null>(null)
 
+  const [baseStyle, setBaseStyle] = useState<string | StyleSpecification>(MAP_STYLE_URL)
   const [rawCantons, setRawCantons] = useState<FeatureCollection | null>(null)
   const [rawDistricts, setRawDistricts] = useState<FeatureCollection | null>(null)
   const [rawMunicipalities, setRawMunicipalities] = useState<FeatureCollection | null>(null)
   const [tooltip, setTooltip] = useState<TooltipState | null>(null)
+
+  useEffect(() => {
+    fetch(MAP_STYLE_URL)
+      .then(r => r.json())
+      .then((style: StyleSpecification) => {
+        const modified: StyleSpecification = {
+          ...style,
+          layers: style.layers.map(layer => {
+            if (layer.type === 'background') return layer
+            if (layer.type === 'fill') {
+              return { ...layer, paint: { ...layer.paint, 'fill-color': '#f1f5f9', 'fill-outline-color': '#e2e8f0' } }
+            }
+            if (layer.type === 'line') {
+              return { ...layer, paint: { ...layer.paint, 'line-color': '#cbd5e1' } }
+            }
+            if (layer.type === 'symbol') {
+              return { ...layer, layout: { ...layer.layout, 'text-field': '', 'icon-image': '' } }
+            }
+            return layer
+          }),
+        }
+        setBaseStyle(modified)
+      })
+  }, [])
 
   useEffect(() => {
     fetch('/geo/cantons.geojson').then((r) => r.json()).then(setRawCantons)
@@ -236,7 +261,7 @@ export default function SwissMap({
     <div className="relative h-full w-full">
       <Map
         ref={mapRef}
-        mapStyle={MAP_STYLE}
+        mapStyle={baseStyle}
         initialViewState={{ bounds: SWISS_BOUNDS, fitBoundsOptions: { padding: 20 } }}
         onMouseMove={onMouseMove}
         onMouseLeave={onMouseLeave}
