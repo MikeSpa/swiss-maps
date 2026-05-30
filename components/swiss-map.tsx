@@ -197,7 +197,9 @@ export default function SwissMap({
       'cantons-fill',
     ].filter(Boolean) as string[]
 
-    const features = map.queryRenderedFeatures(e.point, { layers: activeLayers })
+    const existingLayers = activeLayers.filter((id) => map.getLayer(id))
+    if (existingLayers.length === 0) return
+    const features = map.queryRenderedFeatures(e.point, { layers: existingLayers })
 
     if (features.length > 0) {
       const f = features[0]
