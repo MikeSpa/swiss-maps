@@ -1,0 +1,23 @@
+{
+  "1": {
+    "de": "Städtisch",
+    "fr": "Urbain",
+    "it": "Urbano",
+    "rm": "Urban",
+    "en": "Urban"
+  },
+  "2": {
+    "de": "Periurban",
+    "fr": "Périurbain",
+    "it": "Periurbano",
+    "rm": "Periurban",
+    "en": "Periurban"
+  },
+  "3": {
+    "de": "Ländlich",
+    "fr": "Rural",
+    "it": "Rurale",
+    "rm": "Rural",
+    "en": "Rural"
+  }
+}
