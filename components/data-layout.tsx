@@ -67,12 +67,152 @@ export function DataLayout() {
 
           {/* ── VOTATIONS ── */}
           <Section title="Votations">
-            <p className="mb-4 text-sm text-muted-foreground italic">Coming soon.</p>
+            <dl className="mb-6 grid grid-cols-1 gap-x-8 gap-y-0 rounded-lg border p-4 sm:grid-cols-2">
+              <Field label="Source">
+                <a href="https://opendata.swiss/en/dataset/volksabstimmungen-ab-1981" target="_blank" rel="noopener noreferrer"
+                  className="text-primary underline underline-offset-2">
+                  BFS / opendata.swiss
+                </a>{' — '} official federal votation results
+              </Field>
+              <Field label="Coverage">National + 26 cantons + districts + municipalities</Field>
+              <Field label="Available dates">Sep 2025, Nov 2025, Mar 2026, Jun 2026</Field>
+              <Field label="Freshness">
+                <Tag color="green">Published on vote day, updated as communes report in</Tag>
+              </Field>
+            </dl>
+
+            <h3 className="mb-2 text-sm font-semibold">How results are structured</h3>
+            <p className="mb-3 text-sm">
+              Each votation date contains all proposals voted on that day, with results at four
+              geographic levels: national, cantonal, district, and municipality. Results appear
+              incrementally as communes finish counting on the evening of the vote.
+            </p>
+
+            <h3 className="mb-2 mt-5 text-sm font-semibold">Proposal types</h3>
+            <p className="mb-2 text-sm">Swiss federal ballots can include several types of proposal:</p>
+            <div className="mb-3 space-y-1.5 text-sm">
+              {[
+                ['Mandatory referendum', 'Constitutional amendments — always requires both a popular majority and a cantonal majority (Ständemehr: at least 12 of 23 cantonal votes). Both thresholds must be met.'],
+                ['Optional referendum', 'Challenges to acts of parliament — requires only a simple popular majority to reject the law.'],
+                ['Popular initiative', 'Citizen-proposed constitutional change — requires both a popular majority and a cantonal majority.'],
+                ['Counter-proposal', 'Parliamentary alternative to an initiative — can appear on the same ballot, with a tiebreaker question.'],
+              ].map(([label, desc]) => (
+                <div key={label as string} className="flex items-start gap-2">
+                  <span className="mt-0.5 shrink-0 text-xs font-semibold">{label}:</span>
+                  <span className="text-muted-foreground">{desc}</span>
+                </div>
+              ))}
+            </div>
+
+            <h3 className="mb-2 mt-5 text-sm font-semibold">The cantonal majority (Ständemehr)</h3>
+            <p className="mb-3 text-sm">
+              For mandatory referendums and initiatives, a proposal must win in a majority of cantons,
+              not just nationally. Half-cantons (Obwald, Nidwald, Basel-Stadt, Basel-Landschaft,
+              Appenzell Ausserrhoden, Appenzell Innerrhoden) count as half a vote each, giving 23 total
+              cantonal votes. The threshold is 12. This means a proposal can win the popular vote and
+              still fail — or pass with less than 50% nationally — if the cantonal distribution goes
+              the other way.
+            </p>
+
+            <h3 className="mb-2 mt-5 text-sm font-semibold">Known limitations</h3>
+            <LimitationList items={[
+              'Only the four most recent dates are available. Older results exist back to 1981 but are not included.',
+              'Results may be partial if not all communes have finished counting on vote day.',
+              '~1 municipality per canton may not match the boundary file due to commune mergers since 2022.',
+            ]} />
           </Section>
 
           {/* ── DEMOGRAPHICS ── */}
           <Section title="Demographics">
-            <p className="mb-4 text-sm text-muted-foreground italic">Coming soon.</p>
+            <dl className="mb-6 grid grid-cols-1 gap-x-8 gap-y-0 rounded-lg border p-4 sm:grid-cols-2">
+              <Field label="Main source">
+                <a href="https://opendata.swiss/en/dataset/regionalportrats-2021-kennzahlen-aller-gemeinden" target="_blank" rel="noopener noreferrer"
+                  className="text-primary underline underline-offset-2">
+                  BFS Regionalportraits 2021
+                </a>{' — '} 30 indicators, ~2130 communes
+              </Field>
+              <Field label="Religion source">
+                BFS Volkszählung 2000 (PxWeb <code className="rounded bg-muted px-1 py-0.5 text-xs">px-x-4003000000_122</code>)
+              </Field>
+              <Field label="Typology source">
+                <a href="https://www.swisstopo.admin.ch" target="_blank" rel="noopener noreferrer"
+                  className="text-primary underline underline-offset-2">
+                  swisstopo
+                </a>{' — '} agglomeration classification g1a22, 2022
+              </Field>
+              <Field label="Freshness">
+                <Tag color="amber">Most indicators: 2019</Tag>{' '}
+                <Tag color="red">Religion: 2000</Tag>{' '}
+                <Tag color="green">Typology: 2022</Tag>
+              </Field>
+            </dl>
+
+            <h3 className="mb-2 text-sm font-semibold">Indicator groups</h3>
+            <p className="mb-2 text-sm">
+              The 37 indicators are organised into 10 groups, all at municipality level:
+            </p>
+            <div className="mb-4 space-y-1.5 text-sm">
+              {[
+                ['Context', 'Urban / periurban / rural typology (swisstopo 2022).'],
+                ['Population', 'Total, foreign nationals share, population growth, density, household size.'],
+                ['Age', 'Share aged 0–19, 20–64, and 65+.'],
+                ['Vital statistics', 'Birth, death, marriage, and divorce rates per 1,000 inhabitants.'],
+                ['Land use', 'Share of settlement, agricultural, and wooded area.'],
+                ['Economy', 'Employment share in primary (agriculture), secondary (industry), and tertiary (services) sectors.'],
+                ['Housing', 'Vacant dwelling rate and new housing units per 1,000 inhabitants.'],
+                ['Social', 'Social assistance (Sozialhilfe) rate.'],
+                ['Religion', 'Reformed, Catholic, Muslim, Jewish, no religion, and other — from the 2000 census.'],
+                ['Politics', 'Vote shares for SVP, SP, FDP, Die Mitte, Greens, GLP, EVP, BDP, and small right parties (2019 National Council elections) plus a computed left–right index.'],
+              ].map(([group, desc]) => (
+                <div key={group as string} className="flex items-start gap-2">
+                  <span className="mt-0.5 w-28 shrink-0 text-xs font-semibold">{group}</span>
+                  <span className="text-muted-foreground">{desc}</span>
+                </div>
+              ))}
+            </div>
+
+            <h3 className="mb-2 mt-5 text-sm font-semibold">Why religion data is from 2000</h3>
+            <p className="mb-3 text-sm">
+              The 2000 census (<em>Volkszählung</em>) was the last full-population survey where
+              religion was recorded for every resident in every commune. Since 2010 the BFS uses
+              the <em>Strukturerhebung</em> — a stratified sample of ~200,000 people per year.
+              That sample is statistically representative at canton level and for the ~50–60
+              largest municipalities, but not for a choropleth covering all ~2,100 Swiss communes.
+              No better source exists for municipality-level religion data.
+            </p>
+            <Callout>
+              Commune mergers and renumbering between 2000 and 2022 mean approximately 5–10% of
+              BFS numbers won't match the current boundary file. Those communes appear grey
+              (no data) on the religion map.
+            </Callout>
+
+            <h3 className="mb-2 mt-5 text-sm font-semibold">Urban / periurban / rural classification</h3>
+            <p className="mb-3 text-sm">
+              The typology comes from the swisstopo agglomeration shapefile (<em>g1a22</em>).
+              Communes are assigned to one of three classes based on their relationship to
+              agglomerations: urban cores and suburban belts → <strong>Urban</strong>; periurban
+              communes on the agglomeration fringe → <strong>Periurban</strong>; all remaining
+              communes → <strong>Rural</strong>. The map uses a categorical 3-colour scale
+              rather than a continuous choropleth.
+            </p>
+
+            <h3 className="mb-2 mt-5 text-sm font-semibold">Left–right index</h3>
+            <p className="mb-3 text-sm">
+              A composite score computed as{' '}
+              <code className="rounded bg-muted px-1 py-0.5 text-xs">(SVP + FDP) − (SP + Greens + GLP)</code>{' '}
+              vote share in the 2019 National Council elections. Positive values (blue) indicate
+              a right-leaning commune; negative (red) a left-leaning one. The scale runs roughly
+              from −40 to +60 across Swiss municipalities.
+            </p>
+
+            <h3 className="mb-2 mt-5 text-sm font-semibold">What is not available</h3>
+            <LimitationList items={[
+              'Income / median taxable income: BFS Steuerstatistik exists at municipality level but is only distributed as Excel files with no confirmed programmatic API.',
+              'Unemployment rate: SECO publishes monthly registered unemployment but no clean municipality-level API endpoint was found.',
+              'Religion post-2000: the Strukturerhebung sample is not statistically representative for most of the ~2,100 communes.',
+              'Nationality by country of origin: BFS data exists but only down to canton level via the public API.',
+              'Language spoken at home: same limitation as post-2000 religion — sample data only, not suitable for a full municipality-level choropleth.',
+            ]} />
           </Section>
 
           {/* ── TRADE ── */}
