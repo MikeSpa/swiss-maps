@@ -8,6 +8,7 @@ Comprehensive reference for all datasets used in the Swiss Maps pipeline.
 
 | Dataset | Source | URL / API | Reference Year | Coverage | What We Extract |
 |---|---|---|---|---|---|
+| Trade by partner | BAZG (Swiss Customs) | `bazg.admin.ch/dam/…/2_4_LD_EXP_en.xlsx` + `…IMP…` | 2024 actuals | 245 countries, exports + imports | Business-cycle bilateral totals, used for trade arc map |
 | Commune boundaries | swisstopo (GeoPackage) | `https://dam-api.bfs.admin.ch/hub/api/dam/assets/21224783/master` | 2022 | All ~2150 communes, 26 cantons, ~148 districts | GeoJSON for cantons, districts, municipalities |
 | Votation results | opendata.swiss / BFS | `https://ogd-static.voteinfo-app.ch/v1/ogd/sd-t-17-02-{YYYYMMDD}-eidgAbstimmung.json` | Per vote date | National + canton + district + municipality | Yes/no counts, turnout, counting status |
 | Demographic indicators | BFS Regionalportraits 2021 (opendata.swiss) | `https://dam-api.bfs.admin.ch/hub/api/dam/assets/16484444/master` | 2019 | ~2130 communes | 26 direct indicators + 4 computed (see §2) |
@@ -250,7 +251,57 @@ Maps each class number (as string) to its multilingual labels:
 
 ---
 
-## 6. What We Looked for but Couldn't Find via API
+## 6. BAZG Trade Data
+
+**Script:** `pipeline/scripts/download_trade.py`
+**Output:** `public/trade/trade_2024.json`
+**Sources:**
+- Exports: `https://www.bazg.admin.ch/dam/en/sd-web/L0lqLFfjaSe2/2_4_LD_EXP_en.xlsx`
+- Imports: `https://www.bazg.admin.ch/dam/en/sd-web/-bHd3OniokpL/2_4_LD_IMP_en.xlsx`
+
+### Business cycle total vs. general total
+
+Each BAZG file contains two side-by-side ranking tables. We use the **business cycle total** (cols A–F):
+- Excludes: precious metals, precious stones and gems, works of art, antiques
+- 2024 total: CHF ~283B exports, CHF ~222B imports
+- **General total** (CHF ~394B exports) includes gold/gems — Switzerland is a major commodity trading hub, inflating bilateral figures
+
+### Data coverage
+
+| Item | Value |
+|---|---|
+| Countries in source | 245 |
+| Partners in output (≥ CHF 100M) | 96 |
+| Partners with map centroids | 63 |
+| Reference year | 2024 actuals (published May 2025) |
+
+### Slovenia note
+
+Slovenia ranks #3 in both exports (~CHF 26B) and imports (~CHF 18B). This reflects pharma supply chains (Novartis, Roche manufacturing sites in Slovenia producing active ingredients). Real data, not an error.
+
+### Limitations
+
+- **No per-country sector breakdown.** Requires [SwissImpex](https://www.swissimpex.admin.ch) (official BAZG dashboard, HS chapter × country × month going back to 1988). SwissImpex has no machine-readable API; data can only be downloaded via the web UI. The script `download_trade.py` fetches only the summary-level country totals.
+- UN Comtrade Plus and the legacy Comtrade API now require registration/subscription for data access (both return HTML instead of JSON when accessed without credentials).
+- 33 partner countries above the CHF 100M threshold have no centroid defined in the pipeline and appear in the sidebar list only (no arc on the map).
+
+### Output structure
+
+```json
+{
+  "metadata": { "source": "BAZG", "reference_year": 2024, "total_exports": 283006, ... },
+  "partners": [
+    { "country": "Germany", "country_code": "DE", "exports": 41635, "imports": 53921, "balance": -12286,
+      "fta_status": "EU_bilateral", "centroid": [10.5, 51.2] }
+  ],
+  "sectors": { "exports": [...], "imports": [...] },
+  "timeseries": { "annual": [...2015-2025], "monthly_2025_2026": [...] }
+}
+```
+
+---
+
+## 7. What We Looked for but Couldn't Find via API
 
 ### Income / median taxable income
 
@@ -274,7 +325,7 @@ The same limitation applies as for post-2000 religion data: the **Strukturerhebu
 
 ---
 
-## 7. Dataset Dates Summary
+## 8. Dataset Dates Summary
 
 | Indicator / Dataset | Source | Year of Data |
 |---|---|---|

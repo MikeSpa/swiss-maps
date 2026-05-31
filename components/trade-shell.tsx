@@ -14,6 +14,7 @@ export function TradeShell({ sidebarOpen, onCloseSidebar }: TradeShellProps) {
   const [data, setData] = useState<TradeData | null>(null)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [hoveredCode, setHoveredCode] = useState<string | null>(null)
+  const [selectedCode, setSelectedCode] = useState<string | null>(null)
   const [ftaFilter, setFtaFilter] = useState<FtaStatus | 'all'>('all')
 
   useEffect(() => {
@@ -21,6 +22,10 @@ export function TradeShell({ sidebarOpen, onCloseSidebar }: TradeShellProps) {
       .then(setData)
       .catch(() => setLoadError('Could not load trade data.'))
   }, [])
+
+  function toggleSelected(code: string | null) {
+    setSelectedCode(prev => (prev === code ? null : code))
+  }
 
   return (
     <div className="relative flex min-h-0 flex-1 overflow-hidden">
@@ -31,6 +36,8 @@ export function TradeShell({ sidebarOpen, onCloseSidebar }: TradeShellProps) {
         loadError={loadError}
         hoveredCode={hoveredCode}
         onHover={setHoveredCode}
+        selectedCode={selectedCode}
+        onSelect={toggleSelected}
         ftaFilter={ftaFilter}
         onFtaFilter={setFtaFilter}
       />
@@ -48,6 +55,8 @@ export function TradeShell({ sidebarOpen, onCloseSidebar }: TradeShellProps) {
             data={data}
             hoveredCode={hoveredCode}
             onHover={setHoveredCode}
+            selectedCode={selectedCode}
+            onSelect={toggleSelected}
             ftaFilter={ftaFilter}
           />
         )}

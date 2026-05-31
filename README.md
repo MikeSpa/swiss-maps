@@ -18,6 +18,14 @@ Interactive visualization of Swiss federal votation results and demographic stat
 - Party votes shown individually plus a computed left–right index (diverging red↔blue scale)
 - Sequential blue scale for continuous indicators; P5–P95 domain per topic
 
+**Trade map (`/trade`)**
+- World choropleth map with curved arc lines connecting Switzerland to each trading partner
+- Arc width = total trade volume; arc color = green (CH surplus) / red (CH deficit)
+- Click a country dot or sidebar row to select and pin the detail card; click Switzerland to show all flows
+- FTA status filter (EU bilateral / in force / framework / negotiating / signed / all)
+- 96 trading partners from official 2024 BAZG data (business cycle total, excl. precious metals)
+- Sidebar shows global sector export breakdown (pharma 49%, machines 12%, watches 10%, …)
+
 **Correlation scatter (in votation sidebar)**
 - Inline SVG scatter: X = any demographic indicator, Y = % yes votes
 - Shows canton-level dots (26 points) by default; switches to municipality-level dots when a canton is selected
@@ -52,6 +60,9 @@ uv run python scripts/export_geo.py
 uv run python scripts/download_votations.py
 uv run python scripts/download_votations.py --add YYYYMMDD   # add a new date
 
+# Trade data (BAZG official 2024 actuals — re-run to refresh)
+uv run python scripts/download_trade.py
+
 # Demographic indicators — run all three, in order:
 uv run python scripts/download_demographics.py   # BFS Regionalportraits 2021 (30 indicators, 2019 data)
 uv run python scripts/download_typology.py       # swisstopo urban/periurban/rural classification
@@ -62,6 +73,7 @@ See `pipeline/DATA_SOURCES.md` for a full breakdown of every dataset, indicator,
 
 ## Data sources
 
+- **Trade**: [BAZG (Federal Office for Customs and Border Security)](https://www.bazg.admin.ch) — 2024 actuals, business cycle total (excl. precious metals). Full breakdown at [swissimpex.admin.ch](https://www.swissimpex.admin.ch)
 - **Geography**: [swisstopo swissBOUNDARIES3D](https://www.swisstopo.admin.ch/en/landscape-model-swissboundaries3d) — OGD license
 - **Votation results**: [opendata.swiss](https://opendata.swiss) federal votation JSON API
 - **Demographic indicators**: [BFS Regionalportraits 2021](https://opendata.swiss/en/dataset/regionalportrats-2021-kennzahlen-aller-gemeinden) — 30 indicators, ref. year 2019

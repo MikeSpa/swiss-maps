@@ -9,10 +9,10 @@ export type FtaStatus =
 export interface TradePartner {
   country: string
   country_code: string
-  centroid: [number, number]   // [lng, lat]
-  exports: number              // CHF millions
-  imports: number              // CHF millions
-  balance: number              // exports − imports (positive = CH surplus)
+  centroid?: [number, number]   // [lng, lat] — present for ~63 major partners
+  exports: number               // CHF millions
+  imports: number               // CHF millions
+  balance: number               // exports − imports (positive = CH surplus)
   fta_status: FtaStatus
 }
 
@@ -23,12 +23,29 @@ export interface SectorEntry {
   value_CHF_millions: number
 }
 
+export interface AnnualTotal {
+  year: number
+  exports: number
+  imports: number
+  balance: number
+  preliminary?: boolean
+}
+
+export interface MonthlyTotal {
+  period: string  // "YYYY-MM"
+  exports: number
+  imports: number
+  preliminary?: boolean
+}
+
 export interface TradeData {
   metadata: {
     source: string
     reference_year: number
     currency: string
     unit: string
+    note: string
+    downloaded: string
     total_exports: number
     total_imports: number
     trade_balance: number
@@ -37,6 +54,10 @@ export interface TradeData {
   sectors: {
     exports: SectorEntry[]
     imports: SectorEntry[]
+  }
+  timeseries: {
+    annual: AnnualTotal[]
+    monthly_2025_2026: MonthlyTotal[]
   }
 }
 

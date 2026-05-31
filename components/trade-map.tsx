@@ -62,10 +62,12 @@ interface TradeMapProps {
   data: TradeData
   hoveredCode: string | null
   onHover: (code: string | null) => void
+  selectedCode: string | null
+  onSelect: (code: string | null) => void
   ftaFilter: FtaStatus | 'all'
 }
 
-export default function TradeMap({ data, hoveredCode, onHover, ftaFilter }: TradeMapProps) {
+export default function TradeMap({ data, hoveredCode, onHover, selectedCode, onSelect, ftaFilter }: TradeMapProps) {
   const { t } = useLanguage()
   const mapRef = useRef<MapRef>(null)
   const [baseStyle, setBaseStyle] = useState<string | StyleSpecification>(MAP_STYLE_URL)
@@ -107,15 +109,15 @@ export default function TradeMap({ data, hoveredCode, onHover, ftaFilter }: Trad
         >
           {/* Arcs — drawn first (behind hotspots) */}
           {partners.map(partner => {
+            if (!partner.centroid) return null
             const path = buildArcPath(map, CH_CENTROID, partner.centroid)
             if (!path) return null
             const total = partner.exports + partner.imports
             const w = arcWidth(total, maxTotal)
             const color = arcColor(partner.balance)
-            const isHovered = hoveredCode === partner.country_code
-            const opacity = showAll
-              ? (hoveredCode ? (isHovered ? 1 : 0.25) : 0.7)
-              : (hoveredCode ? (isHovered ? 1 : 0.08) : 0.15)
+            const isActive = hoveredCode === partner.country_code || selectedCode === partner.country_code
+            const anyActive = hoveredCode !== null || selectedCode !== null
+            const opacity = isActive ? 1 : showAll ? 0.55 : anyActive ? 0.07 : 0.15
 
             return (
               <path
@@ -123,7 +125,7 @@ export default function TradeMap({ data, hoveredCode, onHover, ftaFilter }: Trad
                 d={path}
                 fill="none"
                 stroke={color}
-                strokeWidth={isHovered ? w * 1.6 : w}
+                strokeWidth={isActive ? w * 1.6 : w}
                 strokeOpacity={opacity}
                 strokeLinecap="round"
               />
@@ -132,18 +134,20 @@ export default function TradeMap({ data, hoveredCode, onHover, ftaFilter }: Trad
 
           {/* Partner hotspots */}
           {partners.map(partner => {
+            if (!partner.centroid) return null
             const proj = map.project(partner.centroid)
             const isHovered = hoveredCode === partner.country_code
+            const isSelected = selectedCode === partner.country_code
             return (
               <circle
                 key={`hs-${partner.country_code}`}
                 cx={proj.x}
                 cy={proj.y}
-                r={isHovered ? 7 : 5}
+                r={isHovered || isSelected ? 7 : 5}
                 fill={arcColor(partner.balance)}
-                fillOpacity={isHovered ? 1 : 0.6}
+                fillOpacity={isHovered || isSelected ? 1 : 0.6}
                 stroke="white"
-                strokeWidth={1.5}
+                strokeWidth={isSelected ? 2.5 : 1.5}
                 style={{ pointerEvents: 'auto', cursor: 'pointer' }}
                 onMouseEnter={() => {
                   onHover(partner.country_code)
@@ -153,6 +157,7 @@ export default function TradeMap({ data, hoveredCode, onHover, ftaFilter }: Trad
                   onHover(null)
                   setTooltip(null)
                 }}
+                onClick={() => onSelect(partner.country_code)}
               />
             )
           })}

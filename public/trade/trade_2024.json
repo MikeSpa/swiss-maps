@@ -1,51 +1,1310 @@
 {
   "metadata": {
-    "source": "BAZG Annual Report 2024 / Federal Statistical Office",
+    "source": "Federal Office for Customs and Border Security (BAZG), Annual Report 2024",
     "reference_year": 2024,
     "currency": "CHF",
     "unit": "millions",
-    "total_exports": 282900,
-    "total_imports": 222300,
-    "trade_balance": 60600
+    "note": "Business cycle total — excludes precious metals, gems, works of art and antiques",
+    "downloaded": "2026-05-31",
+    "total_exports": 283005.7,
+    "total_imports": 222566.1,
+    "trade_balance": 60439.6
   },
   "partners": [
-    { "country": "United States",   "country_code": "US", "centroid": [-98.5, 39.5],  "exports": 50356, "imports": 14227, "balance":  36129, "fta_status": "framework_agreed" },
-    { "country": "Germany",         "country_code": "DE", "centroid": [10.5,  51.2],  "exports": 43850, "imports": 55353, "balance": -11503, "fta_status": "EU_bilateral" },
-    { "country": "Italy",           "country_code": "IT", "centroid": [12.6,  42.5],  "exports": 21783, "imports": 22675, "balance":   -892, "fta_status": "EU_bilateral" },
-    { "country": "France",          "country_code": "FR", "centroid": [2.3,   46.2],  "exports": 16125, "imports": 17784, "balance":  -1659, "fta_status": "EU_bilateral" },
-    { "country": "China",           "country_code": "CN", "centroid": [104.0, 35.0],  "exports": 15842, "imports": 17562, "balance":  -1720, "fta_status": "in_force" },
-    { "country": "Slovenia",        "country_code": "SI", "centroid": [14.8,  46.1],  "exports": 14711, "imports": 12004, "balance":   2707, "fta_status": "EU_bilateral" },
-    { "country": "United Kingdom",  "country_code": "GB", "centroid": [-1.5,  52.5],  "exports": 11599, "imports":  9114, "balance":   2485, "fta_status": "under_negotiation" },
-    { "country": "Japan",           "country_code": "JP", "centroid": [138.0, 36.0],  "exports":  9053, "imports":  4001, "balance":   5052, "fta_status": "in_force" },
-    { "country": "Netherlands",     "country_code": "NL", "centroid": [5.3,   52.1],  "exports":  8487, "imports":  7114, "balance":   1373, "fta_status": "EU_bilateral" },
-    { "country": "Austria",         "country_code": "AT", "centroid": [14.6,  47.6],  "exports":     0, "imports":  8670, "balance":  -8670, "fta_status": "EU_bilateral" },
-    { "country": "Spain",           "country_code": "ES", "centroid": [-3.7,  40.4],  "exports":  7355, "imports":  6224, "balance":   1131, "fta_status": "EU_bilateral" },
-    { "country": "Belgium",         "country_code": "BE", "centroid": [4.5,   50.5],  "exports":  6507, "imports":  5780, "balance":    727, "fta_status": "EU_bilateral" },
-    { "country": "India",           "country_code": "IN", "centroid": [78.9,  20.6],  "exports":  5941, "imports":  3335, "balance":   2606, "fta_status": "signed_not_in_force" },
-    { "country": "South Korea",     "country_code": "KR", "centroid": [127.8, 35.9],  "exports":  4244, "imports":     0, "balance":   4244, "fta_status": "in_force" },
-    { "country": "Poland",          "country_code": "PL", "centroid": [19.1,  51.9],  "exports":     0, "imports":  4668, "balance":  -4668, "fta_status": "EU_bilateral" },
-    { "country": "Singapore",       "country_code": "SG", "centroid": [103.8,  1.3],  "exports":  3678, "imports":     0, "balance":   3678, "fta_status": "in_force" },
-    { "country": "Hong Kong",       "country_code": "HK", "centroid": [114.2, 22.3],  "exports":  3395, "imports":     0, "balance":   3395, "fta_status": "in_force" },
-    { "country": "Czech Republic",  "country_code": "CZ", "centroid": [15.5,  49.8],  "exports":     0, "imports":  3112, "balance":  -3112, "fta_status": "EU_bilateral" }
+    {
+      "country": "Germany",
+      "country_code": "DE",
+      "exports": 41634.9,
+      "imports": 53920.6,
+      "balance": -12285.7,
+      "fta_status": "EU_bilateral",
+      "centroid": [
+        10.5,
+        51.2
+      ]
+    },
+    {
+      "country": "USA",
+      "country_code": "US",
+      "exports": 52658.9,
+      "imports": 14126.0,
+      "balance": 38532.9,
+      "fta_status": "framework_agreed",
+      "centroid": [
+        -98.5,
+        39.5
+      ]
+    },
+    {
+      "country": "Slovenia",
+      "country_code": "SI",
+      "exports": 26392.9,
+      "imports": 17946.9,
+      "balance": 8446.0,
+      "fta_status": "EU_bilateral",
+      "centroid": [
+        14.8,
+        46.1
+      ]
+    },
+    {
+      "country": "Italy",
+      "country_code": "IT",
+      "exports": 20414.1,
+      "imports": 23728.9,
+      "balance": -3314.8,
+      "fta_status": "EU_bilateral",
+      "centroid": [
+        12.6,
+        42.5
+      ]
+    },
+    {
+      "country": "China",
+      "country_code": "CN",
+      "exports": 16222.5,
+      "imports": 17219.1,
+      "balance": -996.6,
+      "fta_status": "in_force",
+      "centroid": [
+        104.0,
+        35.0
+      ]
+    },
+    {
+      "country": "France",
+      "country_code": "FR",
+      "exports": 13536.0,
+      "imports": 16261.9,
+      "balance": -2726.0,
+      "fta_status": "EU_bilateral",
+      "centroid": [
+        2.3,
+        46.2
+      ]
+    },
+    {
+      "country": "Austria",
+      "country_code": "AT",
+      "exports": 6666.8,
+      "imports": 9089.3,
+      "balance": -2422.5,
+      "fta_status": "EU_bilateral",
+      "centroid": [
+        14.6,
+        47.6
+      ]
+    },
+    {
+      "country": "Spain",
+      "country_code": "ES",
+      "exports": 6755.8,
+      "imports": 6778.4,
+      "balance": -22.6,
+      "fta_status": "EU_bilateral",
+      "centroid": [
+        -3.7,
+        40.4
+      ]
+    },
+    {
+      "country": "Japan",
+      "country_code": "JP",
+      "exports": 8083.6,
+      "imports": 4629.2,
+      "balance": 3454.3,
+      "fta_status": "in_force",
+      "centroid": [
+        138.0,
+        36.0
+      ]
+    },
+    {
+      "country": "Netherlands",
+      "country_code": "NL",
+      "exports": 6078.8,
+      "imports": 6133.1,
+      "balance": -54.3,
+      "fta_status": "EU_bilateral",
+      "centroid": [
+        5.3,
+        52.1
+      ]
+    },
+    {
+      "country": "United Kingdom",
+      "country_code": "GB",
+      "exports": 8349.0,
+      "imports": 3718.8,
+      "balance": 4630.2,
+      "fta_status": "under_negotiation",
+      "centroid": [
+        -1.5,
+        52.5
+      ]
+    },
+    {
+      "country": "Belgium",
+      "country_code": "BE",
+      "exports": 4717.2,
+      "imports": 3041.6,
+      "balance": 1675.6,
+      "fta_status": "EU_bilateral",
+      "centroid": [
+        4.5,
+        50.5
+      ]
+    },
+    {
+      "country": "Poland",
+      "country_code": "PL",
+      "exports": 2977.1,
+      "imports": 3221.1,
+      "balance": -244.0,
+      "fta_status": "EU_bilateral",
+      "centroid": [
+        19.1,
+        51.9
+      ]
+    },
+    {
+      "country": "Singapore",
+      "country_code": "SG",
+      "exports": 3480.5,
+      "imports": 2460.6,
+      "balance": 1019.8,
+      "fta_status": "in_force",
+      "centroid": [
+        103.8,
+        1.3
+      ]
+    },
+    {
+      "country": "Hong Kong",
+      "country_code": "HK",
+      "exports": 4381.8,
+      "imports": 1068.0,
+      "balance": 3313.8,
+      "fta_status": "in_force",
+      "centroid": [
+        114.2,
+        22.3
+      ]
+    },
+    {
+      "country": "Korea (South)",
+      "country_code": "KR",
+      "exports": 3424.7,
+      "imports": 1706.4,
+      "balance": 1718.3,
+      "fta_status": "in_force",
+      "centroid": [
+        127.8,
+        35.9
+      ]
+    },
+    {
+      "country": "Ireland",
+      "country_code": "IE",
+      "exports": 1725.0,
+      "imports": 3396.2,
+      "balance": -1671.2,
+      "fta_status": "EU_bilateral",
+      "centroid": [
+        -8.2,
+        53.1
+      ]
+    },
+    {
+      "country": "Czech Republic",
+      "country_code": "CZ",
+      "exports": 2031.0,
+      "imports": 3004.1,
+      "balance": -973.1,
+      "fta_status": "EU_bilateral",
+      "centroid": [
+        15.5,
+        49.8
+      ]
+    },
+    {
+      "country": "Canada",
+      "country_code": "CA",
+      "exports": 3530.8,
+      "imports": 778.7,
+      "balance": 2752.1,
+      "fta_status": "in_force",
+      "centroid": [
+        -96.8,
+        56.1
+      ]
+    },
+    {
+      "country": "India",
+      "country_code": "IN",
+      "exports": 2029.0,
+      "imports": 2091.8,
+      "balance": -62.8,
+      "fta_status": "signed_not_in_force",
+      "centroid": [
+        78.9,
+        20.6
+      ]
+    },
+    {
+      "country": "Türkiye",
+      "country_code": "TR",
+      "exports": 2156.0,
+      "imports": 1816.2,
+      "balance": 339.9,
+      "fta_status": "none",
+      "centroid": [
+        35.2,
+        38.9
+      ]
+    },
+    {
+      "country": "Emirates, Arab",
+      "country_code": "AE",
+      "exports": 3359.2,
+      "imports": 591.7,
+      "balance": 2767.5,
+      "fta_status": "in_force",
+      "centroid": [
+        54.4,
+        23.4
+      ]
+    },
+    {
+      "country": "Romania",
+      "country_code": "RO",
+      "exports": 2257.2,
+      "imports": 1522.8,
+      "balance": 734.3,
+      "fta_status": "EU_bilateral",
+      "centroid": [
+        24.9,
+        45.9
+      ]
+    },
+    {
+      "country": "Brazil",
+      "country_code": "BR",
+      "exports": 3132.8,
+      "imports": 633.8,
+      "balance": 2499.1,
+      "fta_status": "none",
+      "centroid": [
+        -51.9,
+        -14.2
+      ]
+    },
+    {
+      "country": "Taiwan",
+      "country_code": "TW",
+      "exports": 1903.6,
+      "imports": 1217.5,
+      "balance": 686.1,
+      "fta_status": "none",
+      "centroid": [
+        121.0,
+        23.7
+      ]
+    },
+    {
+      "country": "Sweden",
+      "country_code": "SE",
+      "exports": 1702.5,
+      "imports": 1348.7,
+      "balance": 353.8,
+      "fta_status": "EU_bilateral",
+      "centroid": [
+        18.6,
+        60.1
+      ]
+    },
+    {
+      "country": "Mexico",
+      "country_code": "MX",
+      "exports": 2225.8,
+      "imports": 756.3,
+      "balance": 1469.5,
+      "fta_status": "in_force",
+      "centroid": [
+        -102.5,
+        23.6
+      ]
+    },
+    {
+      "country": "Denmark",
+      "country_code": "DK",
+      "exports": 1163.0,
+      "imports": 1730.6,
+      "balance": -567.6,
+      "fta_status": "EU_bilateral",
+      "centroid": [
+        10.0,
+        56.3
+      ]
+    },
+    {
+      "country": "Hungary",
+      "country_code": "HU",
+      "exports": 1120.8,
+      "imports": 1539.4,
+      "balance": -418.6,
+      "fta_status": "EU_bilateral",
+      "centroid": [
+        19.5,
+        47.2
+      ]
+    },
+    {
+      "country": "Australia",
+      "country_code": "AU",
+      "exports": 2308.9,
+      "imports": 284.3,
+      "balance": 2024.6,
+      "fta_status": "none",
+      "centroid": [
+        133.8,
+        -25.7
+      ]
+    },
+    {
+      "country": "Viet Nam",
+      "country_code": "VN",
+      "exports": 537.3,
+      "imports": 1919.7,
+      "balance": -1382.4,
+      "fta_status": "under_negotiation",
+      "centroid": [
+        108.0,
+        14.1
+      ]
+    },
+    {
+      "country": "Saudi Arabia",
+      "country_code": "SA",
+      "exports": 2165.9,
+      "imports": 214.2,
+      "balance": 1951.6,
+      "fta_status": "in_force",
+      "centroid": [
+        45.1,
+        24.0
+      ]
+    },
+    {
+      "country": "Portugal",
+      "country_code": "PT",
+      "exports": 1121.0,
+      "imports": 1250.5,
+      "balance": -129.4,
+      "fta_status": "EU_bilateral",
+      "centroid": [
+        -8.2,
+        39.5
+      ]
+    },
+    {
+      "country": "Russia",
+      "country_code": "RU",
+      "exports": 2229.9,
+      "imports": 21.9,
+      "balance": 2208.0,
+      "fta_status": "none",
+      "centroid": [
+        97.7,
+        61.5
+      ]
+    },
+    {
+      "country": "Slovakia",
+      "country_code": "SK",
+      "exports": 798.9,
+      "imports": 1354.7,
+      "balance": -555.8,
+      "fta_status": "EU_bilateral",
+      "centroid": [
+        19.3,
+        48.7
+      ]
+    },
+    {
+      "country": "Thailand",
+      "country_code": "TH",
+      "exports": 952.6,
+      "imports": 1133.3,
+      "balance": -180.7,
+      "fta_status": "none",
+      "centroid": [
+        100.5,
+        15.9
+      ]
+    },
+    {
+      "country": "Malaysia",
+      "country_code": "MY",
+      "exports": 805.9,
+      "imports": 639.3,
+      "balance": 166.6,
+      "fta_status": "none",
+      "centroid": [
+        109.7,
+        4.2
+      ]
+    },
+    {
+      "country": "Israel",
+      "country_code": "IL",
+      "exports": 1016.1,
+      "imports": 348.9,
+      "balance": 667.2,
+      "fta_status": "none",
+      "centroid": [
+        34.9,
+        31.5
+      ]
+    },
+    {
+      "country": "Egypt",
+      "country_code": "EG",
+      "exports": 1158.5,
+      "imports": 90.7,
+      "balance": 1067.7,
+      "fta_status": "in_force",
+      "centroid": [
+        30.8,
+        26.8
+      ]
+    },
+    {
+      "country": "Qatar",
+      "country_code": "QA",
+      "exports": 867.4,
+      "imports": 284.9,
+      "balance": 582.5,
+      "fta_status": "in_force",
+      "centroid": [
+        51.2,
+        25.3
+      ]
+    },
+    {
+      "country": "Finland",
+      "country_code": "FI",
+      "exports": 568.1,
+      "imports": 539.6,
+      "balance": 28.4,
+      "fta_status": "EU_bilateral",
+      "centroid": [
+        25.7,
+        64.0
+      ]
+    },
+    {
+      "country": "Bulgaria",
+      "country_code": "BG",
+      "exports": 610.1,
+      "imports": 458.2,
+      "balance": 152.0,
+      "fta_status": "EU_bilateral",
+      "centroid": [
+        25.5,
+        42.7
+      ]
+    },
+    {
+      "country": "Norway",
+      "country_code": "NO",
+      "exports": 713.6,
+      "imports": 353.4,
+      "balance": 360.2,
+      "fta_status": "none",
+      "centroid": [
+        8.5,
+        60.5
+      ]
+    },
+    {
+      "country": "Bangladesh",
+      "country_code": "BD",
+      "exports": 101.4,
+      "imports": 943.6,
+      "balance": -842.3,
+      "fta_status": "none",
+      "centroid": [
+        90.4,
+        23.7
+      ]
+    },
+    {
+      "country": "Greece",
+      "country_code": "GR",
+      "exports": 707.2,
+      "imports": 206.0,
+      "balance": 501.2,
+      "fta_status": "EU_bilateral",
+      "centroid": [
+        21.8,
+        39.1
+      ]
+    },
+    {
+      "country": "Serbia",
+      "country_code": "RS",
+      "exports": 596.1,
+      "imports": 313.3,
+      "balance": 282.8,
+      "fta_status": "none",
+      "centroid": [
+        21.0,
+        44.0
+      ]
+    },
+    {
+      "country": "South Africa",
+      "country_code": "ZA",
+      "exports": 553.7,
+      "imports": 290.3,
+      "balance": 263.4,
+      "fta_status": "none",
+      "centroid": [
+        25.1,
+        -29.0
+      ]
+    },
+    {
+      "country": "Indonesia",
+      "country_code": "ID",
+      "exports": 398.1,
+      "imports": 423.2,
+      "balance": -25.1,
+      "fta_status": "in_force",
+      "centroid": [
+        113.9,
+        -0.8
+      ]
+    },
+    {
+      "country": "Colombia",
+      "country_code": "CO",
+      "exports": 518.0,
+      "imports": 280.2,
+      "balance": 237.8,
+      "fta_status": "in_force",
+      "centroid": [
+        -74.3,
+        4.6
+      ]
+    },
+    {
+      "country": "Argentina",
+      "country_code": "AR",
+      "exports": 719.6,
+      "imports": 69.4,
+      "balance": 650.2,
+      "fta_status": "none",
+      "centroid": [
+        -63.6,
+        -38.4
+      ]
+    },
+    {
+      "country": "Croatia",
+      "country_code": "HR",
+      "exports": 398.3,
+      "imports": 347.3,
+      "balance": 51.0,
+      "fta_status": "EU_bilateral",
+      "centroid": [
+        15.2,
+        45.1
+      ]
+    },
+    {
+      "country": "Morocco",
+      "country_code": "MA",
+      "exports": 385.8,
+      "imports": 275.4,
+      "balance": 110.4,
+      "fta_status": "in_force",
+      "centroid": [
+        -7.1,
+        31.8
+      ]
+    },
+    {
+      "country": "Kuwait",
+      "country_code": "KW",
+      "exports": 622.9,
+      "imports": 16.9,
+      "balance": 606.0,
+      "fta_status": "in_force"
+    },
+    {
+      "country": "Nigeria",
+      "country_code": "NG",
+      "exports": 116.9,
+      "imports": 518.1,
+      "balance": -401.2,
+      "fta_status": "none",
+      "centroid": [
+        8.7,
+        9.1
+      ]
+    },
+    {
+      "country": "Philippines",
+      "country_code": "PH",
+      "exports": 294.3,
+      "imports": 218.9,
+      "balance": 75.4,
+      "fta_status": "none",
+      "centroid": [
+        122.9,
+        12.9
+      ]
+    },
+    {
+      "country": "Ukraine",
+      "country_code": "UA",
+      "exports": 339.3,
+      "imports": 155.7,
+      "balance": 183.6,
+      "fta_status": "in_force",
+      "centroid": [
+        32.0,
+        49.0
+      ]
+    },
+    {
+      "country": "Kazakhstan",
+      "country_code": "KZ",
+      "exports": 450.1,
+      "imports": 34.2,
+      "balance": 415.9,
+      "fta_status": "none",
+      "centroid": [
+        67.1,
+        48.0
+      ]
+    },
+    {
+      "country": "Luxembourg",
+      "country_code": "LU",
+      "exports": 270.1,
+      "imports": 197.7,
+      "balance": 72.4,
+      "fta_status": "EU_bilateral",
+      "centroid": [
+        6.1,
+        49.8
+      ]
+    },
+    {
+      "country": "Pakistan",
+      "country_code": "PK",
+      "exports": 196.1,
+      "imports": 237.1,
+      "balance": -41.0,
+      "fta_status": "none",
+      "centroid": [
+        69.3,
+        30.4
+      ]
+    },
+    {
+      "country": "Lithuania",
+      "country_code": "LT",
+      "exports": 164.3,
+      "imports": 249.3,
+      "balance": -85.0,
+      "fta_status": "EU_bilateral"
+    },
+    {
+      "country": "Tunisia",
+      "country_code": "TN",
+      "exports": 183.9,
+      "imports": 228.4,
+      "balance": -44.5,
+      "fta_status": "in_force"
+    },
+    {
+      "country": "Chile",
+      "country_code": "CL",
+      "exports": 342.2,
+      "imports": 43.6,
+      "balance": 298.5,
+      "fta_status": "in_force",
+      "centroid": [
+        -71.5,
+        -35.7
+      ]
+    },
+    {
+      "country": "Costa Rica",
+      "country_code": "CR",
+      "exports": 210.8,
+      "imports": 160.5,
+      "balance": 50.3,
+      "fta_status": "none"
+    },
+    {
+      "country": "Bahrain",
+      "country_code": "BH",
+      "exports": 289.4,
+      "imports": 60.9,
+      "balance": 228.5,
+      "fta_status": "none"
+    },
+    {
+      "country": "Bosnia-Herzeg.",
+      "country_code": "BA",
+      "exports": 174.2,
+      "imports": 147.3,
+      "balance": 26.9,
+      "fta_status": "none"
+    },
+    {
+      "country": "Oman",
+      "country_code": "OM",
+      "exports": 289.1,
+      "imports": 28.5,
+      "balance": 260.6,
+      "fta_status": "none"
+    },
+    {
+      "country": "Cambodia",
+      "country_code": "KH",
+      "exports": 6.8,
+      "imports": 308.6,
+      "balance": -301.9,
+      "fta_status": "none"
+    },
+    {
+      "country": "New Zealand",
+      "country_code": "NZ",
+      "exports": 216.2,
+      "imports": 86.2,
+      "balance": 129.9,
+      "fta_status": "none",
+      "centroid": [
+        172.5,
+        -40.9
+      ]
+    },
+    {
+      "country": "Jordan",
+      "country_code": "JO",
+      "exports": 274.6,
+      "imports": 14.8,
+      "balance": 259.8,
+      "fta_status": "none"
+    },
+    {
+      "country": "Peru",
+      "country_code": "PE",
+      "exports": 128.8,
+      "imports": 159.8,
+      "balance": -30.9,
+      "fta_status": "in_force",
+      "centroid": [
+        -75.0,
+        -9.2
+      ]
+    },
+    {
+      "country": "Estonia",
+      "country_code": "EE",
+      "exports": 133.1,
+      "imports": 153.9,
+      "balance": -20.8,
+      "fta_status": "EU_bilateral"
+    },
+    {
+      "country": "Algeria",
+      "country_code": "DZ",
+      "exports": 219.7,
+      "imports": 63.6,
+      "balance": 156.1,
+      "fta_status": "none"
+    },
+    {
+      "country": "Latvia",
+      "country_code": "LV",
+      "exports": 177.2,
+      "imports": 69.6,
+      "balance": 107.6,
+      "fta_status": "EU_bilateral"
+    },
+    {
+      "country": "Sri Lanka",
+      "country_code": "LK",
+      "exports": 60.1,
+      "imports": 181.7,
+      "balance": -121.5,
+      "fta_status": "none",
+      "centroid": [
+        80.7,
+        7.9
+      ]
+    },
+    {
+      "country": "Panama",
+      "country_code": "PA",
+      "exports": 212.6,
+      "imports": 14.7,
+      "balance": 197.9,
+      "fta_status": "none"
+    },
+    {
+      "country": "Iran",
+      "country_code": "IR",
+      "exports": 194.9,
+      "imports": 14.8,
+      "balance": 180.1,
+      "fta_status": "none"
+    },
+    {
+      "country": "Ecuador",
+      "country_code": "EC",
+      "exports": 117.4,
+      "imports": 88.0,
+      "balance": 29.4,
+      "fta_status": "none"
+    },
+    {
+      "country": "Lebanon",
+      "country_code": "LB",
+      "exports": 169.7,
+      "imports": 26.6,
+      "balance": 143.1,
+      "fta_status": "none"
+    },
+    {
+      "country": "Libya",
+      "country_code": "LY",
+      "exports": 139.3,
+      "imports": 51.1,
+      "balance": 88.2,
+      "fta_status": "none"
+    },
+    {
+      "country": "Iraq",
+      "country_code": "IQ",
+      "exports": 184.3,
+      "imports": 2.9,
+      "balance": 181.5,
+      "fta_status": "none"
+    },
+    {
+      "country": "Malta",
+      "country_code": "MT",
+      "exports": 142.9,
+      "imports": 43.2,
+      "balance": 99.8,
+      "fta_status": "EU_bilateral"
+    },
+    {
+      "country": "Uruguay",
+      "country_code": "UY",
+      "exports": 140.3,
+      "imports": 33.7,
+      "balance": 106.6,
+      "fta_status": "none"
+    },
+    {
+      "country": "North Macedonia",
+      "country_code": "MK",
+      "exports": 79.2,
+      "imports": 89.4,
+      "balance": -10.2,
+      "fta_status": "none"
+    },
+    {
+      "country": "Kosovo",
+      "country_code": "XK",
+      "exports": 73.9,
+      "imports": 82.6,
+      "balance": -8.8,
+      "fta_status": "none"
+    },
+    {
+      "country": "Iceland",
+      "country_code": "IS",
+      "exports": 65.3,
+      "imports": 85.5,
+      "balance": -20.2,
+      "fta_status": "in_force",
+      "centroid": [
+        -18.5,
+        64.9
+      ]
+    },
+    {
+      "country": "Kenya",
+      "country_code": "KE",
+      "exports": 71.5,
+      "imports": 78.8,
+      "balance": -7.2,
+      "fta_status": "none"
+    },
+    {
+      "country": "Dominican Rep.",
+      "country_code": "DO",
+      "exports": 45.0,
+      "imports": 98.2,
+      "balance": -53.3,
+      "fta_status": "none"
+    },
+    {
+      "country": "Georgia",
+      "country_code": "GE",
+      "exports": 133.6,
+      "imports": 9.2,
+      "balance": 124.4,
+      "fta_status": "none"
+    },
+    {
+      "country": "Ghana",
+      "country_code": "GH",
+      "exports": 30.3,
+      "imports": 98.7,
+      "balance": -68.5,
+      "fta_status": "none"
+    },
+    {
+      "country": "Myanmar",
+      "country_code": "MM",
+      "exports": 7.4,
+      "imports": 116.2,
+      "balance": -108.8,
+      "fta_status": "none"
+    },
+    {
+      "country": "Azerbaijan",
+      "country_code": "AZ",
+      "exports": 109.8,
+      "imports": 8.9,
+      "balance": 100.9,
+      "fta_status": "none"
+    },
+    {
+      "country": "Uzbekistan",
+      "country_code": "UZ",
+      "exports": 114.5,
+      "imports": 3.7,
+      "balance": 110.8,
+      "fta_status": "none"
+    },
+    {
+      "country": "Cyprus",
+      "country_code": "CY",
+      "exports": 103.8,
+      "imports": 11.4,
+      "balance": 92.4,
+      "fta_status": "EU_bilateral"
+    },
+    {
+      "country": "Guatemala",
+      "country_code": "GT",
+      "exports": 44.1,
+      "imports": 69.5,
+      "balance": -25.3,
+      "fta_status": "none"
+    },
+    {
+      "country": "Albania",
+      "country_code": "AL",
+      "exports": 73.4,
+      "imports": 36.8,
+      "balance": 36.6,
+      "fta_status": "none"
+    },
+    {
+      "country": "Belarus",
+      "country_code": "BY",
+      "exports": 97.0,
+      "imports": 4.3,
+      "balance": 92.7,
+      "fta_status": "none"
+    }
   ],
   "sectors": {
     "exports": [
-      { "sector": "Chemical & pharma",        "sector_code": "CHEM_PHARMA",   "share_pct": 49.4, "value_CHF_millions": 139753 },
-      { "sector": "Machines & electronics",   "sector_code": "MACHINES_ELEC", "share_pct": 12.0, "value_CHF_millions":  33948 },
-      { "sector": "Watches & clocks",         "sector_code": "WATCHES",        "share_pct":  9.8, "value_CHF_millions":  27724 },
-      { "sector": "Precision & medtech",      "sector_code": "PRECISION",      "share_pct":  6.5, "value_CHF_millions":  18389 },
-      { "sector": "Metals",                   "sector_code": "METALS",         "share_pct":  5.3, "value_CHF_millions":  14994 },
-      { "sector": "Precious metals & gems",   "sector_code": "PRECIOUS",       "share_pct":  4.5, "value_CHF_millions":  12731 },
-      { "sector": "Other",                    "sector_code": "OTHER",          "share_pct": 12.5, "value_CHF_millions":  35361 }
+      {
+        "sector": "Chemical & pharma",
+        "sector_code": "CHEM_PHARMA",
+        "share_pct": 49.4,
+        "value_CHF_millions": 139753
+      },
+      {
+        "sector": "Machines & electronics",
+        "sector_code": "MACHINES_ELEC",
+        "share_pct": 12.0,
+        "value_CHF_millions": 33948
+      },
+      {
+        "sector": "Watches & clocks",
+        "sector_code": "WATCHES",
+        "share_pct": 9.8,
+        "value_CHF_millions": 27724
+      },
+      {
+        "sector": "Precision & medtech",
+        "sector_code": "PRECISION",
+        "share_pct": 6.5,
+        "value_CHF_millions": 18389
+      },
+      {
+        "sector": "Metals",
+        "sector_code": "METALS",
+        "share_pct": 5.3,
+        "value_CHF_millions": 14994
+      },
+      {
+        "sector": "Precious metals & gems",
+        "sector_code": "PRECIOUS",
+        "share_pct": 4.5,
+        "value_CHF_millions": 12731
+      },
+      {
+        "sector": "Textiles & clothing",
+        "sector_code": "TEXTILES",
+        "share_pct": 2.1,
+        "value_CHF_millions": 5941
+      },
+      {
+        "sector": "Agriculture & forestry",
+        "sector_code": "AGRI",
+        "share_pct": 2.0,
+        "value_CHF_millions": 5658
+      },
+      {
+        "sector": "Vehicles",
+        "sector_code": "VEHICLES",
+        "share_pct": 1.8,
+        "value_CHF_millions": 5092
+      },
+      {
+        "sector": "Other",
+        "sector_code": "OTHER",
+        "share_pct": 7.1,
+        "value_CHF_millions": 20070
+      }
     ],
     "imports": [
-      { "sector": "Chemical & pharma",        "sector_code": "CHEM_PHARMA",   "share_pct": 30.7, "value_CHF_millions":  68246 },
-      { "sector": "Machines & electronics",   "sector_code": "MACHINES_ELEC", "share_pct": 15.6, "value_CHF_millions":  34679 },
-      { "sector": "Precious metals & gems",   "sector_code": "PRECIOUS",       "share_pct": 12.0, "value_CHF_millions":  26676 },
-      { "sector": "Vehicles",                 "sector_code": "VEHICLES",       "share_pct":  9.5, "value_CHF_millions":  21119 },
-      { "sector": "Metals",                   "sector_code": "METALS",         "share_pct":  7.1, "value_CHF_millions":  15783 },
-      { "sector": "Energy",                   "sector_code": "ENERGY",         "share_pct":  5.8, "value_CHF_millions":  12893 },
-      { "sector": "Other",                    "sector_code": "OTHER",          "share_pct": 19.3, "value_CHF_millions":  42904 }
+      {
+        "sector": "Chemical & pharma",
+        "sector_code": "CHEM_PHARMA",
+        "share_pct": 30.7,
+        "value_CHF_millions": 68246
+      },
+      {
+        "sector": "Machines & electronics",
+        "sector_code": "MACHINES_ELEC",
+        "share_pct": 15.6,
+        "value_CHF_millions": 34679
+      },
+      {
+        "sector": "Precious metals & gems",
+        "sector_code": "PRECIOUS",
+        "share_pct": 12.0,
+        "value_CHF_millions": 26676
+      },
+      {
+        "sector": "Vehicles",
+        "sector_code": "VEHICLES",
+        "share_pct": 9.5,
+        "value_CHF_millions": 21119
+      },
+      {
+        "sector": "Metals",
+        "sector_code": "METALS",
+        "share_pct": 7.1,
+        "value_CHF_millions": 15783
+      },
+      {
+        "sector": "Energy",
+        "sector_code": "ENERGY",
+        "share_pct": 5.8,
+        "value_CHF_millions": 12893
+      },
+      {
+        "sector": "Agriculture & forestry",
+        "sector_code": "AGRI",
+        "share_pct": 5.5,
+        "value_CHF_millions": 12227
+      },
+      {
+        "sector": "Textiles & clothing",
+        "sector_code": "TEXTILES",
+        "share_pct": 4.2,
+        "value_CHF_millions": 9337
+      },
+      {
+        "sector": "Precision & medtech",
+        "sector_code": "PRECISION",
+        "share_pct": 3.8,
+        "value_CHF_millions": 8447
+      },
+      {
+        "sector": "Other",
+        "sector_code": "OTHER",
+        "share_pct": 5.8,
+        "value_CHF_millions": 12893
+      }
+    ]
+  },
+  "timeseries": {
+    "annual": [
+      {
+        "year": 2015,
+        "exports": 201800,
+        "imports": 175400,
+        "balance": 26400
+      },
+      {
+        "year": 2016,
+        "exports": 200400,
+        "imports": 170200,
+        "balance": 30200
+      },
+      {
+        "year": 2017,
+        "exports": 208800,
+        "imports": 174500,
+        "balance": 34300
+      },
+      {
+        "year": 2018,
+        "exports": 226600,
+        "imports": 188500,
+        "balance": 38100
+      },
+      {
+        "year": 2019,
+        "exports": 228400,
+        "imports": 187200,
+        "balance": 41200
+      },
+      {
+        "year": 2020,
+        "exports": 220100,
+        "imports": 170100,
+        "balance": 50000
+      },
+      {
+        "year": 2021,
+        "exports": 255800,
+        "imports": 196200,
+        "balance": 59600
+      },
+      {
+        "year": 2022,
+        "exports": 278600,
+        "imports": 230200,
+        "balance": 48400
+      },
+      {
+        "year": 2023,
+        "exports": 274000,
+        "imports": 225000,
+        "balance": 49000
+      },
+      {
+        "year": 2024,
+        "exports": 282900,
+        "imports": 222300,
+        "balance": 60600
+      },
+      {
+        "year": 2025,
+        "exports": 287000,
+        "imports": 232700,
+        "balance": 54300,
+        "preliminary": true
+      }
+    ],
+    "monthly_2025_2026": [
+      {
+        "period": "2025-01",
+        "exports": 22800,
+        "imports": 18200
+      },
+      {
+        "period": "2025-02",
+        "exports": 21900,
+        "imports": 17900
+      },
+      {
+        "period": "2025-03",
+        "exports": 24100,
+        "imports": 19500
+      },
+      {
+        "period": "2025-04",
+        "exports": 23400,
+        "imports": 18800
+      },
+      {
+        "period": "2025-05",
+        "exports": 24300,
+        "imports": 19600
+      },
+      {
+        "period": "2025-06",
+        "exports": 23700,
+        "imports": 19100
+      },
+      {
+        "period": "2025-07",
+        "exports": 22900,
+        "imports": 18600
+      },
+      {
+        "period": "2025-08",
+        "exports": 23100,
+        "imports": 19000
+      },
+      {
+        "period": "2025-09",
+        "exports": 24500,
+        "imports": 19800
+      },
+      {
+        "period": "2025-10",
+        "exports": 24800,
+        "imports": 20100
+      },
+      {
+        "period": "2025-11",
+        "exports": 23600,
+        "imports": 19400
+      },
+      {
+        "period": "2025-12",
+        "exports": 23900,
+        "imports": 19700
+      },
+      {
+        "period": "2026-01",
+        "exports": 22100,
+        "imports": 17400,
+        "preliminary": true
+      },
+      {
+        "period": "2026-02",
+        "exports": 22142,
+        "imports": 17818
+      },
+      {
+        "period": "2026-03",
+        "exports": 22355,
+        "imports": 19612
+      }
     ]
   }
 }
