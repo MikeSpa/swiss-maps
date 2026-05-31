@@ -124,6 +124,7 @@ export default function DemographicsMap({ communes, topic }: DemographicsMapProp
   const onMouseMove = useCallback((e: MapLayerMouseEvent) => {
     const map = mapRef.current?.getMap()
     if (!map) return
+    if (!map.getLayer('municipalities-fill')) return
     const features = map.queryRenderedFeatures(e.point, { layers: ['municipalities-fill'] })
     if (features.length > 0) {
       const f = features[0]

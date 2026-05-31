@@ -224,6 +224,7 @@ export default function SwissMap({
   const onClick = useCallback((e: MapLayerMouseEvent) => {
     const map = mapRef.current?.getMap()
     if (!map) return
+    if (!map.getLayer('cantons-fill')) return
     const features = map.queryRenderedFeatures(e.point, { layers: ['cantons-fill'] })
     if (features.length === 0) return
     const feature = features[0]
