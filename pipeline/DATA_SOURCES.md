@@ -281,7 +281,7 @@ Slovenia ranks #3 in both exports (~CHF 26B) and imports (~CHF 18B). This reflec
 
 ### Limitations
 
-- **No per-country sector breakdown.** Requires [SwissImpex](https://www.swissimpex.admin.ch) (official BAZG dashboard, HS chapter × country × month going back to 1988). SwissImpex has no machine-readable API; data can only be downloaded via the web UI. The script `download_trade.py` fetches only the summary-level country totals.
+- Per-country sector breakdown is now available via `sectors_by_country.json` (see §6b below).
 - UN Comtrade Plus and the legacy Comtrade API now require registration/subscription for data access (both return HTML instead of JSON when accessed without credentials).
 - 33 partner countries above the CHF 100M threshold have no centroid defined in the pipeline and appear in the sidebar list only (no arc on the map).
 
@@ -298,6 +298,42 @@ Slovenia ranks #3 in both exports (~CHF 26B) and imports (~CHF 18B). This reflec
   "timeseries": { "annual": [...2015-2025], "monthly_2025_2026": [...] }
 }
 ```
+
+## 6b. SwissImpex TN8_VK — Per-Country Sector Breakdown
+
+**Script:** `pipeline/scripts/process_trade_sectors.py`
+**Input:** `dev_scripts/trade/TN8_VK_EXP_en_v1.csv` + `TN8_VK_IMP_en_v1.csv`
+**Output:** `public/trade/sectors_by_country.json`
+**Source:** [SwissImpex / BAZG](https://www.swissimpex.admin.ch) — transaction-level bulk export (opendata.swiss)
+
+### What it contains
+
+Every Swiss trade transaction in 2025 at 8-digit HS tariff number × trading partner country × month × transport mode. Aggregated to HS2-chapter sector level per country.
+
+| Field | Description |
+|---|---|
+| `year` | 2025 (full 12 months in the downloaded files) |
+| `Tariffnumber8` | 8-digit HS code (format `XXXX.XXXX`; first 2 digits = chapter = sector) |
+| `Country_isoAlpha2` | ISO-3166-1 alpha-2 country code |
+| `Value_CHF` | Transaction value in CHF |
+
+Chapter 71 (precious metals, gems, jewellery) is excluded to stay consistent with the business-cycle total used in the bilateral BAZG data.
+
+### Relationship to §6 bilateral data
+
+| | BAZG XLSX (§6) | SwissImpex TN8_VK (§6b) |
+|---|---|---|
+| Year | 2024 | 2025 |
+| Grain | Country totals | HS8 × country × month × transport |
+| Countries | 245 | 248 |
+| Grand total exports | CHF 283B | CHF 277B (−2%) |
+| Purpose | Bilateral totals, arc sizing | Sector shares per country |
+
+The 2% total difference is a normal year-over-year change. Country-level differences are larger for financial trading hubs (Singapore, HK, UAE) because the TN8_VK transport-mode dataset misses some commodity and re-export flows that the summary bilateral file captures. **Sector percentage shares remain reliable for all countries.**
+
+### Usage in the app
+
+Sector % shares from 2025 are applied to 2024 bilateral totals to estimate per-country sector CHF values. This keeps all figures consistent with the 2024 baseline while providing sector granularity.
 
 ---
 

@@ -20,7 +20,8 @@ Interactive visualization of Swiss federal votation results and demographic stat
 
 **Trade map (`/trade`)**
 - World choropleth map with curved arc lines connecting Switzerland to each trading partner
-- Arc width = total trade volume; arc color = green (CH surplus) / red (CH deficit)
+- Arc width = total trade volume; arc color = green (CH surplus) / red (CH deficit); sector filter changes arc color to sector color and sizes by sector volume
+- Per-country sector breakdown (pharma, machines, watches, precision, metals…) from SwissImpex 2025 HS8 data — shown in hover tooltip and country card
 - Click a country dot or sidebar row to select and pin the detail card; click Switzerland to show all flows
 - FTA status filter (EU bilateral / in force / framework / negotiating / signed / all)
 - 96 trading partners from official 2024 BAZG data (business cycle total, excl. precious metals)
@@ -73,7 +74,8 @@ See `pipeline/DATA_SOURCES.md` for a full breakdown of every dataset, indicator,
 
 ## Data sources
 
-- **Trade**: [BAZG (Federal Office for Customs and Border Security)](https://www.bazg.admin.ch) — 2024 actuals, business cycle total (excl. precious metals). Full breakdown at [swissimpex.admin.ch](https://www.swissimpex.admin.ch)
+- **Trade (bilateral totals)**: [BAZG Annual Report 2024](https://www.bazg.admin.ch) — 2024 actuals, business cycle total (excl. precious metals), 245 countries
+- **Trade (sector breakdown)**: [SwissImpex / BAZG TN8_VK](https://www.swissimpex.admin.ch) — 2025 full year, HS8 tariff × country × transport mode; used for per-country sector shares
 - **Geography**: [swisstopo swissBOUNDARIES3D](https://www.swisstopo.admin.ch/en/landscape-model-swissboundaries3d) — OGD license
 - **Votation results**: [opendata.swiss](https://opendata.swiss) federal votation JSON API
 - **Demographic indicators**: [BFS Regionalportraits 2021](https://opendata.swiss/en/dataset/regionalportrats-2021-kennzahlen-aller-gemeinden) — 30 indicators, ref. year 2019

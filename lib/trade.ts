@@ -38,6 +38,22 @@ export interface MonthlyTotal {
   preliminary?: boolean
 }
 
+export interface CountrySectors {
+  exports: SectorEntry[]
+  imports: SectorEntry[]
+}
+
+export interface SectorsData {
+  metadata: { source: string; year: number; note: string }
+  by_country: Record<string, CountrySectors>
+}
+
+export async function fetchSectorsData(): Promise<SectorsData> {
+  const res = await fetch('/trade/sectors_by_country.json')
+  if (!res.ok) throw new Error('Failed to load sectors data')
+  return res.json()
+}
+
 export interface TradeData {
   metadata: {
     source: string
@@ -74,6 +90,30 @@ export const FTA_LABELS: Record<FtaStatus, string> = {
   under_negotiation:     'Under negotiation',
   signed_not_in_force:   'Signed, pending',
   none:                  'No FTA',
+}
+
+/** Sector-specific export + import + balance for one partner, estimated from
+ *  2025 sector shares applied to 2024 bilateral totals. */
+export interface SectorMetrics {
+  exp: number      // estimated sector exports (CHF millions)
+  imp: number      // estimated sector imports (CHF millions)
+  balance: number  // exp − imp
+  expShare: number // % of that country's total exports that are this sector
+  impShare: number // % of that country's total imports that are this sector
+  volume: number   // exp + imp
+}
+
+export function sectorMetrics(
+  partner: TradePartner,
+  byCountry: SectorsData['by_country'],
+  sectorCode: string,
+): SectorMetrics {
+  const cs = byCountry[partner.country_code]
+  const expShare = cs?.exports.find(s => s.sector_code === sectorCode)?.share_pct ?? 0
+  const impShare = cs?.imports.find(s => s.sector_code === sectorCode)?.share_pct ?? 0
+  const exp = (expShare / 100) * partner.exports
+  const imp = (impShare / 100) * partner.imports
+  return { exp, imp, balance: exp - imp, expShare, impShare, volume: exp + imp }
 }
 
 export const FTA_COLORS: Record<FtaStatus, string> = {
