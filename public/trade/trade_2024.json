@@ -641,7 +641,11 @@
       "exports": 622.9,
       "imports": 16.9,
       "balance": 606.0,
-      "fta_status": "in_force"
+      "fta_status": "in_force",
+      "centroid": [
+        47.5,
+        29.3
+      ]
     },
     {
       "country": "Nigeria",
@@ -721,7 +725,11 @@
       "exports": 164.3,
       "imports": 249.3,
       "balance": -85.0,
-      "fta_status": "EU_bilateral"
+      "fta_status": "EU_bilateral",
+      "centroid": [
+        23.9,
+        55.2
+      ]
     },
     {
       "country": "Tunisia",
@@ -729,7 +737,11 @@
       "exports": 183.9,
       "imports": 228.4,
       "balance": -44.5,
-      "fta_status": "in_force"
+      "fta_status": "in_force",
+      "centroid": [
+        9.6,
+        33.9
+      ]
     },
     {
       "country": "Chile",
@@ -749,7 +761,11 @@
       "exports": 210.8,
       "imports": 160.5,
       "balance": 50.3,
-      "fta_status": "none"
+      "fta_status": "none",
+      "centroid": [
+        -84.0,
+        9.7
+      ]
     },
     {
       "country": "Bahrain",
@@ -757,7 +773,11 @@
       "exports": 289.4,
       "imports": 60.9,
       "balance": 228.5,
-      "fta_status": "none"
+      "fta_status": "none",
+      "centroid": [
+        50.6,
+        26.0
+      ]
     },
     {
       "country": "Bosnia-Herzeg.",
@@ -765,7 +785,11 @@
       "exports": 174.2,
       "imports": 147.3,
       "balance": 26.9,
-      "fta_status": "none"
+      "fta_status": "none",
+      "centroid": [
+        17.6,
+        44.2
+      ]
     },
     {
       "country": "Oman",
@@ -773,7 +797,11 @@
       "exports": 289.1,
       "imports": 28.5,
       "balance": 260.6,
-      "fta_status": "none"
+      "fta_status": "none",
+      "centroid": [
+        57.5,
+        21.5
+      ]
     },
     {
       "country": "Cambodia",
@@ -781,7 +809,11 @@
       "exports": 6.8,
       "imports": 308.6,
       "balance": -301.9,
-      "fta_status": "none"
+      "fta_status": "none",
+      "centroid": [
+        104.9,
+        12.6
+      ]
     },
     {
       "country": "New Zealand",
@@ -801,7 +833,11 @@
       "exports": 274.6,
       "imports": 14.8,
       "balance": 259.8,
-      "fta_status": "none"
+      "fta_status": "none",
+      "centroid": [
+        37.0,
+        31.2
+      ]
     },
     {
       "country": "Peru",
@@ -821,7 +857,11 @@
       "exports": 133.1,
       "imports": 153.9,
       "balance": -20.8,
-      "fta_status": "EU_bilateral"
+      "fta_status": "EU_bilateral",
+      "centroid": [
+        25.0,
+        58.6
+      ]
     },
     {
       "country": "Algeria",
@@ -829,7 +869,11 @@
       "exports": 219.7,
       "imports": 63.6,
       "balance": 156.1,
-      "fta_status": "none"
+      "fta_status": "none",
+      "centroid": [
+        3.0,
+        28.0
+      ]
     },
     {
       "country": "Latvia",
@@ -837,7 +881,11 @@
       "exports": 177.2,
       "imports": 69.6,
       "balance": 107.6,
-      "fta_status": "EU_bilateral"
+      "fta_status": "EU_bilateral",
+      "centroid": [
+        24.6,
+        56.9
+      ]
     },
     {
       "country": "Sri Lanka",
@@ -857,7 +905,11 @@
       "exports": 212.6,
       "imports": 14.7,
       "balance": 197.9,
-      "fta_status": "none"
+      "fta_status": "none",
+      "centroid": [
+        -80.0,
+        8.5
+      ]
     },
     {
       "country": "Iran",
@@ -865,7 +917,11 @@
       "exports": 194.9,
       "imports": 14.8,
       "balance": 180.1,
-      "fta_status": "none"
+      "fta_status": "none",
+      "centroid": [
+        53.7,
+        32.4
+      ]
     },
     {
       "country": "Ecuador",
@@ -873,7 +929,11 @@
       "exports": 117.4,
       "imports": 88.0,
       "balance": 29.4,
-      "fta_status": "none"
+      "fta_status": "none",
+      "centroid": [
+        -78.1,
+        -1.8
+      ]
     },
     {
       "country": "Lebanon",
@@ -881,7 +941,11 @@
       "exports": 169.7,
       "imports": 26.6,
       "balance": 143.1,
-      "fta_status": "none"
+      "fta_status": "none",
+      "centroid": [
+        35.8,
+        33.9
+      ]
     },
     {
       "country": "Libya",
@@ -889,7 +953,11 @@
       "exports": 139.3,
       "imports": 51.1,
       "balance": 88.2,
-      "fta_status": "none"
+      "fta_status": "none",
+      "centroid": [
+        17.2,
+        26.3
+      ]
     },
     {
       "country": "Iraq",
@@ -897,7 +965,11 @@
       "exports": 184.3,
       "imports": 2.9,
       "balance": 181.5,
-      "fta_status": "none"
+      "fta_status": "none",
+      "centroid": [
+        44.4,
+        33.2
+      ]
     },
     {
       "country": "Malta",
@@ -905,7 +977,11 @@
       "exports": 142.9,
       "imports": 43.2,
       "balance": 99.8,
-      "fta_status": "EU_bilateral"
+      "fta_status": "EU_bilateral",
+      "centroid": [
+        14.4,
+        35.9
+      ]
     },
     {
       "country": "Uruguay",
@@ -913,7 +989,11 @@
       "exports": 140.3,
       "imports": 33.7,
       "balance": 106.6,
-      "fta_status": "none"
+      "fta_status": "none",
+      "centroid": [
+        -55.7,
+        -32.5
+      ]
     },
     {
       "country": "North Macedonia",
@@ -921,7 +1001,11 @@
       "exports": 79.2,
       "imports": 89.4,
       "balance": -10.2,
-      "fta_status": "none"
+      "fta_status": "none",
+      "centroid": [
+        21.7,
+        41.6
+      ]
     },
     {
       "country": "Kosovo",
@@ -929,7 +1013,11 @@
       "exports": 73.9,
       "imports": 82.6,
       "balance": -8.8,
-      "fta_status": "none"
+      "fta_status": "none",
+      "centroid": [
+        21.1,
+        42.6
+      ]
     },
     {
       "country": "Iceland",
@@ -949,7 +1037,11 @@
       "exports": 71.5,
       "imports": 78.8,
       "balance": -7.2,
-      "fta_status": "none"
+      "fta_status": "none",
+      "centroid": [
+        37.9,
+        0.0
+      ]
     },
     {
       "country": "Dominican Rep.",
@@ -957,7 +1049,11 @@
       "exports": 45.0,
       "imports": 98.2,
       "balance": -53.3,
-      "fta_status": "none"
+      "fta_status": "none",
+      "centroid": [
+        -70.2,
+        18.7
+      ]
     },
     {
       "country": "Georgia",
@@ -965,7 +1061,11 @@
       "exports": 133.6,
       "imports": 9.2,
       "balance": 124.4,
-      "fta_status": "none"
+      "fta_status": "none",
+      "centroid": [
+        43.4,
+        42.3
+      ]
     },
     {
       "country": "Ghana",
@@ -973,7 +1073,11 @@
       "exports": 30.3,
       "imports": 98.7,
       "balance": -68.5,
-      "fta_status": "none"
+      "fta_status": "none",
+      "centroid": [
+        -1.0,
+        7.9
+      ]
     },
     {
       "country": "Myanmar",
@@ -981,7 +1085,11 @@
       "exports": 7.4,
       "imports": 116.2,
       "balance": -108.8,
-      "fta_status": "none"
+      "fta_status": "none",
+      "centroid": [
+        96.9,
+        16.9
+      ]
     },
     {
       "country": "Azerbaijan",
@@ -989,7 +1097,11 @@
       "exports": 109.8,
       "imports": 8.9,
       "balance": 100.9,
-      "fta_status": "none"
+      "fta_status": "none",
+      "centroid": [
+        47.6,
+        40.1
+      ]
     },
     {
       "country": "Uzbekistan",
@@ -997,7 +1109,11 @@
       "exports": 114.5,
       "imports": 3.7,
       "balance": 110.8,
-      "fta_status": "none"
+      "fta_status": "none",
+      "centroid": [
+        64.6,
+        41.3
+      ]
     },
     {
       "country": "Cyprus",
@@ -1005,7 +1121,11 @@
       "exports": 103.8,
       "imports": 11.4,
       "balance": 92.4,
-      "fta_status": "EU_bilateral"
+      "fta_status": "EU_bilateral",
+      "centroid": [
+        33.4,
+        35.1
+      ]
     },
     {
       "country": "Guatemala",
@@ -1013,7 +1133,11 @@
       "exports": 44.1,
       "imports": 69.5,
       "balance": -25.3,
-      "fta_status": "none"
+      "fta_status": "none",
+      "centroid": [
+        -90.2,
+        15.8
+      ]
     },
     {
       "country": "Albania",
@@ -1021,7 +1145,11 @@
       "exports": 73.4,
       "imports": 36.8,
       "balance": 36.6,
-      "fta_status": "none"
+      "fta_status": "none",
+      "centroid": [
+        20.2,
+        41.2
+      ]
     },
     {
       "country": "Belarus",
@@ -1029,7 +1157,11 @@
       "exports": 97.0,
       "imports": 4.3,
       "balance": 92.7,
-      "fta_status": "none"
+      "fta_status": "none",
+      "centroid": [
+        27.9,
+        53.5
+      ]
     }
   ],
   "sectors": {

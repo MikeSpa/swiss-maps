@@ -20,8 +20,9 @@ Interactive visualization of Swiss federal votation results and demographic stat
 
 **Trade map (`/trade`)**
 - World choropleth map with curved arc lines connecting Switzerland to each trading partner
-- Arc width = total trade volume; arc color = green (CH surplus) / red (CH deficit); sector filter changes arc color to sector color and sizes by sector volume
-- Per-country sector breakdown (pharma, machines, watches, precision, metals…) from SwissImpex 2025 HS8 data — shown in hover tooltip and country card
+- Arc width = trade volume (total or sector); arc color = green (CH surplus) / red (CH deficit) — always based on the active sector's balance, not a flat color
+- Sector filter (9 sectors): recalculates arc sizing + balance + sorting for the selected sector only
+- Per-country sector breakdown from SwissImpex 2025 HS8 data — shown in hover tooltip and selected-country card with % share + estimated CHF value per sector
 - Click a country dot or sidebar row to select and pin the detail card; click Switzerland to show all flows
 - FTA status filter (EU bilateral / in force / framework / negotiating / signed / all)
 - 96 trading partners from official 2024 BAZG data (business cycle total, excl. precious metals)

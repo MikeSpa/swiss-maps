@@ -36,6 +36,7 @@ pnpm-debug.log*
 next-env.d.ts
 
 .ignore/
+.vscode/
 dev_scripts/
 
 # pipeline — raw downloads and intermediate files (large, regenerable)

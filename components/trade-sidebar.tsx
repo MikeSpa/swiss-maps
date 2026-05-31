@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useLanguage } from '@/contexts/language'
-import type { TradeData, TradePartner, FtaStatus, SectorsData, SectorEntry } from '@/lib/trade'
+import type { TradeData, TradePartner, FtaStatus, SectorsData, SectorEntry, AnnualTotal } from '@/lib/trade'
 import { FTA_LABELS, sectorMetrics } from '@/lib/trade'
 
 function fmtB(millions: number): string {
@@ -10,20 +10,73 @@ function fmtB(millions: number): string {
   return `${millions.toFixed(0)}M`
 }
 
+function yoyPct(annual: AnnualTotal[], field: 'exports' | 'imports' | 'balance'): number | null {
+  const final = annual.filter(a => !a.preliminary)
+  if (final.length < 2) return null
+  const prev = final[final.length - 2][field]
+  const curr = final[final.length - 1][field]
+  if (prev === 0) return null
+  return ((curr - prev) / Math.abs(prev)) * 100
+}
+
+// ── Sparkline ─────────────────────────────────────────────────────────────────
+
+function TradeSparkline({ annual }: { annual: AnnualTotal[] }) {
+  const data = annual.filter(a => !a.preliminary)
+  if (data.length < 2) return null
+
+  const W = 240
+  const H = 44
+  const PAD = { l: 0, r: 0, t: 4, b: 14 }
+  const innerW = W - PAD.l - PAD.r
+  const innerH = H - PAD.t - PAD.b
+
+  const allVals = data.flatMap(a => [a.exports, a.imports])
+  const minV = Math.min(...allVals) * 0.92
+  const maxV = Math.max(...allVals) * 1.02
+
+  const xOf = (i: number) => PAD.l + (i / (data.length - 1)) * innerW
+  const yOf = (v: number) => PAD.t + (1 - (v - minV) / (maxV - minV)) * innerH
+
+  const expLine = data.map((a, i) => `${i === 0 ? 'M' : 'L'}${xOf(i).toFixed(1)},${yOf(a.exports).toFixed(1)}`).join(' ')
+  const impLine = data.map((a, i) => `${i === 0 ? 'M' : 'L'}${xOf(i).toFixed(1)},${yOf(a.imports).toFixed(1)}`).join(' ')
+
+  // Balance area (shaded between exports and imports at each point)
+  const balAreaTop = data.map((a, i) => `${i === 0 ? 'M' : 'L'}${xOf(i).toFixed(1)},${yOf(a.exports).toFixed(1)}`).join(' ')
+  const balAreaBot = data.map((a, i) => `L${xOf(i).toFixed(1)},${yOf(a.imports).toFixed(1)}`).reverse().join(' ')
+  const balArea = `${balAreaTop} ${balAreaBot} Z`
+
+  const firstYear = data[0].year
+  const lastYear = data[data.length - 1].year
+
+  return (
+    <svg width={W} height={H} className="overflow-visible">
+      {/* Balance fill between the two lines */}
+      <path d={balArea} fill="#3b82f6" fillOpacity={0.08} />
+      {/* Import line */}
+      <path d={impLine} fill="none" stroke="#dc2626" strokeWidth={1.2} strokeLinecap="round" strokeLinejoin="round" />
+      {/* Export line */}
+      <path d={expLine} fill="none" stroke="#16a34a" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+      {/* Year labels */}
+      <text x={PAD.l} y={H} fontSize={9} fill="currentColor" className="text-muted-foreground" opacity={0.5}>{firstYear}</text>
+      <text x={W - PAD.r} y={H} fontSize={9} fill="currentColor" className="text-muted-foreground" opacity={0.5} textAnchor="end">{lastYear}</text>
+    </svg>
+  )
+}
+
 // ── Sector definitions ─────────────────────────────────────────────────────────
-// Colors: semantic where possible (gold for watches, green for agri, gray for metals),
-// otherwise chosen for visual contrast across the 9 sectors.
 
 export const SECTORS = [
-  { code: 'CHEM_PHARMA',   label: 'Pharma',    color: '#6366f1' }, // indigo — lab/science
-  { code: 'MACHINES_ELEC', label: 'Machines',  color: '#0ea5e9' }, // sky — industrial
-  { code: 'WATCHES',       label: 'Watches',   color: '#d97706' }, // amber — gold/luxury
-  { code: 'PRECISION',     label: 'Medtech',   color: '#10b981' }, // emerald — medical
-  { code: 'METALS',        label: 'Metals',    color: '#78716c' }, // warm-gray — metallic
-  { code: 'VEHICLES',      label: 'Vehicles',  color: '#3b82f6' }, // blue — transport
-  { code: 'TEXTILES',      label: 'Textiles',  color: '#ec4899' }, // pink — fashion
-  { code: 'AGRI',          label: 'Agri',      color: '#65a30d' }, // lime — agriculture
-  { code: 'ENERGY',        label: 'Energy',    color: '#f97316' }, // orange — energy
+  { code: 'CHEM_PHARMA',   label: 'Pharma',    color: '#6366f1' },
+  { code: 'MACHINES_ELEC', label: 'Machines',  color: '#0ea5e9' },
+  { code: 'WATCHES',       label: 'Watches',   color: '#d97706' },
+  { code: 'PRECISION',     label: 'Medtech',   color: '#10b981' },
+  { code: 'METALS',        label: 'Metals',    color: '#78716c' },
+  { code: 'VEHICLES',      label: 'Vehicles',  color: '#3b82f6' },
+  { code: 'TEXTILES',      label: 'Textiles',  color: '#ec4899' },
+  { code: 'AGRI',          label: 'Agri',      color: '#65a30d' },
+  { code: 'ENERGY',        label: 'Energy',    color: '#f97316' },
+  { code: 'OTHER',         label: 'Other',     color: '#94a3b8' },
 ]
 
 const FTA_OPTIONS: Array<{ value: FtaStatus | 'all'; label: string }> = [
@@ -33,25 +86,23 @@ const FTA_OPTIONS: Array<{ value: FtaStatus | 'all'; label: string }> = [
   { value: 'framework_agreed',    label: 'Framework' },
   { value: 'under_negotiation',   label: 'Negotiating' },
   { value: 'signed_not_in_force', label: 'Signed' },
+  { value: 'none',                label: 'No FTA' },
 ]
 
-// ── SectorBar: shows name, %, and estimated CHF ────────────────────────────────
-// bilateralTotal is partner.exports (for export sectors) or partner.imports (for import sectors)
+// ── SectorBar ──────────────────────────────────────────────────────────────────
 
 function SectorBar({ entry, color, bilateralTotal }: {
-  entry: SectorEntry
-  color: string
-  bilateralTotal: number  // partner.exports or partner.imports
+  entry: SectorEntry; color: string; bilateralTotal: number
 }) {
   const chf = (entry.share_pct / 100) * bilateralTotal
   return (
     <div className="space-y-0.5">
       <div className="flex items-center justify-between gap-1">
-        <div className="flex items-center gap-1.5 min-w-0">
+        <div className="flex min-w-0 items-center gap-1.5">
           <span className="h-2 w-2 shrink-0 rounded-sm" style={{ backgroundColor: color }} />
           <span className="truncate text-[10px] text-muted-foreground">{entry.sector}</span>
         </div>
-        <div className="shrink-0 flex items-baseline gap-1.5 ml-1">
+        <div className="ml-1 flex shrink-0 items-baseline gap-1.5">
           <span className="text-[10px] font-semibold">{entry.share_pct}%</span>
           <span className="text-[10px] text-muted-foreground">{fmtB(chf)}</span>
         </div>
@@ -79,8 +130,6 @@ function PartnerCard({ partner, sectorsData, onClose, t }: {
         <button onClick={onClose} className="shrink-0 text-muted-foreground hover:text-foreground">✕</button>
       </div>
       <p className="mb-2 text-muted-foreground">{FTA_LABELS[partner.fta_status]}</p>
-
-      {/* Bilateral totals */}
       <div className="mb-2 space-y-0.5">
         {[
           { label: t.trade.exports, val: partner.exports, cls: 'text-green-600 dark:text-green-400' },
@@ -93,37 +142,28 @@ function PartnerCard({ partner, sectorsData, onClose, t }: {
           </div>
         ))}
       </div>
-
-      {/* Per-sector breakdown with CHF values */}
       {cs && cs.exports.length > 0 && (
         <>
           <div className="my-2 border-t" />
           <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Exports by sector</p>
           <div className="space-y-1.5">
             {cs.exports.slice(0, 6).map(s => (
-              <SectorBar
-                key={s.sector_code}
-                entry={s}
+              <SectorBar key={s.sector_code} entry={s}
                 color={SECTORS.find(x => x.code === s.sector_code)?.color ?? '#94a3b8'}
-                bilateralTotal={partner.exports}
-              />
+                bilateralTotal={partner.exports} />
             ))}
           </div>
         </>
       )}
-
       {cs && cs.imports.length > 0 && (
         <>
           <div className="my-2 border-t" />
           <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Imports by sector</p>
           <div className="space-y-1.5">
             {cs.imports.slice(0, 5).map(s => (
-              <SectorBar
-                key={s.sector_code}
-                entry={s}
+              <SectorBar key={s.sector_code} entry={s}
                 color={SECTORS.find(x => x.code === s.sector_code)?.color ?? '#94a3b8'}
-                bilateralTotal={partner.imports}
-              />
+                bilateralTotal={partner.imports} />
             ))}
           </div>
         </>
@@ -141,7 +181,7 @@ function PartnerRow({ partner, isHovered, isSelected, onHover, onSelect, maxForB
   isSelected: boolean
   onHover: (code: string | null) => void
   onSelect: (code: string | null) => void
-  maxForBar: number   // max bilateral OR max sector volume — determines bar scale
+  maxForBar: number
   sectorFilter: string | null
   sectorsData: SectorsData | null
   sortMode: 'share' | 'volume'
@@ -155,12 +195,9 @@ function PartnerRow({ partner, isHovered, isSelected, onHover, onSelect, maxForB
   const displayImp     = sm ? sm.imp     : partner.imports
   const displayVolume  = displayExp + displayImp
 
-  // Bar width relative to the appropriate max (sector or total)
-  const barWidthPct = Math.min(Math.round((displayVolume / maxForBar) * 100), 100)
-  const exportFrac  = displayVolume > 0 ? (displayExp / displayVolume) * 100 : 50
-
-  // Badge value: whichever share is larger (covers import-dominated sectors like energy)
-  const badgeShare = sm ? Math.max(sm.expShare, sm.impShare) : null
+  const barWidthPct   = Math.min(Math.round((displayVolume / maxForBar) * 100), 100)
+  const exportFrac    = displayVolume > 0 ? (displayExp / displayVolume) * 100 : 50
+  const badgeShare    = sm ? Math.max(sm.expShare, sm.impShare) : null
 
   return (
     <button
@@ -171,7 +208,6 @@ function PartnerRow({ partner, isHovered, isSelected, onHover, onSelect, maxForB
       onMouseLeave={() => onHover(null)}
       onClick={() => onSelect(partner.country_code)}
     >
-      {/* Row 1: name + % badge (in % mode) + balance */}
       <div className="flex items-center justify-between gap-1">
         <span className="truncate font-medium">{partner.country}</span>
         <div className="flex shrink-0 items-center gap-1.5">
@@ -185,19 +221,12 @@ function PartnerRow({ partner, isHovered, isSelected, onHover, onSelect, maxForB
           </span>
         </div>
       </div>
-
-      {/* Bar — width relative to maxForBar */}
       <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-muted">
-        <div
-          className="h-full rounded-full"
-          style={{
-            width: `${barWidthPct}%`,
-            background: `linear-gradient(to right, #16a34a ${exportFrac}%, #dc2626 ${exportFrac}%)`,
-          }}
-        />
+        <div className="h-full rounded-full" style={{
+          width: `${barWidthPct}%`,
+          background: `linear-gradient(to right, #16a34a ${exportFrac}%, #dc2626 ${exportFrac}%)`,
+        }} />
       </div>
-
-      {/* Row 3: CHF volume always shown; add % when sector active */}
       <div className="mt-0.5 flex justify-between text-[10px] text-muted-foreground">
         {sm ? (
           <>
@@ -236,39 +265,57 @@ interface TradeSidebarProps {
 export function TradeSidebar({
   isOpen, onClose, data, sectorsData, loadError,
   hoveredCode, onHover, selectedCode, onSelect,
-  ftaFilter, onFtaFilter,
-  sectorFilter, onSectorFilter,
+  ftaFilter, onFtaFilter, sectorFilter, onSectorFilter,
 }: TradeSidebarProps) {
   const { t } = useLanguage()
   const [sortMode, setSortMode] = useState<'share' | 'volume'>('volume')
+  const [search, setSearch] = useState('')
+
+  const annual = data?.timeseries?.annual ?? []
+  const yoyExp = yoyPct(annual, 'exports')
+  const yoyImp = yoyPct(annual, 'imports')
+  const yoyBal = yoyPct(annual, 'balance')
 
   const maxTotal = data ? Math.max(...data.partners.map(p => p.exports + p.imports)) : 1
 
-  const ftaFiltered = data
+  const ftaFiltered = useMemo(() => data
     ? (ftaFilter === 'all' ? data.partners : data.partners.filter(p => p.fta_status === ftaFilter))
-    : []
+    : [], [data, ftaFilter])
 
-  const sectorFiltered = sectorFilter && sectorsData
+  const sectorFiltered = useMemo(() => sectorFilter && sectorsData
     ? ftaFiltered.filter(p => sectorMetrics(p, sectorsData.by_country, sectorFilter).volume > 0)
-    : ftaFiltered
+    : ftaFiltered, [ftaFiltered, sectorFilter, sectorsData])
 
-  // Bar denominator: when sector active, scale bars to the largest sector volume in this list
-  const maxForBar = sectorFilter && sectorsData
+  const maxForBar = useMemo(() => sectorFilter && sectorsData
     ? Math.max(...sectorFiltered.map(p => sectorMetrics(p, sectorsData.by_country, sectorFilter).volume), 1)
-    : maxTotal
+    : maxTotal, [sectorFiltered, sectorFilter, sectorsData, maxTotal])
 
-  // % sort: use max(expShare, impShare) so import-dominated sectors (energy) sort correctly
-  const sorted = sectorFilter && sectorsData
-    ? sectorFiltered.slice().sort((a, b) => {
-        const smA = sectorMetrics(a, sectorsData.by_country, sectorFilter)
-        const smB = sectorMetrics(b, sectorsData.by_country, sectorFilter)
-        const promA = Math.max(smA.expShare, smA.impShare)
-        const promB = Math.max(smB.expShare, smB.impShare)
-        return sortMode === 'share' ? promB - promA : smB.volume - smA.volume
-      })
-    : sectorFiltered.slice().sort((a, b) => (b.exports + b.imports) - (a.exports + a.imports))
+  const sorted = useMemo(() => {
+    const base = sectorFilter && sectorsData
+      ? sectorFiltered.slice().sort((a, b) => {
+          const smA = sectorMetrics(a, sectorsData.by_country, sectorFilter)
+          const smB = sectorMetrics(b, sectorsData.by_country, sectorFilter)
+          const promA = Math.max(smA.expShare, smA.impShare)
+          const promB = Math.max(smB.expShare, smB.impShare)
+          return sortMode === 'share' ? promB - promA : smB.volume - smA.volume
+        })
+      : sectorFiltered.slice().sort((a, b) => (b.exports + b.imports) - (a.exports + a.imports))
+    if (!search.trim()) return base
+    const q = search.toLowerCase()
+    return base.filter(p => p.country.toLowerCase().includes(q) || p.country_code.toLowerCase().includes(q))
+  }, [sectorFiltered, sectorFilter, sectorsData, sortMode, search])
 
   const selectedPartner = data?.partners.find(p => p.country_code === selectedCode) ?? null
+
+  function YoyBadge({ pct }: { pct: number | null }) {
+    if (pct === null) return null
+    const up = pct >= 0
+    return (
+      <span className={`text-[9px] font-medium ${up ? 'text-green-600 dark:text-green-400' : 'text-red-500'}`}>
+        {up ? '▲' : '▼'}{Math.abs(pct).toFixed(1)}%
+      </span>
+    )
+  }
 
   return (
     <aside className={`
@@ -287,20 +334,40 @@ export function TradeSidebar({
 
         {data && (
           <>
-            {/* Summary */}
-            <div className="grid grid-cols-3 gap-1 rounded-lg bg-muted/50 p-2 text-center text-xs">
-              <div>
-                <div className="font-semibold text-green-600 dark:text-green-400">{fmtB(data.metadata.total_exports)}</div>
-                <div className="text-muted-foreground">{t.trade.exports}</div>
+            {/* Summary + sparkline */}
+            <div className="rounded-lg bg-muted/50 p-2">
+              <div className="grid grid-cols-3 gap-1 text-center text-xs mb-2">
+                <div>
+                  <div className="font-semibold text-green-600 dark:text-green-400">{fmtB(data.metadata.total_exports)}</div>
+                  <div className="flex items-center justify-center gap-0.5 text-muted-foreground">
+                    <span>{t.trade.exports}</span>
+                    <YoyBadge pct={yoyExp} />
+                  </div>
+                </div>
+                <div>
+                  <div className="font-semibold text-red-600 dark:text-red-400">{fmtB(data.metadata.total_imports)}</div>
+                  <div className="flex items-center justify-center gap-0.5 text-muted-foreground">
+                    <span>{t.trade.imports}</span>
+                    <YoyBadge pct={yoyImp} />
+                  </div>
+                </div>
+                <div>
+                  <div className="font-semibold text-blue-600 dark:text-blue-400">+{fmtB(data.metadata.trade_balance)}</div>
+                  <div className="flex items-center justify-center gap-0.5 text-muted-foreground">
+                    <span>{t.trade.balance}</span>
+                    <YoyBadge pct={yoyBal} />
+                  </div>
+                </div>
               </div>
-              <div>
-                <div className="font-semibold text-red-600 dark:text-red-400">{fmtB(data.metadata.total_imports)}</div>
-                <div className="text-muted-foreground">{t.trade.imports}</div>
-              </div>
-              <div>
-                <div className="font-semibold text-blue-600 dark:text-blue-400">+{fmtB(data.metadata.trade_balance)}</div>
-                <div className="text-muted-foreground">{t.trade.balance}</div>
-              </div>
+              {annual.length > 1 && (
+                <div className="px-1">
+                  <TradeSparkline annual={annual} />
+                  <div className="mt-0.5 flex justify-between text-[9px] text-muted-foreground opacity-60">
+                    <span className="flex items-center gap-1"><span className="inline-block h-px w-3 bg-green-600" />Exports</span>
+                    <span className="flex items-center gap-1"><span className="inline-block h-px w-3 bg-red-600" />Imports</span>
+                  </div>
+                </div>
+              )}
             </div>
 
             {selectedPartner && (
@@ -323,8 +390,7 @@ export function TradeSidebar({
                   All
                 </button>
                 {SECTORS.map(s => (
-                  <button
-                    key={s.code}
+                  <button key={s.code}
                     onClick={() => onSectorFilter(sectorFilter === s.code ? null : s.code)}
                     className="rounded px-2 py-0.5 text-xs transition-colors"
                     style={sectorFilter === s.code
@@ -342,8 +408,7 @@ export function TradeSidebar({
               <p className="mb-1.5 text-xs font-medium text-muted-foreground">Agreement</p>
               <div className="flex flex-wrap gap-1">
                 {FTA_OPTIONS.map(opt => (
-                  <button
-                    key={opt.value}
+                  <button key={opt.value}
                     onClick={() => onFtaFilter(opt.value)}
                     className={`rounded px-2 py-0.5 text-xs transition-colors ${ftaFilter === opt.value ? 'bg-primary text-primary-foreground' : 'bg-muted hover:bg-muted/80'}`}
                   >
@@ -361,26 +426,38 @@ export function TradeSidebar({
       {/* Scrollable list */}
       {data && (
         <div className="flex-1 overflow-y-auto p-3">
-          <div className="mb-1 flex items-center justify-between">
-            <p className="text-xs font-medium text-muted-foreground">
-              {sectorFilter
-                ? `${SECTORS.find(s => s.code === sectorFilter)?.label} (${sorted.length})`
-                : `${t.trade.topPartners} (${sorted.length})`}
-            </p>
-            {sectorFilter && (
-              <div className="flex overflow-hidden rounded border text-[10px]">
-                {(['volume', 'share'] as const).map(mode => (
-                  <button
-                    key={mode}
-                    onClick={() => setSortMode(mode)}
-                    className={`px-1.5 py-0.5 transition-colors ${sortMode === mode ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'}`}
-                  >
-                    {mode === 'volume' ? 'CHF' : '%'}
-                  </button>
-                ))}
-              </div>
-            )}
+          {/* Search + sort header */}
+          <div className="mb-2 space-y-1.5">
+            <input
+              type="search"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Search country…"
+              className="w-full rounded border bg-background px-2 py-1 text-xs outline-none focus:ring-1 focus:ring-primary placeholder:text-muted-foreground"
+            />
+            <div className="flex items-center justify-between">
+              <p className="text-xs text-muted-foreground">
+                {sectorFilter
+                  ? `${SECTORS.find(s => s.code === sectorFilter)?.label} (${sorted.length})`
+                  : `${t.trade.topPartners} (${sorted.length})`}
+              </p>
+              {sectorFilter && (
+                <div className="flex overflow-hidden rounded border text-[10px]">
+                  {(['volume', 'share'] as const).map(mode => (
+                    <button key={mode} onClick={() => setSortMode(mode)}
+                      className={`px-1.5 py-0.5 transition-colors ${sortMode === mode ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'}`}
+                    >
+                      {mode === 'volume' ? 'CHF' : '%'}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
+
+          {sorted.length === 0 && search && (
+            <p className="py-4 text-center text-xs text-muted-foreground">No match for "{search}"</p>
+          )}
 
           <div className="space-y-0.5">
             {sorted.map(p => (
@@ -398,7 +475,6 @@ export function TradeSidebar({
               />
             ))}
           </div>
-
           <p className="mt-4 text-[10px] text-muted-foreground">{t.trade.source}</p>
         </div>
       )}
