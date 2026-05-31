@@ -1,0 +1,8 @@
+- fix bug in sidebar: we cant see the bottom of it
+- better UX for mobile, we should see the votation outside of the sidebar (or block it completely at some point if it become to hard to adapt/use it on mobile)
+- add explanation for the votation with the erlauterung
+- add page to explain the diff type of votations, initiatives, referendums,...
+- red/blue colors
+- move 30% yes into 70% no? might be clearer
+- demo page, canton level data not just muni (swiss overall aslo for comparison)
+- more data for demo: langauge and income
