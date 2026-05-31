@@ -1,0 +1,51 @@
+{
+  "metadata": {
+    "source": "BAZG Annual Report 2024 / Federal Statistical Office",
+    "reference_year": 2024,
+    "currency": "CHF",
+    "unit": "millions",
+    "total_exports": 282900,
+    "total_imports": 222300,
+    "trade_balance": 60600
+  },
+  "partners": [
+    { "country": "United States",   "country_code": "US", "centroid": [-98.5, 39.5],  "exports": 50356, "imports": 14227, "balance":  36129, "fta_status": "framework_agreed" },
+    { "country": "Germany",         "country_code": "DE", "centroid": [10.5,  51.2],  "exports": 43850, "imports": 55353, "balance": -11503, "fta_status": "EU_bilateral" },
+    { "country": "Italy",           "country_code": "IT", "centroid": [12.6,  42.5],  "exports": 21783, "imports": 22675, "balance":   -892, "fta_status": "EU_bilateral" },
+    { "country": "France",          "country_code": "FR", "centroid": [2.3,   46.2],  "exports": 16125, "imports": 17784, "balance":  -1659, "fta_status": "EU_bilateral" },
+    { "country": "China",           "country_code": "CN", "centroid": [104.0, 35.0],  "exports": 15842, "imports": 17562, "balance":  -1720, "fta_status": "in_force" },
+    { "country": "Slovenia",        "country_code": "SI", "centroid": [14.8,  46.1],  "exports": 14711, "imports": 12004, "balance":   2707, "fta_status": "EU_bilateral" },
+    { "country": "United Kingdom",  "country_code": "GB", "centroid": [-1.5,  52.5],  "exports": 11599, "imports":  9114, "balance":   2485, "fta_status": "under_negotiation" },
+    { "country": "Japan",           "country_code": "JP", "centroid": [138.0, 36.0],  "exports":  9053, "imports":  4001, "balance":   5052, "fta_status": "in_force" },
+    { "country": "Netherlands",     "country_code": "NL", "centroid": [5.3,   52.1],  "exports":  8487, "imports":  7114, "balance":   1373, "fta_status": "EU_bilateral" },
+    { "country": "Austria",         "country_code": "AT", "centroid": [14.6,  47.6],  "exports":     0, "imports":  8670, "balance":  -8670, "fta_status": "EU_bilateral" },
+    { "country": "Spain",           "country_code": "ES", "centroid": [-3.7,  40.4],  "exports":  7355, "imports":  6224, "balance":   1131, "fta_status": "EU_bilateral" },
+    { "country": "Belgium",         "country_code": "BE", "centroid": [4.5,   50.5],  "exports":  6507, "imports":  5780, "balance":    727, "fta_status": "EU_bilateral" },
+    { "country": "India",           "country_code": "IN", "centroid": [78.9,  20.6],  "exports":  5941, "imports":  3335, "balance":   2606, "fta_status": "signed_not_in_force" },
+    { "country": "South Korea",     "country_code": "KR", "centroid": [127.8, 35.9],  "exports":  4244, "imports":     0, "balance":   4244, "fta_status": "in_force" },
+    { "country": "Poland",          "country_code": "PL", "centroid": [19.1,  51.9],  "exports":     0, "imports":  4668, "balance":  -4668, "fta_status": "EU_bilateral" },
+    { "country": "Singapore",       "country_code": "SG", "centroid": [103.8,  1.3],  "exports":  3678, "imports":     0, "balance":   3678, "fta_status": "in_force" },
+    { "country": "Hong Kong",       "country_code": "HK", "centroid": [114.2, 22.3],  "exports":  3395, "imports":     0, "balance":   3395, "fta_status": "in_force" },
+    { "country": "Czech Republic",  "country_code": "CZ", "centroid": [15.5,  49.8],  "exports":     0, "imports":  3112, "balance":  -3112, "fta_status": "EU_bilateral" }
+  ],
+  "sectors": {
+    "exports": [
+      { "sector": "Chemical & pharma",        "sector_code": "CHEM_PHARMA",   "share_pct": 49.4, "value_CHF_millions": 139753 },
+      { "sector": "Machines & electronics",   "sector_code": "MACHINES_ELEC", "share_pct": 12.0, "value_CHF_millions":  33948 },
+      { "sector": "Watches & clocks",         "sector_code": "WATCHES",        "share_pct":  9.8, "value_CHF_millions":  27724 },
+      { "sector": "Precision & medtech",      "sector_code": "PRECISION",      "share_pct":  6.5, "value_CHF_millions":  18389 },
+      { "sector": "Metals",                   "sector_code": "METALS",         "share_pct":  5.3, "value_CHF_millions":  14994 },
+      { "sector": "Precious metals & gems",   "sector_code": "PRECIOUS",       "share_pct":  4.5, "value_CHF_millions":  12731 },
+      { "sector": "Other",                    "sector_code": "OTHER",          "share_pct": 12.5, "value_CHF_millions":  35361 }
+    ],
+    "imports": [
+      { "sector": "Chemical & pharma",        "sector_code": "CHEM_PHARMA",   "share_pct": 30.7, "value_CHF_millions":  68246 },
+      { "sector": "Machines & electronics",   "sector_code": "MACHINES_ELEC", "share_pct": 15.6, "value_CHF_millions":  34679 },
+      { "sector": "Precious metals & gems",   "sector_code": "PRECIOUS",       "share_pct": 12.0, "value_CHF_millions":  26676 },
+      { "sector": "Vehicles",                 "sector_code": "VEHICLES",       "share_pct":  9.5, "value_CHF_millions":  21119 },
+      { "sector": "Metals",                   "sector_code": "METALS",         "share_pct":  7.1, "value_CHF_millions":  15783 },
+      { "sector": "Energy",                   "sector_code": "ENERGY",         "share_pct":  5.8, "value_CHF_millions":  12893 },
+      { "sector": "Other",                    "sector_code": "OTHER",          "share_pct": 19.3, "value_CHF_millions":  42904 }
+    ]
+  }
+}
