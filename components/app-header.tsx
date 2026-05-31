@@ -46,6 +46,12 @@ export function AppHeader({ onToggleSidebar }: AppHeaderProps) {
         >
           {t.nav.trade}
         </Link>
+        <Link
+          href="/data"
+          className={`rounded px-3 py-1 text-sm font-medium hover:bg-muted ${pathname === '/data' ? 'text-foreground' : 'text-muted-foreground'}`}
+        >
+          {t.nav.data}
+        </Link>
       </nav>
 
       <div className="ml-auto">

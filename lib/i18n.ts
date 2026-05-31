@@ -13,6 +13,7 @@ const de = {
     votations: 'Abstimmungen',
     demographics: 'Demografie',
     trade: 'Handel',
+    data: 'Daten',
   },
   trade: {
     title: 'Aussenhandel 2024',
@@ -80,6 +81,7 @@ const fr: Translations = {
     votations: 'Votations',
     demographics: 'Démographie',
     trade: 'Commerce',
+    data: 'Données',
   },
   trade: {
     title: 'Commerce extérieur 2024',
@@ -145,6 +147,7 @@ const it: Translations = {
     votations: 'Votazioni',
     demographics: 'Demografia',
     trade: 'Commercio',
+    data: 'Dati',
   },
   trade: {
     title: 'Commercio estero 2024',
@@ -210,6 +213,7 @@ const rm: Translations = {
     votations: 'Votaziuns',
     demographics: 'Demografica',
     trade: 'Commerzi',
+    data: 'Datas',
   },
   trade: {
     title: 'Commerzi exteriur 2024',
@@ -275,6 +279,7 @@ const en: Translations = {
     votations: 'Votations',
     demographics: 'Demographics',
     trade: 'Trade',
+    data: 'Data',
   },
   trade: {
     title: 'Foreign Trade 2024',
