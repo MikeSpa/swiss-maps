@@ -40,10 +40,8 @@ next-env.d.ts
 dev_scripts/
 
 # pipeline — raw downloads and intermediate files (large, regenerable)
-pipeline/data/raw/*
-pipeline/data/processed/*
-!pipeline/data/raw/.gitkeep
-!pipeline/data/processed/.gitkeep
+pipeline/data/
+pipeline/.venv/
 
 # pipeline — generated geo output (regenerable from pipeline)
 public/geo/*.pmtiles

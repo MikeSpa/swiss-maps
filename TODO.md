@@ -6,3 +6,7 @@
 - move 30% yes into 70% no? might be clearer
 - demo page, canton level data not just muni (swiss overall aslo for comparison)
 - more data for demo: langauge and income
+- add email/link/feedback
+- clean erlauterungen text extraction with llm + add en translation
+- improve UI
+- refactor code

@@ -1,10 +1,13 @@
 'use client'
 
-import { CheckCircle, XCircle, Clock, ChevronRight, AlertCircle } from 'lucide-react'
+import { useState } from 'react'
+import { CheckCircle, XCircle, Clock, ChevronRight, AlertCircle, Info } from 'lucide-react'
 import { useLanguage } from '@/contexts/language'
 import { type VotationData, type Vorlage, type Resultat, getTitle, staendeYes } from '@/lib/votation'
 import type { DemographicData } from '@/lib/demographics'
+import type { ErlaeuterungenData } from '@/lib/erlaeuterungen'
 import { VotationScatter } from './votation-scatter'
+import { VorlageInfoModal } from './vorlage-info-modal'
 
 interface VotationEntry {
   date: string
@@ -32,6 +35,7 @@ interface AppSidebarProps {
   cantonResults: Record<number, Resultat> | null
   municipalityResults: Record<number, Resultat> | null
   demoData: DemographicData | null
+  erlaeuterungen: ErlaeuterungenData | null
 }
 
 function ResultBar({ pct }: { pct: number }) {
@@ -125,8 +129,10 @@ export function AppSidebar({
   cantonResults,
   municipalityResults,
   demoData,
+  erlaeuterungen,
 }: AppSidebarProps) {
   const { lang, t } = useLanguage()
+  const [infoVorlage, setInfoVorlage] = useState<Vorlage | null>(null)
   const selectedVorlage = votation?.vorlagen.find((v) => v.vorlagenId === selectedVorlageId)
 
   return (
@@ -179,36 +185,49 @@ export function AppSidebar({
             </p>
             {votation.vorlagen.map((v) => {
               const active = v.vorlagenId === selectedVorlageId
+              const hasErlaeuterungen = erlaeuterungen?.proposals.some(
+                (p) => p.vorlagenId === v.vorlagenId,
+              )
               return (
-                <button
-                  key={v.vorlagenId}
-                  onClick={() => { onSelectVorlage(v.vorlagenId); onClose() }}
-                  className={`rounded-md border p-2.5 text-left text-xs transition-colors ${
-                    active
-                      ? 'border-primary bg-primary/5'
-                      : 'border-border hover:border-primary/40 hover:bg-muted/30'
-                  }`}
-                >
-                  <div className="flex items-start gap-2">
-                    <div className="mt-0.5 shrink-0">
-                      {v.vorlageAngenommen === true ? (
-                        <CheckCircle className="h-3.5 w-3.5 text-green-600" />
-                      ) : v.vorlageAngenommen === false ? (
-                        <XCircle className="h-3.5 w-3.5 text-red-500" />
-                      ) : (
-                        <Clock className="h-3.5 w-3.5 text-muted-foreground" />
-                      )}
+                <div key={v.vorlagenId} className="relative">
+                  <button
+                    onClick={() => { onSelectVorlage(v.vorlagenId); onClose() }}
+                    className={`w-full rounded-md border p-2.5 text-left text-xs transition-colors ${
+                      active
+                        ? 'border-primary bg-primary/5'
+                        : 'border-border hover:border-primary/40 hover:bg-muted/30'
+                    }`}
+                  >
+                    <div className="flex items-start gap-2 pr-6">
+                      <div className="mt-0.5 shrink-0">
+                        {v.vorlageAngenommen === true ? (
+                          <CheckCircle className="h-3.5 w-3.5 text-green-600" />
+                        ) : v.vorlageAngenommen === false ? (
+                          <XCircle className="h-3.5 w-3.5 text-red-500" />
+                        ) : (
+                          <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+                        )}
+                      </div>
+                      <div>
+                        <p className="font-medium leading-snug text-foreground">
+                          {getTitle(v.vorlagenTitel, lang)}
+                        </p>
+                        <p className="mt-0.5 text-muted-foreground">
+                          {t.vorlageArt[v.vorlagenArtId]}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-medium leading-snug text-foreground">
-                        {getTitle(v.vorlagenTitel, lang)}
-                      </p>
-                      <p className="mt-0.5 text-muted-foreground">
-                        {t.vorlageArt[v.vorlagenArtId]}
-                      </p>
-                    </div>
-                  </div>
-                </button>
+                  </button>
+                  {hasErlaeuterungen && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setInfoVorlage(v) }}
+                      className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full border border-border bg-background text-muted-foreground transition-colors hover:border-primary/60 hover:text-primary"
+                      title={t.erlaeuterungen.title}
+                    >
+                      <Info className="h-3 w-3" />
+                    </button>
+                  )}
+                </div>
               )
             })}
           </div>
@@ -262,6 +281,15 @@ export function AppSidebar({
             </>
           )}
         </>
+      )}
+
+      {infoVorlage && (
+        <VorlageInfoModal
+          vorlage={infoVorlage}
+          erlaeuterungen={erlaeuterungen}
+          open={infoVorlage !== null}
+          onClose={() => setInfoVorlage(null)}
+        />
       )}
     </aside>
   )

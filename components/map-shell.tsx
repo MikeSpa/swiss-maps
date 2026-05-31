@@ -12,6 +12,7 @@ import {
   buildMunicipalityResultMap,
 } from '@/lib/votation'
 import { fetchDemographics, type DemographicData } from '@/lib/demographics'
+import { fetchErlaeuterungen, type ErlaeuterungenData } from '@/lib/erlaeuterungen'
 
 interface VotationEntry {
   date: string
@@ -37,6 +38,7 @@ export function MapShell({ sidebarOpen, onCloseSidebar }: MapShellProps) {
   const [selectedVorlageId, setSelectedVorlageId] = useState<number | null>(null)
   const [selection, setSelection] = useState<Selection | null>(null)
   const [demoData, setDemoData] = useState<DemographicData | null>(null)
+  const [erlaeuterungen, setErlaeuterungen] = useState<ErlaeuterungenData | null>(null)
 
   // Load demographics in background (non-blocking)
   useEffect(() => {
@@ -65,6 +67,7 @@ export function MapShell({ sidebarOpen, onCloseSidebar }: MapShellProps) {
     setVotation(null)
     setSelectedVorlageId(null)
     setLoadError(null)
+    setErlaeuterungen(null)
 
     fetchVotation(entry.file)
       .then((data) => {
@@ -72,6 +75,8 @@ export function MapShell({ sidebarOpen, onCloseSidebar }: MapShellProps) {
         if (data.vorlagen.length > 0) setSelectedVorlageId(data.vorlagen[0].vorlagenId)
       })
       .catch(() => setLoadError('Could not load votation data.'))
+
+    fetchErlaeuterungen(selectedDate).then(setErlaeuterungen)
   }, [selectedDate, index])
 
   const selectedVorlage = votation?.vorlagen.find((v) => v.vorlagenId === selectedVorlageId)
@@ -114,6 +119,7 @@ export function MapShell({ sidebarOpen, onCloseSidebar }: MapShellProps) {
         cantonResults={cantonResults}
         municipalityResults={municipalityResults}
         demoData={demoData}
+        erlaeuterungen={erlaeuterungen}
       />
       <main className="relative flex-1 overflow-hidden">
         <MapLoader

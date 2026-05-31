@@ -2,21 +2,121 @@
   {
     "date": "20260614",
     "label": "14.06.2026",
-    "file": "/votations/20260614.json"
+    "file": "/votations/20260614.json",
+    "source_url": "https://ogd-static.voteinfo-app.ch/v1/ogd/sd-t-17-02-20260614-eidgAbstimmung.json"
   },
   {
     "date": "20260308",
     "label": "08.03.2026",
-    "file": "/votations/20260308.json"
+    "file": "/votations/20260308.json",
+    "source_url": "https://ogd-static.voteinfo-app.ch/v1/ogd/sd-t-17-02-20260308-eidgAbstimmung.json"
   },
   {
     "date": "20251130",
     "label": "30.11.2025",
-    "file": "/votations/20251130.json"
+    "file": "/votations/20251130.json",
+    "source_url": "https://ogd-static.voteinfo-app.ch/v1/ogd/sd-t-17-02-20251130-eidgAbstimmung.json"
   },
   {
     "date": "20250928",
     "label": "28.09.2025",
-    "file": "/votations/20250928.json"
+    "file": "/votations/20250928.json",
+    "source_url": "https://ogd-static.voteinfo-app.ch/v1/ogd/sd-t-17-02-20250928-eidgAbstimmung.json"
+  },
+  {
+    "date": "20250209",
+    "label": "09.02.2025",
+    "file": "/votations/20250209.json",
+    "source_url": "https://ogd-static.voteinfo-app.ch/v1/ogd/sd-t-17-02-20250209-eidgAbstimmung.json"
+  },
+  {
+    "date": "20241124",
+    "label": "24.11.2024",
+    "file": "/votations/20241124.json",
+    "source_url": "https://ogd-static.voteinfo-app.ch/v1/ogd/sd-t-17-02-20241124-eidgAbstimmung.json"
+  },
+  {
+    "date": "20240922",
+    "label": "22.09.2024",
+    "file": "/votations/20240922.json",
+    "source_url": "https://dam-api.bfs.admin.ch/hub/api/dam/assets/32588879/master"
+  },
+  {
+    "date": "20240609",
+    "label": "09.06.2024",
+    "file": "/votations/20240609.json",
+    "source_url": "https://dam-api.bfs.admin.ch/hub/api/dam/assets/32006477/master"
+  },
+  {
+    "date": "20240303",
+    "label": "03.03.2024",
+    "file": "/votations/20240303.json",
+    "source_url": "https://dam-api.bfs.admin.ch/hub/api/dam/assets/30625672/master"
+  },
+  {
+    "date": "20230618",
+    "label": "18.06.2023",
+    "file": "/votations/20230618.json",
+    "source_url": "https://dam-api.bfs.admin.ch/hub/api/dam/assets/25225724/master"
+  },
+  {
+    "date": "20220925",
+    "label": "25.09.2022",
+    "file": "/votations/20220925.json",
+    "source_url": "https://dam-api.bfs.admin.ch/hub/api/dam/assets/23364529/master"
+  },
+  {
+    "date": "20220515",
+    "label": "15.05.2022",
+    "file": "/votations/20220515.json",
+    "source_url": "https://dam-api.bfs.admin.ch/hub/api/dam/assets/22644300/master"
+  },
+  {
+    "date": "20220213",
+    "label": "13.02.2022",
+    "file": "/votations/20220213.json",
+    "source_url": "https://dam-api.bfs.admin.ch/hub/api/dam/assets/21364126/master"
+  },
+  {
+    "date": "20211128",
+    "label": "28.11.2021",
+    "file": "/votations/20211128.json",
+    "source_url": "https://dam-api.bfs.admin.ch/hub/api/dam/assets/20024012/master"
+  },
+  {
+    "date": "20210926",
+    "label": "26.09.2021",
+    "file": "/votations/20210926.json",
+    "source_url": "https://dam-api.bfs.admin.ch/hub/api/dam/assets/18944886/master"
+  },
+  {
+    "date": "20210613",
+    "label": "13.06.2021",
+    "file": "/votations/20210613.json",
+    "source_url": "https://dam-api.bfs.admin.ch/hub/api/dam/assets/17484107/master"
+  },
+  {
+    "date": "20210307",
+    "label": "07.03.2021",
+    "file": "/votations/20210307.json",
+    "source_url": "https://dam-api.bfs.admin.ch/hub/api/dam/assets/15924511/master"
+  },
+  {
+    "date": "20201129",
+    "label": "29.11.2020",
+    "file": "/votations/20201129.json",
+    "source_url": "https://dam-api.bfs.admin.ch/hub/api/dam/assets/14843937/master"
+  },
+  {
+    "date": "20200927",
+    "label": "27.09.2020",
+    "file": "/votations/20200927.json",
+    "source_url": "https://dam-api.bfs.admin.ch/hub/api/dam/assets/14856203/master"
+  },
+  {
+    "date": "20200209",
+    "label": "09.02.2020",
+    "file": "/votations/20200209.json",
+    "source_url": "https://dam-api.bfs.admin.ch/hub/api/dam/assets/11708082/master"
   }
 ]
