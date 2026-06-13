@@ -2,55 +2,7 @@
 
 import { useState } from 'react'
 import { AppHeader } from './app-header'
-
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <section className="mb-10">
-      <h2 className="mb-4 text-lg font-semibold tracking-tight">{title}</h2>
-      {children}
-    </section>
-  )
-}
-
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div className="mb-3">
-      <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</dt>
-      <dd className="mt-0.5 text-sm">{children}</dd>
-    </div>
-  )
-}
-
-function Tag({ color, children }: { color: 'green' | 'amber' | 'red' | 'blue'; children: React.ReactNode }) {
-  const cls = {
-    green: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
-    amber: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300',
-    red:   'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
-    blue:  'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
-  }[color]
-  return <span className={`inline-block rounded px-1.5 py-0.5 text-xs font-medium ${cls}`}>{children}</span>
-}
-
-function LimitationList({ items }: { items: string[] }) {
-  return (
-    <ul className="mt-1 space-y-1">
-      {items.map((item, i) => (
-        <li key={i} className="flex gap-2 text-sm">
-          <span className="mt-0.5 shrink-0 text-amber-500">⚠</span>
-          <span>{item}</span>
-        </li>
-      ))}
-    </ul>
-  )
-}
-
-function Callout({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="my-3 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm dark:border-blue-800 dark:bg-blue-950/30">
-      {children}
-    </div>
-  )
-}
+import { Section, Field, Tag, LimitationList, Callout } from './data-layout-elements'
 
 export function DataLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)

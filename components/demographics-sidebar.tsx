@@ -3,6 +3,7 @@
 import { X } from 'lucide-react'
 import { useLanguage } from '@/contexts/language'
 import type { DemographicData, DemographicGroup, DemographicTopic } from '@/lib/demographics'
+import { Button } from './ui/button'
 
 interface DemographicsSidebarProps {
   isOpen: boolean
@@ -44,12 +45,12 @@ export function DemographicsSidebar({
     >
       <div className="flex items-center justify-between border-b px-4 py-3 md:hidden">
         <span className="font-semibold">{t.demographics.title}</span>
-        <button onClick={onClose} className="rounded p-1 hover:bg-muted">
+        <Button variant="ghost" size="icon-xs" onClick={onClose}>
           <X className="h-4 w-4" />
-        </button>
+        </Button>
       </div>
 
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto pb-3">
         {loadError && (
           <p className="m-4 rounded bg-destructive/10 px-3 py-2 text-sm text-destructive">
             {t.demographics.error}
@@ -77,7 +78,6 @@ export function DemographicsSidebar({
             </ul>
           </div>
         ))}
-        <div className="h-3" />
       </div>
 
       {selectedTopic && (

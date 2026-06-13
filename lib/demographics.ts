@@ -1,3 +1,5 @@
+import { jsonFetch } from './fetch'
+
 export interface DemographicGroup {
   id: string
   label: Record<string, string>
@@ -24,7 +26,5 @@ export interface DemographicData {
 }
 
 export async function fetchDemographics(): Promise<DemographicData> {
-  const resp = await fetch('/demographics/index.json')
-  if (!resp.ok) throw new Error('Could not load demographic data')
-  return resp.json()
+  return jsonFetch('/demographics/index.json', 'Could not load demographic data')
 }

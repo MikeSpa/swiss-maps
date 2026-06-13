@@ -5,6 +5,7 @@ import { AppSidebar } from './app-sidebar'
 import { MapLoader } from './map-loader'
 import {
   type VotationData,
+  type VotationEntry,
   type Resultat,
   fetchVotation,
   buildCantonResultMap,
@@ -13,12 +14,6 @@ import {
 } from '@/lib/votation'
 import { fetchDemographics, type DemographicData } from '@/lib/demographics'
 import { fetchErlaeuterungen, type ErlaeuterungenData } from '@/lib/erlaeuterungen'
-
-interface VotationEntry {
-  date: string
-  label: string
-  file: string
-}
 
 interface MapShellProps {
   sidebarOpen: boolean

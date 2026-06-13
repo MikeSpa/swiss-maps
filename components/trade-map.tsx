@@ -5,10 +5,9 @@ import Map from 'react-map-gl/maplibre'
 import type { MapRef } from 'react-map-gl/maplibre'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import type { StyleSpecification } from 'maplibre-gl'
-import { loadWorldStyle, MAP_STYLE_URL } from '@/lib/map-style'
+import { loadMapStyle, MAP_STYLE_URL } from '@/lib/map-style'
 import type { TradePartner, TradeData, FtaStatus, SectorsData } from '@/lib/trade'
-import { FTA_LABELS, sectorMetrics } from '@/lib/trade'
-import { SECTORS } from './trade-sidebar'
+import { FTA_LABELS, SECTORS, sectorMetrics } from '@/lib/trade'
 import { useLanguage } from '@/contexts/language'
 
 const CH_CENTROID: [number, number] = [8.2, 46.8]
@@ -65,7 +64,7 @@ export default function TradeMap({
   const [tooltip, setTooltip] = useState<TooltipState | null>(null)
   const [, forceUpdate] = useReducer((x: number) => x + 1, 0)
 
-  useEffect(() => { loadWorldStyle().then(setBaseStyle) }, [])
+  useEffect(() => { loadMapStyle().then(setBaseStyle) }, [])
 
   const partners = ftaFilter === 'all'
     ? data.partners

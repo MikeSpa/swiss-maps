@@ -3,17 +3,13 @@
 import { useState } from 'react'
 import { CheckCircle, XCircle, Clock, ChevronRight, AlertCircle, Info } from 'lucide-react'
 import { useLanguage } from '@/contexts/language'
-import { type VotationData, type Vorlage, type Resultat, getTitle, staendeYes } from '@/lib/votation'
+import { type VotationData, type VotationEntry, type Vorlage, type Resultat, getTitle } from '@/lib/votation'
 import type { DemographicData } from '@/lib/demographics'
 import type { ErlaeuterungenData } from '@/lib/erlaeuterungen'
 import { VotationScatter } from './votation-scatter'
 import { VorlageInfoModal } from './vorlage-info-modal'
-
-interface VotationEntry {
-  date: string
-  label: string
-  file: string
-}
+import { ResultBlock, StaendeBlock } from './result-block'
+import { SelectButton } from './ui/select-button'
 
 interface Selection {
   cantonNum: number
@@ -36,82 +32,6 @@ interface AppSidebarProps {
   municipalityResults: Record<number, Resultat> | null
   demoData: DemographicData | null
   erlaeuterungen: ErlaeuterungenData | null
-}
-
-function ResultBar({ pct }: { pct: number }) {
-  return (
-    <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-muted">
-      <div
-        className={`absolute inset-y-0 left-0 rounded-full ${pct >= 50 ? 'bg-green-500' : 'bg-red-500'}`}
-        style={{ width: `${pct}%` }}
-      />
-      <div className="absolute inset-y-0 left-1/2 w-px bg-border" />
-    </div>
-  )
-}
-
-function ResultBlock({ result }: { result: Resultat }) {
-  const { t } = useLanguage()
-  const { jaStimmenInProzent: ja, stimmbeteiligungInProzent: turnout, gebietAusgezaehlt } = result
-
-  if (ja === null) {
-    return (
-      <div className="rounded-md bg-muted/50 p-3">
-        <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
-          <Clock className="h-3 w-3" /> {t.sidebar.pending}
-        </p>
-      </div>
-    )
-  }
-
-  return (
-    <div className="rounded-md bg-muted/50 p-3">
-      <div className="mb-1.5 flex items-center justify-between">
-        {gebietAusgezaehlt && (
-          <span className="ml-auto text-xs text-green-600">{t.sidebar.final}</span>
-        )}
-      </div>
-      <div className="flex items-baseline justify-between">
-        <span className={`text-xl font-semibold tabular-nums ${ja >= 50 ? 'text-green-600' : 'text-red-500'}`}>
-          {ja.toFixed(1)}%
-        </span>
-        <span className="text-xs text-muted-foreground">{t.sidebar.yes}</span>
-      </div>
-      <ResultBar pct={ja} />
-      {turnout !== null && (
-        <p className="mt-1.5 text-xs text-muted-foreground">
-          {t.sidebar.turnout}: {turnout.toFixed(1)}%
-        </p>
-      )}
-    </div>
-  )
-}
-
-function StaendeBlock({ vorlage }: { vorlage: Vorlage }) {
-  const { t } = useLanguage()
-  if (!vorlage.doppeltesMehr) return null
-  const { staende } = vorlage
-  const yes = staendeYes(staende)
-  const no = (staende.neinStaendeGanz ?? 0) + (staende.neinStaendeHalb ?? 0) * 0.5
-  const pending = staende.anzahlStaendeGanz === null
-
-  return (
-    <div className="rounded-md bg-muted/50 p-3">
-      <p className="mb-1.5 text-xs text-muted-foreground">{t.sidebar.cantonalVotes}</p>
-      {pending ? (
-        <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
-          <Clock className="h-3 w-3" /> {t.sidebar.pending}
-        </p>
-      ) : (
-        <div className="flex items-center gap-2 text-sm">
-          <span className="font-medium text-green-600">{yes} {t.sidebar.yes}</span>
-          <span className="text-muted-foreground">/</span>
-          <span className="font-medium text-red-500">{no} {t.sidebar.no}</span>
-          <span className="ml-auto text-xs text-muted-foreground">{t.sidebar.cantonalVotesOf}</span>
-        </div>
-      )}
-    </div>
-  )
 }
 
 export function AppSidebar({
@@ -152,17 +72,15 @@ export function AppSidebar({
         </p>
         <div className="flex flex-wrap gap-1.5">
           {index.map((entry) => (
-            <button
+            <SelectButton
               key={entry.date}
+              active={selectedDate === entry.date}
               onClick={() => { onSelectDate(entry.date); onClose() }}
-              className={`rounded px-2.5 py-1 text-xs font-medium transition-colors ${
-                selectedDate === entry.date
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground'
-              }`}
+              className="px-2.5 py-1 text-xs font-medium"
+              inactiveClassName="bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
             >
               {entry.label}
-            </button>
+            </SelectButton>
           ))}
         </div>
       </div>

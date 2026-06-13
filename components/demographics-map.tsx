@@ -8,16 +8,13 @@ import type { ExpressionSpecification, StyleSpecification } from 'maplibre-gl'
 import type { FeatureCollection } from 'geojson'
 import type { DemographicTopic } from '@/lib/demographics'
 import { useLanguage } from '@/contexts/language'
-import { loadStrippedStyle, MAP_STYLE_URL } from '@/lib/map-style'
+import { loadMapStyle, MAP_STYLE_URL, HOVER_OPACITY } from '@/lib/map-style'
+import { MapTooltip } from './map-tooltip'
 const SWISS_BOUNDS: [[number, number], [number, number]] = [
   [5.96, 45.82],
   [10.49, 47.81],
 ]
 const NO_DATA = -9999
-
-const HOVER_OPACITY: ExpressionSpecification = [
-  'case', ['boolean', ['feature-state', 'hover'], false], 0.95, 0.8,
-]
 
 // Colors for the 3-class typology
 const TYPOLOGY_COLORS: Record<number, string> = { 1: '#1d4ed8', 2: '#60a5fa', 3: '#bfdbfe' }
@@ -96,7 +93,7 @@ export default function DemographicsMap({ communes, topic }: DemographicsMapProp
   const [tooltip, setTooltip] = useState<TooltipState | null>(null)
 
   useEffect(() => {
-    loadStrippedStyle().then(setBaseStyle)
+    loadMapStyle(true).then(setBaseStyle)
   }, [])
 
   useEffect(() => {
@@ -187,10 +184,7 @@ export default function DemographicsMap({ communes, topic }: DemographicsMapProp
 
       {/* Tooltip */}
       {tooltip && (
-        <div
-          className="pointer-events-none absolute z-10 min-w-36 rounded bg-popover px-3 py-2 text-sm text-popover-foreground shadow-md"
-          style={{ left: tooltip.x + 12, top: tooltip.y - 40 }}
-        >
+        <MapTooltip x={tooltip.x} y={tooltip.y}>
           <p className="font-medium">{tooltip.name}</p>
           {tooltip.value > NO_DATA ? (
             <p className="mt-0.5 text-xs text-muted-foreground">
@@ -199,7 +193,7 @@ export default function DemographicsMap({ communes, topic }: DemographicsMapProp
           ) : (
             <p className="mt-0.5 text-xs text-muted-foreground">—</p>
           )}
-        </div>
+        </MapTooltip>
       )}
 
       {/* Legend */}
