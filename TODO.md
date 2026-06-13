@@ -10,3 +10,4 @@
 - clean erlauterungen text extraction with llm + add en translation
 - improve UI
 - refactor code
+- add logs/analytics/monitoring
