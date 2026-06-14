@@ -15,6 +15,9 @@ Comprehensive reference for all datasets used in the Swiss Maps pipeline.
 | Population by age/sex/citizenship | BFS STATPOP (PxWeb `px-x-0102010000_101`) | `https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0102010000_101/` | 2010–2024 | All municipalities | Age distribution, Swiss/foreign ratio (see §3) |
 | Religion (2000 census) | BFS Volkszählung 2000 (PxWeb `px-x-4003000000_122`) | `https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-4003000000_122/px-x-4003000000_122.px` | 2000 | ~2100 communes | Reformed, Catholic, Muslim, Jewish, no religion, other (see §4) |
 | Agglomeration typology | swisstopo boundaries ZIP, sheet `g1a22` | Same ZIP as commune boundaries above | 2022 | ~1418 communes (remainder are rural) | Urban / periurban / rural class per commune (see §5) |
+| Taxable income | ESTV direct federal tax statistics (xlsx) | `https://www.estv.admin.ch/dam/de/sd-web/wum7OKVNOOwl/statistik-dbst-np-gden-2022-normalfall.xlsx` | 2022 | ~2148 communes | Median + average taxable income per commune (see §7) |
+| Linguistic region | BFS Raumgliederungen der Gemeinden (`agvchapp` API) | `https://www.agvchapp.bfs.admin.ch/api/communes/levels?date=01-01-2026` | 2020 (SPRGEB2020) | ~2110 communes | Official language area: German/French/Italian/Romansh (see §8) |
+| Home language (2000 census) | BFS Volkszählung 2000 (PxWeb `px-x-4003000000_123`) | `https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-4003000000_123/px-x-4003000000_123.px` | 2000 | ~2100 communes | German/French/Italian/Romansh/other main-language shares (see §8) |
 
 ---
 
@@ -112,10 +115,10 @@ All indicators refer to **2019** (stated as the reference year in the BFS public
 
 ### What is NOT in this dataset
 
-- No income / median taxable income data
-- No unemployment rate
-- No religion data
-- No language data
+- No income / median taxable income data — now covered separately, see §7
+- No unemployment rate (still unavailable, see §9)
+- No religion data — covered separately, see §4
+- No language data — now covered separately, see §8
 
 ---
 
@@ -337,11 +340,104 @@ Sector % shares from 2025 are applied to 2024 bilateral totals to estimate per-c
 
 ---
 
-## 7. What We Looked for but Couldn't Find via API
+## 7. ESTV Taxable Income (Steuerstatistik)
 
-### Income / median taxable income
+**Script:** `pipeline/scripts/download_income.py`
+**Output:** `public/demographics/income.json`
+**Source:** ESTV (Federal Tax Administration) — Statistik der direkten Bundessteuer, natürliche Personen, Gemeinden, tax year 2022
+**File:** `statistik-dbst-np-gden-2022-normalfall.xlsx`
+**URL:** `https://www.estv.admin.ch/dam/de/sd-web/wum7OKVNOOwl/statistik-dbst-np-gden-2022-normalfall.xlsx`
+**Landing page:** `https://www.estv.admin.ch/estv/de/home/die-estv/steuerstatistiken-estv/allgemeine-steuerstatistiken/direkte-bundessteuer/dbst-np-gemeinden-ab-1983.html`
 
-BFS publishes the **Steuerstatistik** (tax statistics) at municipality level (publication `ts-x-18.03.02`). However, this is distributed as manually downloadable Excel files from the BFS website — no programmatic REST or PxWeb API has been confirmed for municipality-level income data. Data would need to be downloaded by hand and ingested separately.
+This is the dataset referenced in the earlier opendata.swiss "Steuerb. Einkommen natürl. Pers. Median [Fr.]" listing — that listing only points to Kanton Zürich's open data (`KANTON_ZUERICH_316.csv`, ~184 ZH communes). The ESTV xlsx above is the **nationwide** equivalent, all ~2148 communes, directly downloadable (no API key, no manual click-through).
+
+### Format
+
+The workbook has sheets `511`–`524` (different cross-tabs of taxpayer counts / income sums / tax revenue, by "reines Einkommen" vs. "steuerbares Einkommen" brackets). We use:
+
+| Sheet | Content |
+|---|---|
+| `521` | Number of taxpayers per **steuerbares Einkommen** (taxable income) bracket |
+| `523` | Sum of taxable income (CHF) per same bracket |
+
+Each sheet has the same row layout: `Kanton ID, Kanton, Gemeinde ID, Gemeinde, <10 bracket columns>, Total`. `Gemeinde ID` = `bfs_nummer`. Rows with `Gemeinde ID = 10000` are canton/national subtotal rows (skipped). `"- "` marks values withheld for privacy/tax-secrecy (treated as 0).
+
+Bracket columns (CHF): `0`, `1–30'000`, `30'001–40'000`, `40'001–50'000`, `50'001–75'000`, `75'001–100'000`, `100'001–200'000`, `200'001–500'000`, `500'001–1'000'000`, `1'000'001+` (open-ended, capped at 2,000,000 for interpolation).
+
+### Computed indicators
+
+| ID | Formula | Unit |
+|---|---|---|
+| `avg_taxable_income_chf` | `sum(523 bracket totals) / sum(521 bracket totals)` | CHF |
+| `median_taxable_income_chf` | Linear interpolation within the bracket containing the 50th-percentile taxpayer (from sheet `521`) | CHF |
+
+Both are per-taxpayer (not per-capita / per-household) figures, "Normalfälle" only (excludes special cases like at-source taxation).
+
+### Verified values (2022)
+
+| Commune | Median | Average |
+|---|---|---|
+| Zürich (261) | CHF 54,735 | CHF 70,786 |
+| Aeugst am Albis, ZH (1) | CHF 67,123 | CHF 89,951 |
+| Genève (6621) | CHF 39,502 | CHF 53,578 |
+
+---
+
+## 8. Language: Linguistic Region + Home Language
+
+**Script:** `pipeline/scripts/download_language.py`
+**Output:** `public/demographics/language.json`
+
+Two distinct datasets are merged here.
+
+### 10a. Official linguistic region (current)
+
+**Source:** BFS commune register, "Raumgliederungen der Gemeinden" API
+**URL:** `https://www.agvchapp.bfs.admin.ch/api/communes/levels?date=01-01-2026`
+
+This is the same `agvchapp` register used by the official commune list (`historisiertes-gemeindeverzeichnis-der-schweiz` on opendata.swiss). It returns a CSV with one row per commune and ~25 classification columns ("Raumgliederungen"): canton/district IDs, agglomeration codes, urbanity typology, etc. The column `SPRGEB2020` ("Sprachgebiet") is the official linguistic region:
+
+| Code | Region | Count (of 2110 communes) |
+|---|---|---|
+| 1 | German | 1374 |
+| 2 | French | 606 |
+| 3 | Italian | 115 |
+| 4 | Romansh | 15 |
+
+Output field: `official_language_region` (categorical 1–4). Verified: Zürich=1, Genève=2, Lugano=3, Disentis/Mustér & Scuol=4.
+
+### 10b. Home language (2000 census)
+
+**PxWeb table:** `px-x-4003000000_123` — "Wohnbevölkerung 2000 nach Wohnsitztyp, Kanton/Bezirk/Gemeinde, Staatsangehörigkeit und Hauptsprache"
+**API base:** `https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-4003000000_123/px-x-4003000000_123.px`
+
+Same vintage and limitations as the religion table (§4): **2000 census only**, last full-population survey. Post-2000 main-language data exists only in the Strukturerhebung sample survey (canton-level / large-commune representative only).
+
+Query: `Wohnsitztyp=0` (civil residence), `Staatsangehörigkeit=0` (total), `Hauptsprache ∈ {0=Total, 1=Deutsch, 2=Französisch, 3=Italienisch, 4=Rätoromanisch}`. Same batching approach as `download_religion.py` (200 communes/batch, 1.5s sleep, json-stat2 ordering = commune slower, Hauptsprache faster).
+
+Output fields per commune:
+
+| ID | Description |
+|---|---|
+| `lang_german_pct` | Main language German |
+| `lang_french_pct` | Main language French |
+| `lang_italian_pct` | Main language Italian |
+| `lang_romansh_pct` | Main language Romansh |
+| `lang_other_pct` | Everything else (English, Portuguese, Serbo-Croatian, Albanian, Turkish, etc.) = `100 − sum(above 4)` |
+
+### Verified values (2000 census home language)
+
+| Commune | German | French | Italian | Romansh | Other |
+|---|---|---|---|---|---|
+| Zürich (261) | 77.6% | 2.0% | 4.4% | 0.2% | 15.8% |
+| Genève (6621) | 3.6% | 72.5% | 4.0% | 0.1% | 19.9% |
+| Lugano (5192) | 6.6% | 2.2% | 79.5% | 0.1% | 11.6% |
+
+The gap between `lang_*_pct` (home language, 2000) and `official_language_region` (current) is itself informative — e.g. cities show a much higher "other" home-language share than their official region would suggest, reflecting immigration since 2000.
+
+---
+
+## 9. What We Looked for but Couldn't Find via API
 
 ### Unemployment rate
 
@@ -355,13 +451,9 @@ The **Strukturerhebung** (2010–2023) is a stratified sample survey of approxim
 
 BFS ZEMIS/AIG data exists and is accessible via PxWeb (`px-x-0103010000` series), but only down to **canton level** — municipality-level breakdown by country of origin is not available via the public API.
 
-### Language spoken at home
-
-The same limitation applies as for post-2000 religion data: the **Strukturerhebung** records the main language spoken at home, but the sample is only statistically representative at canton level or for very large municipalities. No municipality-level language dataset covering all ~2100 communes was found.
-
 ---
 
-## 8. Dataset Dates Summary
+## 10. Dataset Dates Summary
 
 | Indicator / Dataset | Source | Year of Data |
 |---|---|---|
@@ -381,3 +473,6 @@ The same limitation applies as for post-2000 religion data: the **Strukturerhebu
 | Religion (Reformed, Catholic, Muslim, Jewish, no religion) | BFS Volkszählung | 2000 |
 | Urban / periurban / rural typology | swisstopo agglomeration classification | 2022 |
 | Population by age, sex, citizenship (STATPOP) | BFS STATPOP | 2010–2024 (not yet scripted) |
+| Taxable income (median / average) | ESTV Steuerstatistik | 2022 |
+| Official linguistic region (German/French/Italian/Romansh) | BFS Raumgliederungen der Gemeinden (SPRGEB2020) | 2020 |
+| Home language (German/French/Italian/Romansh/other) | BFS Volkszählung | 2000 |
