@@ -5,7 +5,7 @@ import { AppHeader } from './app-header'
 import { Section, Field, Tag, LimitationList, Callout } from './data-layout-elements'
 
 export function DataLayout() {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [, setSidebarOpen] = useState(false)
 
   return (
     <div className="flex h-svh flex-col overflow-hidden">
@@ -14,7 +14,7 @@ export function DataLayout() {
         <div className="mx-auto max-w-3xl px-6 py-10">
           <h1 className="mb-2 text-2xl font-bold tracking-tight">Data Sources</h1>
           <p className="mb-10 text-sm text-muted-foreground">
-            Every dataset used in Swiss Maps — where it comes from, how fresh it is, what it covers, and what it doesn't.
+            Every dataset used in Swiss Maps — where it comes from, how fresh it is, what it covers, and what it doesn&apos;t.
           </p>
 
           {/* ── VOTATIONS ── */}
@@ -134,7 +134,7 @@ export function DataLayout() {
             </p>
             <Callout>
               Commune mergers and renumbering between 2000 and 2022 mean approximately 5–10% of
-              BFS numbers won't match the current boundary file. Those communes appear grey
+              BFS numbers won&apos;t match the current boundary file. Those communes appear grey
               (no data) on the religion map.
             </Callout>
 
@@ -189,7 +189,7 @@ export function DataLayout() {
               </Field>
             </dl>
 
-            <h3 className="mb-2 text-sm font-semibold">What is "Business cycle total"?</h3>
+            <h3 className="mb-2 text-sm font-semibold">What is &quot;Business cycle total&quot;?</h3>
             <p className="mb-3 text-sm">
               BAZG publishes two trade totals. This app uses the <strong>business cycle total</strong> (CHF 283B exports).
               The broader <strong>general total</strong> (CHF 394B) adds precious metals, rough diamonds, gemstones,
@@ -198,7 +198,7 @@ export function DataLayout() {
               Excluding them gives a clearer picture of the productive economy.
             </p>
             <Callout>
-              The CHF ~111B gap is almost entirely gold. Switzerland is one of the world's largest gold refining
+              The CHF ~111B gap is almost entirely gold. Switzerland is one of the world&apos;s largest gold refining
               and trading hubs — significant economic activity, but it inflates bilateral trade figures in ways
               that distort a geographic visualization.
             </Callout>

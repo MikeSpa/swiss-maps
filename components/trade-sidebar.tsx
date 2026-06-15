@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react'
 import { X } from 'lucide-react'
 import { useLanguage } from '@/contexts/language'
-import type { TradeData, TradePartner, FtaStatus, SectorsData } from '@/lib/trade'
+import type { TradeData, FtaStatus, SectorsData } from '@/lib/trade'
 import { sectorMetrics, SECTORS } from '@/lib/trade'
 import { fmtB, yoyPct } from '@/lib/trade-format'
 import { Button } from './ui/button'
@@ -21,6 +21,16 @@ const FTA_OPTIONS: Array<{ value: FtaStatus | 'all'; label: string }> = [
   { value: 'signed_not_in_force', label: 'Signed' },
   { value: 'none',                label: 'No FTA' },
 ]
+
+function YoyBadge({ pct }: { pct: number | null }) {
+  if (pct === null) return null
+  const up = pct >= 0
+  return (
+    <span className={`text-[9px] font-medium ${up ? 'text-green-600 dark:text-green-400' : 'text-red-500'}`}>
+      {up ? '▲' : '▼'}{Math.abs(pct).toFixed(1)}%
+    </span>
+  )
+}
 
 interface TradeSidebarProps {
   isOpen: boolean
@@ -82,16 +92,6 @@ export function TradeSidebar({
   }, [sectorFiltered, sectorFilter, sectorsData, sortMode, search])
 
   const selectedPartner = data?.partners.find(p => p.country_code === selectedCode) ?? null
-
-  function YoyBadge({ pct }: { pct: number | null }) {
-    if (pct === null) return null
-    const up = pct >= 0
-    return (
-      <span className={`text-[9px] font-medium ${up ? 'text-green-600 dark:text-green-400' : 'text-red-500'}`}>
-        {up ? '▲' : '▼'}{Math.abs(pct).toFixed(1)}%
-      </span>
-    )
-  }
 
   return (
     <aside className={`
@@ -237,7 +237,7 @@ export function TradeSidebar({
           </div>
 
           {sorted.length === 0 && search && (
-            <p className="py-4 text-center text-xs text-muted-foreground">No match for "{search}"</p>
+            <p className="py-4 text-center text-xs text-muted-foreground">No match for &quot;{search}&quot;</p>
           )}
 
           <div className="space-y-0.5">

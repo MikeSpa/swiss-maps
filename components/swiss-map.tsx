@@ -152,7 +152,7 @@ export default function SwissMap({
       setTooltip(null)
       map.getCanvas().style.cursor = ''
     }
-  }, [cantonResults, districtResults, municipalityResults, selectedCantonNum, setHover, clearHover])
+  }, [districtResults, municipalityResults, selectedCantonNum, setHover, clearHover])
 
   const onMouseLeave = useCallback(() => {
     clearHover()
