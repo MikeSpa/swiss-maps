@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm lint
+
+      - run: pnpm typecheck
+
+      - run: pnpm test
+
+      # Playwright e2e is intentionally not run here: it needs the
+      # pipeline-generated public/geo and public/votations data, which
+      # are gitignored. See TODO.md for the plan to add a CI data
+      # strategy (run the pipeline or commit fixtures) and enable
+      # `pnpm test:e2e` here.

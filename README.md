@@ -77,6 +77,22 @@ uv run python scripts/download_religion.py       # BFS 2000 census religion data
 
 See `pipeline/DATA_SOURCES.md` for a full breakdown of every dataset, indicator, reference year, and known limitations (unemployment and post-2000 religion/language are not available via API).
 
+## Testing
+
+```bash
+pnpm test          # unit + component tests (Vitest + React Testing Library)
+pnpm test:watch    # same, in watch mode
+
+pnpm exec playwright install chromium   # one-time browser install
+pnpm dev                                 # in one terminal — needs geo + votation data, see pipeline above
+pnpm test:e2e                            # in another terminal (Playwright)
+```
+
+Unit/component tests are co-located with the source as `*.test.ts(x)` (e.g. `lib/votation.test.ts`,
+`components/result-block.test.tsx`). E2E specs live in `e2e/*.spec.ts` and run against the local dev
+server. CI runs lint, typecheck, and `pnpm test` on every push/PR; `pnpm test:e2e` is local-only for
+now since it depends on the gitignored `public/geo` and `public/votations` pipeline output.
+
 ## Data sources
 
 - **Trade (bilateral totals)**: [BAZG Annual Report 2024](https://www.bazg.admin.ch) — 2024 actuals, business cycle total (excl. precious metals), 245 countries

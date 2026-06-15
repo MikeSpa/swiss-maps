@@ -11,3 +11,4 @@
 - improve UI
 - refactor code
 - add logs/analytics/monitoring
+- set up CI data strategy (run pipeline in CI or commit minimal fixtures) so `pnpm test:e2e` can run in GitHub Actions
