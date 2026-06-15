@@ -170,7 +170,7 @@ export function VotationScatter({ demoData, cantonResults, municipalityResults, 
                   fillOpacity={isMunicipalityLevel ? 0.5 : 0.75}
                   stroke="white" strokeWidth={isMunicipalityLevel ? 0 : 0.8}
                   className="cursor-default"
-                  onMouseEnter={(e) =>
+                  onMouseEnter={() =>
                     setHovered({ x: cx, y: cy, name: p.name, xv: p.x, yv: p.y })
                   }
                 />
