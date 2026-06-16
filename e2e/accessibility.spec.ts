@@ -25,7 +25,8 @@ test.describe('accessibility', () => {
 
   test('trade page passes WCAG 2.1 AA', async ({ page }) => {
     await page.goto('/trade')
-    await expect(page.locator('main')).toBeVisible()
+    // Wait for trade data to load — the sidebar only renders coloured values after the fetch
+    await expect(page.getByText('Top Partners')).toBeVisible()
     const { violations } = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa'])
       .analyze()

@@ -53,7 +53,11 @@ test.describe('votations', () => {
     await page.goto('/')
     await page.getByRole('button', { name: '24.11.2024' }).click()
 
-    await page.getByTitle('Federal Council Explanations').first().click()
+    // The info button only appears after a second fetch (_erlaeuterungen.json) resolves.
+    // Wait explicitly before clicking — in CI the second fetch takes longer.
+    const infoButton = page.getByTitle('Federal Council Explanations').first()
+    await expect(infoButton).toBeVisible()
+    await infoButton.click()
 
     const dialog = page.getByRole('dialog')
     await expect(dialog).toBeVisible()

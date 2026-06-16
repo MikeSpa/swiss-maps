@@ -26,7 +26,7 @@ function YoyBadge({ pct }: { pct: number | null }) {
   if (pct === null) return null
   const up = pct >= 0
   return (
-    <span className={`text-[9px] font-medium ${up ? 'text-green-600 dark:text-green-400' : 'text-red-500'}`}>
+    <span className={`text-[9px] font-medium ${up ? 'text-green-700 dark:text-green-400' : 'text-red-600'}`}>
       {up ? '▲' : '▼'}{Math.abs(pct).toFixed(1)}%
     </span>
   )
@@ -116,7 +116,7 @@ export function TradeSidebar({
             <div className="rounded-lg bg-muted/50 p-2">
               <div className="grid grid-cols-3 gap-1 text-center text-xs mb-2">
                 <div>
-                  <div className="font-semibold text-green-600 dark:text-green-400">{fmtB(data.metadata.total_exports)}</div>
+                  <div className="font-semibold text-green-700 dark:text-green-400">{fmtB(data.metadata.total_exports)}</div>
                   <div className="flex items-center justify-center gap-0.5 text-muted-foreground">
                     <span>{t.trade.exports}</span>
                     <YoyBadge pct={yoyExp} />
@@ -140,7 +140,7 @@ export function TradeSidebar({
               {annual.length > 1 && (
                 <div className="px-1">
                   <TradeSparkline annual={annual} />
-                  <div className="mt-0.5 flex justify-between text-[9px] text-muted-foreground opacity-60">
+                  <div className="mt-0.5 flex justify-between text-[9px] text-muted-foreground">
                     <span className="flex items-center gap-1"><span className="inline-block h-px w-3 bg-green-600" />Exports</span>
                     <span className="flex items-center gap-1"><span className="inline-block h-px w-3 bg-red-600" />Imports</span>
                   </div>

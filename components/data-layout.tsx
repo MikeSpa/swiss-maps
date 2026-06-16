@@ -21,7 +21,7 @@ export function DataLayout() {
           <Section title="Votations">
             <dl className="mb-6 grid grid-cols-1 gap-x-8 gap-y-0 rounded-lg border p-4 sm:grid-cols-2">
               <Field label="Source">
-                <a href="https://opendata.swiss/en/dataset/volksabstimmungen-ab-1981" target="_blank" rel="noopener noreferrer"
+                <a href="https://opendata.swiss/en/dataset/echtzeitdaten-am-abstimmungstag-zu-eidgenoessischen-abstimmungsvorlagen" target="_blank" rel="noopener noreferrer"
                   className="text-primary underline underline-offset-2">
                   BFS / opendata.swiss
                 </a>{' — '} official federal votation results

@@ -44,7 +44,7 @@ export function PartnerRow({ partner, isHovered, isSelected, onHover, onSelect, 
               {badgeShare.toFixed(0)}%
             </span>
           )}
-          <span className={`text-xs font-semibold ${displayBalance >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-500'}`}>
+          <span className={`text-xs font-semibold ${displayBalance >= 0 ? 'text-green-700 dark:text-green-400' : 'text-red-600'}`}>
             {displayBalance >= 0 ? '+' : ''}{fmtB(displayBalance)}
           </span>
         </div>
