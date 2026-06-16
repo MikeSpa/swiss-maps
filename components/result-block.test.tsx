@@ -26,6 +26,11 @@ describe('ResultBar', () => {
     const { container } = renderWithProviders(<ResultBar pct={30} />)
     expect(container.querySelector('.bg-red-500')).toBeInTheDocument()
   })
+
+  it('uses a green bar at exactly 50% (boundary: pct >= 50 is green)', () => {
+    const { container } = renderWithProviders(<ResultBar pct={50} />)
+    expect(container.querySelector('.bg-green-500')).toBeInTheDocument()
+  })
 })
 
 describe('ResultBlock', () => {
@@ -51,6 +56,19 @@ describe('ResultBlock', () => {
     const result: Resultat = { ...emptyResultat, jaStimmenInProzent: 40 }
     renderWithProviders(<ResultBlock result={result} />)
     expect(screen.getByText('40.0%')).toHaveClass('text-red-500')
+  })
+
+  it('shows the percentage but not a "Final" badge when counting is still in progress', () => {
+    const result: Resultat = { ...emptyResultat, jaStimmenInProzent: 55, gebietAusgezaehlt: false }
+    renderWithProviders(<ResultBlock result={result} />)
+    expect(screen.getByText('55.0%')).toBeInTheDocument()
+    expect(screen.queryByText('Final')).not.toBeInTheDocument()
+  })
+
+  it('applies the green color at exactly 50% (boundary: ja >= 50 is green)', () => {
+    const result: Resultat = { ...emptyResultat, jaStimmenInProzent: 50 }
+    renderWithProviders(<ResultBlock result={result} />)
+    expect(screen.getByText('50.0%')).toHaveClass('text-green-600')
   })
 })
 

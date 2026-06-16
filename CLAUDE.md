@@ -49,12 +49,12 @@ swiss-maps/
 │   ├── i18n.ts                 All UI translations (5 languages)
 │   └── utils.ts                shadcn cn() helper
 ├── public/
-│   ├── geo/                    Generated GeoJSON (gitignored, from pipeline)
+│   ├── geo/                    Generated GeoJSON (committed — regenerate with pipeline)
 │   │   ├── cantons.geojson
 │   │   ├── districts.geojson
 │   │   └── municipalities.geojson
-│   └── votations/              Votation JSON files (gitignored, from pipeline)
-│       ├── index.json          ← COMMITTED — lists available dates
+│   └── votations/              Votation JSON files (committed — static votation results)
+│       ├── index.json          ← lists available dates
 │       ├── 20260614.json
 │       ├── 20260308.json
 │       ├── 20251130.json
@@ -191,10 +191,10 @@ pnpm test:e2e      # Playwright e2e — requires `pnpm dev` running with real pi
 - **Config**: `vitest.config.ts` (jsdom env, `@` alias matches `tsconfig.json`, excludes `e2e/`),
   `vitest.setup.ts` (jest-dom matchers + RTL `cleanup()` after each test).
 - **E2E specs** (`e2e/*.spec.ts`) — Playwright, config in `playwright.config.ts`. Runs against the
-  local dev server (`pnpm dev`); needs `public/geo` + `public/votations` to exist locally (pipeline
-  output, gitignored). Not yet wired into CI for that reason — see `TODO.md`.
-- **CI** (`.github/workflows/ci.yml`) — runs `pnpm lint`, `pnpm typecheck`, `pnpm test` on push/PR.
-  Does not run `pnpm test:e2e`.
+  local dev server (`pnpm dev`); `public/geo` and `public/votations` are committed so no pipeline
+  setup is needed.
+- **CI** (`.github/workflows/ci.yml`) — runs `pnpm lint`, `pnpm typecheck`, `pnpm test`, and
+  `pnpm test:e2e` on push/PR.
 
 ## Running the pipeline
 

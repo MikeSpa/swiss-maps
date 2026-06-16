@@ -86,6 +86,14 @@ describe('VorlageInfoModal', () => {
     expect(screen.getByText('Kurzer Text.')).toBeInTheDocument()
   })
 
+  it('shows "Federal Council recommends No" when gov_rec is reject', () => {
+    const erlaeuterungen = erlaeuterungenWith({ gov_rec: 'reject' })
+    renderWithProviders(
+      <VorlageInfoModal vorlage={vorlage} erlaeuterungen={erlaeuterungen} open={true} onClose={() => {}} />,
+    )
+    expect(screen.getByText('Federal Council recommends No')).toBeInTheDocument()
+  })
+
   it('truncates long summaries and expands on click', async () => {
     const longText = 'A'.repeat(700)
     const erlaeuterungen = erlaeuterungenWith({ inkuerze_de: longText })

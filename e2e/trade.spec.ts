@@ -35,6 +35,23 @@ test.describe('trade', () => {
     await expect(page.getByText('No match for "zzzzz"')).toBeVisible()
   })
 
+  test('CHF/% toggle switches the active sort mode', async ({ page }) => {
+    await page.goto('/trade')
+    await page.getByRole('button', { name: 'Pharma', exact: true }).click()
+
+    const chfButton = page.getByRole('button', { name: 'CHF', exact: true })
+    const pctButton = page.getByRole('button', { name: '%', exact: true })
+
+    // CHF is active by default
+    await expect(chfButton).toHaveClass(/bg-primary/)
+    await expect(pctButton).not.toHaveClass(/bg-primary/)
+
+    // Switch to %
+    await pctButton.click()
+    await expect(pctButton).toHaveClass(/bg-primary/)
+    await expect(chfButton).not.toHaveClass(/bg-primary/)
+  })
+
   test('selecting a partner shows its details and can be closed', async ({ page }) => {
     await page.goto('/trade')
 

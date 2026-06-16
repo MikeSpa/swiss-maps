@@ -119,6 +119,16 @@ describe('buildDistrictResultMap', () => {
   it('returns an empty map for a canton that is not present', () => {
     expect(buildDistrictResultMap(vorlage, 2)).toEqual({})
   })
+
+  it('returns an empty map for a canton that has no districts (e.g. Geneva, Uri, Zug)', () => {
+    const noDistrictVorlage: Vorlage = {
+      ...vorlage,
+      kantone: [
+        { geoLevelnummer: '25', geoLevelname: 'Genève', resultat: resultat(55), bezirke: [], gemeinden: [] },
+      ],
+    }
+    expect(buildDistrictResultMap(noDistrictVorlage, 25)).toEqual({})
+  })
 })
 
 describe('buildMunicipalityResultMap', () => {

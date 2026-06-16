@@ -9,6 +9,7 @@ describe('fmtB', () => {
   })
 
   it('formats values of 1000 or more in billions with one decimal', () => {
+    expect(fmtB(1000)).toBe('1.0B')
     expect(fmtB(1500)).toBe('1.5B')
   })
 

@@ -125,4 +125,98 @@ describe('VotationScatter', () => {
     expect(screen.getByText('Not enough data')).toBeInTheDocument()
     expect(container.querySelectorAll('circle')).toHaveLength(0)
   })
+
+  it('shows dots but no correlation summary when all x values are uniform (pearsonR returns null)', () => {
+    const uniformDemoData: DemographicData = {
+      ...demoData,
+      cantons: {
+        '1': { pop_density: 50 },
+        '2': { pop_density: 50 },
+        '3': { pop_density: 50 },
+      },
+    }
+    const { container } = renderWithProviders(
+      <VotationScatter
+        demoData={uniformDemoData}
+        cantonResults={cantonResults}
+        municipalityResults={null}
+        isMunicipalityLevel={false}
+      />,
+    )
+    expect(container.querySelectorAll('circle')).toHaveLength(3)
+    expect(screen.queryByText(/r =/)).not.toBeInTheDocument()
+  })
+
+  it('summarizes a perfectly anti-correlated dataset as a strong negative correlation', () => {
+    const reverseCantonResults: Record<number, Resultat> = {
+      1: resultat(90),
+      2: resultat(50),
+      3: resultat(10),
+    }
+    renderWithProviders(
+      <VotationScatter
+        demoData={demoData}
+        cantonResults={reverseCantonResults}
+        municipalityResults={null}
+        isMunicipalityLevel={false}
+      />,
+    )
+    expect(screen.getByText('-1.00')).toBeInTheDocument()
+    expect(screen.getByText(/strong negative/)).toBeInTheDocument()
+  })
+
+  it('summarizes an uncorrelated dataset as "no correlation"', () => {
+    const flatDemoData: DemographicData = {
+      ...demoData,
+      cantons: {
+        '1': { pop_density: 10 },
+        '2': { pop_density: 20 },
+        '3': { pop_density: 30 },
+      },
+    }
+    // y=[30,20,30] with x=[10,20,30]: num=(-10)(3.33)+(0)(-6.67)+(10)(3.33)=0 → r=0
+    const flatCantonResults: Record<number, Resultat> = {
+      1: resultat(30),
+      2: resultat(20),
+      3: resultat(30),
+    }
+    renderWithProviders(
+      <VotationScatter
+        demoData={flatDemoData}
+        cantonResults={flatCantonResults}
+        municipalityResults={null}
+        isMunicipalityLevel={false}
+      />,
+    )
+    expect(screen.getByText('0.00')).toBeInTheDocument()
+    expect(screen.getByText(/no correlation/)).toBeInTheDocument()
+  })
+
+  it('plots municipality-level points when isMunicipalityLevel is true', () => {
+    const muniDemoData: DemographicData = {
+      ...demoData,
+      communes: {
+        '101': { pop_density: 10 },
+        '201': { pop_density: 30 },
+        '301': { pop_density: 70 },
+        '401': { pop_density: 90 },
+      },
+    }
+    const municipalityResults: Record<number, Resultat> = {
+      101: resultat(20),
+      201: resultat(40),
+      301: resultat(60),
+      401: resultat(80),
+    }
+    const { container } = renderWithProviders(
+      <VotationScatter
+        demoData={muniDemoData}
+        cantonResults={cantonResults}
+        municipalityResults={municipalityResults}
+        isMunicipalityLevel={true}
+      />,
+    )
+    // 4 circles from communes (not 3 from cantons), proving the municipality path is used
+    expect(container.querySelectorAll('circle')).toHaveLength(4)
+  })
 })
