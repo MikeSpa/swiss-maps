@@ -1,0 +1,18 @@
+#!/bin/sh
+# Runs before every `git push`. Mirrors the fast CI steps so failures are
+# caught locally before they waste a CI run.
+set -e
+
+echo "→ lint"
+pnpm lint
+
+echo "→ typecheck"
+pnpm typecheck
+
+echo "→ unit tests"
+pnpm test
+
+echo "→ audit (high+)"
+pnpm audit --audit-level high
+
+echo "✓ all checks passed"
