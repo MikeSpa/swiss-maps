@@ -18,7 +18,6 @@ Output:
 """
 
 import json
-import sys
 import requests
 import openpyxl
 from io import BytesIO
@@ -493,7 +492,7 @@ def main() -> None:
     OUT_FILE.write_text(json.dumps(output, ensure_ascii=False, indent=2))
     size_kb = OUT_FILE.stat().st_size // 1024
     print(f"\n✓ Written to {OUT_FILE} ({size_kb}KB)")
-    print(f"  Top 10 partners by total trade:")
+    print("  Top 10 partners by total trade:")
     for p in partners[:10]:
         arc = "●" if "centroid" in p else "○"
         print(f"  {arc} {p['country_code']} {p['country']:25s}  exp={p['exports']:8,.0f}  imp={p['imports']:8,.0f}  bal={p['balance']:+9,.0f}  {p['fta_status']}")
