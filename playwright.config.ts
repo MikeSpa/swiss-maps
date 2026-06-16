@@ -6,8 +6,9 @@ export default defineConfig({
   reporter: 'list',
   use: {
     baseURL: 'http://localhost:3000',
-    // If MapLibre's WebGL canvas fails to initialize in headless Chromium,
-    // add launchOptions: { args: ['--use-gl=angle', '--use-angle=swiftshader'] }
+    // Required for MapLibre's WebGL canvas (and feature queries on click)
+    // to work in headless Chromium.
+    launchOptions: { args: ['--use-gl=angle', '--use-angle=swiftshader'] },
   },
   projects: [
     {
