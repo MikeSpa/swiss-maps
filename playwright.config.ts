@@ -6,7 +6,7 @@ export default defineConfig({
   // Cap at 2 workers — the Next.js dev server can't handle more concurrent
   // browser instances without timing out under JIT compilation pressure.
   workers: 2,
-  reporter: 'list',
+  reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : 'list',
   use: {
     baseURL: 'http://localhost:3000',
     // Required for MapLibre's WebGL canvas (and feature queries on click)
