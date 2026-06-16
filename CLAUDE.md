@@ -49,12 +49,12 @@ swiss-maps/
 │   ├── i18n.ts                 All UI translations (5 languages)
 │   └── utils.ts                shadcn cn() helper
 ├── public/
-│   ├── geo/                    Generated GeoJSON (gitignored, from pipeline)
+│   ├── geo/                    Generated GeoJSON (committed — regenerate with pipeline)
 │   │   ├── cantons.geojson
 │   │   ├── districts.geojson
 │   │   └── municipalities.geojson
-│   └── votations/              Votation JSON files (gitignored, from pipeline)
-│       ├── index.json          ← COMMITTED — lists available dates
+│   └── votations/              Votation JSON files (committed — static votation results)
+│       ├── index.json          ← lists available dates
 │       ├── 20260614.json
 │       ├── 20260308.json
 │       ├── 20251130.json
@@ -174,6 +174,27 @@ pnpm dev          # start dev server
 pnpm build        # production build
 pnpm typecheck    # TypeScript check
 ```
+
+## Testing
+
+```bash
+pnpm test          # unit + component tests (Vitest + React Testing Library, run once)
+pnpm test:watch    # same, in watch mode
+pnpm test:e2e      # Playwright e2e — requires `pnpm dev` running with real pipeline data
+```
+
+- **Unit tests** (`lib/*.test.ts`) — pure functions in `lib/`, co-located with the source file.
+- **Component tests** (`components/*.test.tsx`) — Vitest + React Testing Library, jsdom environment.
+  Use `renderWithProviders` from `test/test-utils.tsx` for components that call `useLanguage()`
+  (it wraps in `LanguageProvider`); plain `render` from `@testing-library/react` is fine for
+  components with no context dependency.
+- **Config**: `vitest.config.ts` (jsdom env, `@` alias matches `tsconfig.json`, excludes `e2e/`),
+  `vitest.setup.ts` (jest-dom matchers + RTL `cleanup()` after each test).
+- **E2E specs** (`e2e/*.spec.ts`) — Playwright, config in `playwright.config.ts`. Runs against the
+  local dev server (`pnpm dev`); `public/geo` and `public/votations` are committed so no pipeline
+  setup is needed.
+- **CI** (`.github/workflows/ci.yml`) — runs `pnpm lint`, `pnpm typecheck`, `pnpm test`, and
+  `pnpm test:e2e` on push/PR.
 
 ## Running the pipeline
 

@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import { Map, Menu } from 'lucide-react'
 import { LanguageSwitcher } from './language-switcher'
 import { useLanguage } from '@/contexts/language'
+import { Button } from './ui/button'
 
 interface AppHeaderProps {
   onToggleSidebar: () => void
@@ -16,13 +17,15 @@ export function AppHeader({ onToggleSidebar }: AppHeaderProps) {
 
   return (
     <header className="flex h-12 shrink-0 items-center gap-2 border-b bg-background px-3">
-      <button
+      <Button
+        variant="ghost"
+        size="icon-sm"
         onClick={onToggleSidebar}
-        className="rounded p-1.5 hover:bg-muted md:hidden"
+        className="md:hidden"
         aria-label="Toggle sidebar"
       >
         <Menu className="h-4 w-4" />
-      </button>
+      </Button>
 
       <Map className="h-4 w-4 shrink-0 text-primary" />
       <span className="font-semibold tracking-tight">Swiss Maps</span>

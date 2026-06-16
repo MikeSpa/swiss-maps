@@ -1,0 +1,37 @@
+name: Download votation results
+
+on:
+  workflow_dispatch:
+    inputs:
+      date:
+        description: 'Vote date (YYYYMMDD, e.g. 20260614)'
+        required: true
+        type: string
+
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+
+      - name: Download votation data for ${{ inputs.date }}
+        run: uv run python pipeline/scripts/download_votations.py --add ${{ inputs.date }}
+
+      - name: Open pull request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: "data: add votation results for ${{ inputs.date }}"
+          title: "Add votation results for ${{ inputs.date }}"
+          body: |
+            Automated download of Swiss federal votation results for **${{ inputs.date }}**.
+
+            Please verify the data looks correct before merging:
+            - Check `public/votations/${{ inputs.date }}.json` for expected proposal count and structure
+            - Check `public/votations/index.json` includes the new date
+          branch: "votation/${{ inputs.date }}"
+          delete-branch: true

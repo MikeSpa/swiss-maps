@@ -1,3 +1,5 @@
+import { jsonFetch } from './fetch'
+
 export type FtaStatus =
   | 'EU_bilateral'
   | 'in_force'
@@ -49,9 +51,7 @@ export interface SectorsData {
 }
 
 export async function fetchSectorsData(): Promise<SectorsData> {
-  const res = await fetch('/trade/sectors_by_country.json')
-  if (!res.ok) throw new Error('Failed to load sectors data')
-  return res.json()
+  return jsonFetch('/trade/sectors_by_country.json', 'Failed to load sectors data')
 }
 
 export interface TradeData {
@@ -78,9 +78,7 @@ export interface TradeData {
 }
 
 export async function fetchTradeData(): Promise<TradeData> {
-  const res = await fetch('/trade/trade_2024.json')
-  if (!res.ok) throw new Error('Failed to load trade data')
-  return res.json()
+  return jsonFetch('/trade/trade_2024.json', 'Failed to load trade data')
 }
 
 export const FTA_LABELS: Record<FtaStatus, string> = {
@@ -124,3 +122,16 @@ export const FTA_COLORS: Record<FtaStatus, string> = {
   signed_not_in_force:   '#f59e0b',  // amber
   none:                  '#94a3b8',  // slate
 }
+
+export const SECTORS = [
+  { code: 'CHEM_PHARMA',   label: 'Pharma',    color: '#6366f1' },
+  { code: 'MACHINES_ELEC', label: 'Machines',  color: '#0ea5e9' },
+  { code: 'WATCHES',       label: 'Watches',   color: '#d97706' },
+  { code: 'PRECISION',     label: 'Medtech',   color: '#10b981' },
+  { code: 'METALS',        label: 'Metals',    color: '#78716c' },
+  { code: 'VEHICLES',      label: 'Vehicles',  color: '#3b82f6' },
+  { code: 'TEXTILES',      label: 'Textiles',  color: '#ec4899' },
+  { code: 'AGRI',          label: 'Agri',      color: '#65a30d' },
+  { code: 'ENERGY',        label: 'Energy',    color: '#f97316' },
+  { code: 'OTHER',         label: 'Other',     color: '#94a3b8' },
+]

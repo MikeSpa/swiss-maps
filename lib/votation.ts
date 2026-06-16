@@ -1,3 +1,5 @@
+import { jsonFetch } from './fetch'
+
 export interface VorlageTitle {
   langKey: string
   text: string
@@ -62,6 +64,12 @@ export interface VotationData {
   vorlagen: Vorlage[]
 }
 
+export interface VotationEntry {
+  date: string
+  label: string
+  file: string
+}
+
 // ----- helpers -----
 
 export function getTitle(titles: VorlageTitle[], lang = 'de'): string {
@@ -73,20 +81,17 @@ export function formatDate(abstimmtag: string): string {
   return `${abstimmtag.slice(6, 8)}.${abstimmtag.slice(4, 6)}.${abstimmtag.slice(0, 4)}`
 }
 
-export const VORLAGE_ART: Record<number, string> = {
-  1: 'Obligatorisches Referendum',
-  2: 'Fakultatives Referendum',
-  3: 'Volksinitiative',
-  4: 'Volksinitiative',
-  5: 'Gegenvorschlag',
-  6: 'Stichfrage',
+function resultMapFrom(items: { geoLevelnummer: string; resultat: Resultat }[]): Record<number, Resultat> {
+  return Object.fromEntries(items.map((item) => [parseInt(item.geoLevelnummer, 10), item.resultat]))
+}
+
+function findKanton(vorlage: Vorlage, kantonNum: number): KantonVote | undefined {
+  return vorlage.kantone.find((k) => parseInt(k.geoLevelnummer, 10) === kantonNum)
 }
 
 /** Map from kantonsnummer → result for a given vorlage */
 export function buildCantonResultMap(vorlage: Vorlage): Record<number, Resultat> {
-  return Object.fromEntries(
-    vorlage.kantone.map((k) => [parseInt(k.geoLevelnummer, 10), k.resultat]),
-  )
+  return resultMapFrom(vorlage.kantone)
 }
 
 /** Map from bezirksnummer → result for a given vorlage + selected canton */
@@ -94,11 +99,8 @@ export function buildDistrictResultMap(
   vorlage: Vorlage,
   kantonNum: number,
 ): Record<number, Resultat> {
-  const kanton = vorlage.kantone.find((k) => parseInt(k.geoLevelnummer, 10) === kantonNum)
-  if (!kanton) return {}
-  return Object.fromEntries(
-    kanton.bezirke.map((b) => [parseInt(b.geoLevelnummer, 10), b.resultat]),
-  )
+  const kanton = findKanton(vorlage, kantonNum)
+  return kanton ? resultMapFrom(kanton.bezirke) : {}
 }
 
 /** Map from bfs_nummer → result for a given vorlage + selected canton */
@@ -106,11 +108,8 @@ export function buildMunicipalityResultMap(
   vorlage: Vorlage,
   kantonNum: number,
 ): Record<number, Resultat> {
-  const kanton = vorlage.kantone.find((k) => parseInt(k.geoLevelnummer, 10) === kantonNum)
-  if (!kanton) return {}
-  return Object.fromEntries(
-    kanton.gemeinden.map((g) => [parseInt(g.geoLevelnummer, 10), g.resultat]),
-  )
+  const kanton = findKanton(vorlage, kantonNum)
+  return kanton ? resultMapFrom(kanton.gemeinden) : {}
 }
 
 /** Ständemehr: yes cantonal votes as a decimal (half-cantons count 0.5) */
@@ -119,9 +118,10 @@ export function staendeYes(staende: Staende): number {
 }
 
 export async function fetchVotation(url: string): Promise<VotationData> {
-  const resp = await fetch(url)
-  if (!resp.ok) throw new Error(`Votation fetch failed: ${resp.status}`)
-  const raw = await resp.json()
+  const raw = await jsonFetch<{ abstimmtag: string; timestamp: string; schweiz: { vorlagen: Vorlage[] } }>(
+    url,
+    'Votation fetch failed',
+  )
   return {
     abstimmtag: raw.abstimmtag,
     timestamp: raw.timestamp,

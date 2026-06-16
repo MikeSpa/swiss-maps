@@ -2,58 +2,10 @@
 
 import { useState } from 'react'
 import { AppHeader } from './app-header'
-
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <section className="mb-10">
-      <h2 className="mb-4 text-lg font-semibold tracking-tight">{title}</h2>
-      {children}
-    </section>
-  )
-}
-
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div className="mb-3">
-      <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</dt>
-      <dd className="mt-0.5 text-sm">{children}</dd>
-    </div>
-  )
-}
-
-function Tag({ color, children }: { color: 'green' | 'amber' | 'red' | 'blue'; children: React.ReactNode }) {
-  const cls = {
-    green: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
-    amber: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300',
-    red:   'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
-    blue:  'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
-  }[color]
-  return <span className={`inline-block rounded px-1.5 py-0.5 text-xs font-medium ${cls}`}>{children}</span>
-}
-
-function LimitationList({ items }: { items: string[] }) {
-  return (
-    <ul className="mt-1 space-y-1">
-      {items.map((item, i) => (
-        <li key={i} className="flex gap-2 text-sm">
-          <span className="mt-0.5 shrink-0 text-amber-500">⚠</span>
-          <span>{item}</span>
-        </li>
-      ))}
-    </ul>
-  )
-}
-
-function Callout({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="my-3 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm dark:border-blue-800 dark:bg-blue-950/30">
-      {children}
-    </div>
-  )
-}
+import { Section, Field, Tag, LimitationList, Callout } from './data-layout-elements'
 
 export function DataLayout() {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [, setSidebarOpen] = useState(false)
 
   return (
     <div className="flex h-svh flex-col overflow-hidden">
@@ -62,14 +14,14 @@ export function DataLayout() {
         <div className="mx-auto max-w-3xl px-6 py-10">
           <h1 className="mb-2 text-2xl font-bold tracking-tight">Data Sources</h1>
           <p className="mb-10 text-sm text-muted-foreground">
-            Every dataset used in Swiss Maps — where it comes from, how fresh it is, what it covers, and what it doesn't.
+            Every dataset used in Swiss Maps — where it comes from, how fresh it is, what it covers, and what it doesn&apos;t.
           </p>
 
           {/* ── VOTATIONS ── */}
           <Section title="Votations">
             <dl className="mb-6 grid grid-cols-1 gap-x-8 gap-y-0 rounded-lg border p-4 sm:grid-cols-2">
               <Field label="Source">
-                <a href="https://opendata.swiss/en/dataset/volksabstimmungen-ab-1981" target="_blank" rel="noopener noreferrer"
+                <a href="https://opendata.swiss/en/dataset/echtzeitdaten-am-abstimmungstag-zu-eidgenoessischen-abstimmungsvorlagen" target="_blank" rel="noopener noreferrer"
                   className="text-primary underline underline-offset-2">
                   BFS / opendata.swiss
                 </a>{' — '} official federal votation results
@@ -182,7 +134,7 @@ export function DataLayout() {
             </p>
             <Callout>
               Commune mergers and renumbering between 2000 and 2022 mean approximately 5–10% of
-              BFS numbers won't match the current boundary file. Those communes appear grey
+              BFS numbers won&apos;t match the current boundary file. Those communes appear grey
               (no data) on the religion map.
             </Callout>
 
@@ -237,7 +189,7 @@ export function DataLayout() {
               </Field>
             </dl>
 
-            <h3 className="mb-2 text-sm font-semibold">What is "Business cycle total"?</h3>
+            <h3 className="mb-2 text-sm font-semibold">What is &quot;Business cycle total&quot;?</h3>
             <p className="mb-3 text-sm">
               BAZG publishes two trade totals. This app uses the <strong>business cycle total</strong> (CHF 283B exports).
               The broader <strong>general total</strong> (CHF 394B) adds precious metals, rough diamonds, gemstones,
@@ -246,7 +198,7 @@ export function DataLayout() {
               Excluding them gives a clearer picture of the productive economy.
             </p>
             <Callout>
-              The CHF ~111B gap is almost entirely gold. Switzerland is one of the world's largest gold refining
+              The CHF ~111B gap is almost entirely gold. Switzerland is one of the world&apos;s largest gold refining
               and trading hubs — significant economic activity, but it inflates bilateral trade figures in ways
               that distort a geographic visualization.
             </Callout>

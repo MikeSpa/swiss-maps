@@ -112,6 +112,7 @@ export function VotationScatter({ demoData, cantonResults, municipalityResults, 
       <select
         value={topicId}
         onChange={(e) => setTopicId(e.target.value)}
+        aria-label={t.sidebar.correlationTopic}
         className="w-full rounded border border-input bg-background px-2 py-1 text-xs text-foreground"
       >
         {demoData.groups.map((g) => {
@@ -170,7 +171,7 @@ export function VotationScatter({ demoData, cantonResults, municipalityResults, 
                   fillOpacity={isMunicipalityLevel ? 0.5 : 0.75}
                   stroke="white" strokeWidth={isMunicipalityLevel ? 0 : 0.8}
                   className="cursor-default"
-                  onMouseEnter={(e) =>
+                  onMouseEnter={() =>
                     setHovered({ x: cx, y: cy, name: p.name, xv: p.x, yv: p.y })
                   }
                 />

@@ -5,6 +5,7 @@ import { AppSidebar } from './app-sidebar'
 import { MapLoader } from './map-loader'
 import {
   type VotationData,
+  type VotationEntry,
   type Resultat,
   fetchVotation,
   buildCantonResultMap,
@@ -13,12 +14,6 @@ import {
 } from '@/lib/votation'
 import { fetchDemographics, type DemographicData } from '@/lib/demographics'
 import { fetchErlaeuterungen, type ErlaeuterungenData } from '@/lib/erlaeuterungen'
-
-interface VotationEntry {
-  date: string
-  label: string
-  file: string
-}
 
 interface MapShellProps {
   sidebarOpen: boolean
@@ -39,6 +34,17 @@ export function MapShell({ sidebarOpen, onCloseSidebar }: MapShellProps) {
   const [selection, setSelection] = useState<Selection | null>(null)
   const [demoData, setDemoData] = useState<DemographicData | null>(null)
   const [erlaeuterungen, setErlaeuterungen] = useState<ErlaeuterungenData | null>(null)
+  const [loadedDate, setLoadedDate] = useState<string | null>(null)
+
+  // Reset previous votation data as soon as the selected date changes, before the
+  // new data has loaded (adjusting state during render avoids an extra cascading effect).
+  if (selectedDate !== loadedDate) {
+    setLoadedDate(selectedDate)
+    setVotation(null)
+    setSelectedVorlageId(null)
+    setLoadError(null)
+    setErlaeuterungen(null)
+  }
 
   // Load demographics in background (non-blocking)
   useEffect(() => {
@@ -63,11 +69,6 @@ export function MapShell({ sidebarOpen, onCloseSidebar }: MapShellProps) {
     if (!selectedDate) return
     const entry = index.find((e) => e.date === selectedDate)
     if (!entry) return
-
-    setVotation(null)
-    setSelectedVorlageId(null)
-    setLoadError(null)
-    setErlaeuterungen(null)
 
     fetchVotation(entry.file)
       .then((data) => {

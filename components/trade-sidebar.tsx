@@ -1,83 +1,16 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import { X } from 'lucide-react'
 import { useLanguage } from '@/contexts/language'
-import type { TradeData, TradePartner, FtaStatus, SectorsData, SectorEntry, AnnualTotal } from '@/lib/trade'
-import { FTA_LABELS, sectorMetrics } from '@/lib/trade'
-
-function fmtB(millions: number): string {
-  if (Math.abs(millions) >= 1000) return `${(millions / 1000).toFixed(1)}B`
-  return `${millions.toFixed(0)}M`
-}
-
-function yoyPct(annual: AnnualTotal[], field: 'exports' | 'imports' | 'balance'): number | null {
-  const final = annual.filter(a => !a.preliminary)
-  if (final.length < 2) return null
-  const prev = final[final.length - 2][field]
-  const curr = final[final.length - 1][field]
-  if (prev === 0) return null
-  return ((curr - prev) / Math.abs(prev)) * 100
-}
-
-// ── Sparkline ─────────────────────────────────────────────────────────────────
-
-function TradeSparkline({ annual }: { annual: AnnualTotal[] }) {
-  const data = annual.filter(a => !a.preliminary)
-  if (data.length < 2) return null
-
-  const W = 240
-  const H = 44
-  const PAD = { l: 0, r: 0, t: 4, b: 14 }
-  const innerW = W - PAD.l - PAD.r
-  const innerH = H - PAD.t - PAD.b
-
-  const allVals = data.flatMap(a => [a.exports, a.imports])
-  const minV = Math.min(...allVals) * 0.92
-  const maxV = Math.max(...allVals) * 1.02
-
-  const xOf = (i: number) => PAD.l + (i / (data.length - 1)) * innerW
-  const yOf = (v: number) => PAD.t + (1 - (v - minV) / (maxV - minV)) * innerH
-
-  const expLine = data.map((a, i) => `${i === 0 ? 'M' : 'L'}${xOf(i).toFixed(1)},${yOf(a.exports).toFixed(1)}`).join(' ')
-  const impLine = data.map((a, i) => `${i === 0 ? 'M' : 'L'}${xOf(i).toFixed(1)},${yOf(a.imports).toFixed(1)}`).join(' ')
-
-  // Balance area (shaded between exports and imports at each point)
-  const balAreaTop = data.map((a, i) => `${i === 0 ? 'M' : 'L'}${xOf(i).toFixed(1)},${yOf(a.exports).toFixed(1)}`).join(' ')
-  const balAreaBot = data.map((a, i) => `L${xOf(i).toFixed(1)},${yOf(a.imports).toFixed(1)}`).reverse().join(' ')
-  const balArea = `${balAreaTop} ${balAreaBot} Z`
-
-  const firstYear = data[0].year
-  const lastYear = data[data.length - 1].year
-
-  return (
-    <svg width={W} height={H} className="overflow-visible">
-      {/* Balance fill between the two lines */}
-      <path d={balArea} fill="#3b82f6" fillOpacity={0.08} />
-      {/* Import line */}
-      <path d={impLine} fill="none" stroke="#dc2626" strokeWidth={1.2} strokeLinecap="round" strokeLinejoin="round" />
-      {/* Export line */}
-      <path d={expLine} fill="none" stroke="#16a34a" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
-      {/* Year labels */}
-      <text x={PAD.l} y={H} fontSize={9} fill="currentColor" className="text-muted-foreground" opacity={0.5}>{firstYear}</text>
-      <text x={W - PAD.r} y={H} fontSize={9} fill="currentColor" className="text-muted-foreground" opacity={0.5} textAnchor="end">{lastYear}</text>
-    </svg>
-  )
-}
-
-// ── Sector definitions ─────────────────────────────────────────────────────────
-
-export const SECTORS = [
-  { code: 'CHEM_PHARMA',   label: 'Pharma',    color: '#6366f1' },
-  { code: 'MACHINES_ELEC', label: 'Machines',  color: '#0ea5e9' },
-  { code: 'WATCHES',       label: 'Watches',   color: '#d97706' },
-  { code: 'PRECISION',     label: 'Medtech',   color: '#10b981' },
-  { code: 'METALS',        label: 'Metals',    color: '#78716c' },
-  { code: 'VEHICLES',      label: 'Vehicles',  color: '#3b82f6' },
-  { code: 'TEXTILES',      label: 'Textiles',  color: '#ec4899' },
-  { code: 'AGRI',          label: 'Agri',      color: '#65a30d' },
-  { code: 'ENERGY',        label: 'Energy',    color: '#f97316' },
-  { code: 'OTHER',         label: 'Other',     color: '#94a3b8' },
-]
+import type { TradeData, FtaStatus, SectorsData } from '@/lib/trade'
+import { sectorMetrics, SECTORS } from '@/lib/trade'
+import { fmtB, yoyPct } from '@/lib/trade-format'
+import { Button } from './ui/button'
+import { SelectButton } from './ui/select-button'
+import { TradeSparkline } from './trade-sparkline'
+import { PartnerCard } from './trade-partner-card'
+import { PartnerRow } from './trade-partner-row'
 
 const FTA_OPTIONS: Array<{ value: FtaStatus | 'all'; label: string }> = [
   { value: 'all',                 label: 'All' },
@@ -89,162 +22,15 @@ const FTA_OPTIONS: Array<{ value: FtaStatus | 'all'; label: string }> = [
   { value: 'none',                label: 'No FTA' },
 ]
 
-// ── SectorBar ──────────────────────────────────────────────────────────────────
-
-function SectorBar({ entry, color, bilateralTotal }: {
-  entry: SectorEntry; color: string; bilateralTotal: number
-}) {
-  const chf = (entry.share_pct / 100) * bilateralTotal
+function YoyBadge({ pct }: { pct: number | null }) {
+  if (pct === null) return null
+  const up = pct >= 0
   return (
-    <div className="space-y-0.5">
-      <div className="flex items-center justify-between gap-1">
-        <div className="flex min-w-0 items-center gap-1.5">
-          <span className="h-2 w-2 shrink-0 rounded-sm" style={{ backgroundColor: color }} />
-          <span className="truncate text-[10px] text-muted-foreground">{entry.sector}</span>
-        </div>
-        <div className="ml-1 flex shrink-0 items-baseline gap-1.5">
-          <span className="text-[10px] font-semibold">{entry.share_pct}%</span>
-          <span className="text-[10px] text-muted-foreground">{fmtB(chf)}</span>
-        </div>
-      </div>
-      <div className="h-1.5 w-full rounded-full bg-muted">
-        <div className="h-full rounded-full" style={{ width: `${entry.share_pct}%`, backgroundColor: color }} />
-      </div>
-    </div>
+    <span className={`text-[9px] font-medium ${up ? 'text-green-700 dark:text-green-400' : 'text-red-600'}`}>
+      {up ? '▲' : '▼'}{Math.abs(pct).toFixed(1)}%
+    </span>
   )
 }
-
-// ── PartnerCard ────────────────────────────────────────────────────────────────
-
-function PartnerCard({ partner, sectorsData, onClose, t }: {
-  partner: TradePartner
-  sectorsData: SectorsData | null
-  onClose: () => void
-  t: ReturnType<typeof useLanguage>['t']
-}) {
-  const cs = sectorsData?.by_country[partner.country_code]
-  return (
-    <div className="rounded-lg border bg-muted/30 p-2.5 text-xs">
-      <div className="mb-1 flex items-start justify-between gap-2">
-        <p className="font-semibold">{partner.country}</p>
-        <button onClick={onClose} className="shrink-0 text-muted-foreground hover:text-foreground">✕</button>
-      </div>
-      <p className="mb-2 text-muted-foreground">{FTA_LABELS[partner.fta_status]}</p>
-      <div className="mb-2 space-y-0.5">
-        {[
-          { label: t.trade.exports, val: partner.exports, cls: 'text-green-600 dark:text-green-400' },
-          { label: t.trade.imports, val: partner.imports, cls: 'text-red-600 dark:text-red-400' },
-          { label: t.trade.balance, val: partner.balance, cls: partner.balance >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' },
-        ].map(({ label, val, cls }) => (
-          <div key={label} className="flex justify-between">
-            <span className="text-muted-foreground">{label}</span>
-            <span className={`font-medium ${cls}`}>{fmtB(val)}</span>
-          </div>
-        ))}
-      </div>
-      {cs && cs.exports.length > 0 && (
-        <>
-          <div className="my-2 border-t" />
-          <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Exports by sector</p>
-          <div className="space-y-1.5">
-            {cs.exports.slice(0, 6).map(s => (
-              <SectorBar key={s.sector_code} entry={s}
-                color={SECTORS.find(x => x.code === s.sector_code)?.color ?? '#94a3b8'}
-                bilateralTotal={partner.exports} />
-            ))}
-          </div>
-        </>
-      )}
-      {cs && cs.imports.length > 0 && (
-        <>
-          <div className="my-2 border-t" />
-          <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Imports by sector</p>
-          <div className="space-y-1.5">
-            {cs.imports.slice(0, 5).map(s => (
-              <SectorBar key={s.sector_code} entry={s}
-                color={SECTORS.find(x => x.code === s.sector_code)?.color ?? '#94a3b8'}
-                bilateralTotal={partner.imports} />
-            ))}
-          </div>
-        </>
-      )}
-    </div>
-  )
-}
-
-// ── PartnerRow ─────────────────────────────────────────────────────────────────
-
-function PartnerRow({ partner, isHovered, isSelected, onHover, onSelect, maxForBar,
-  sectorFilter, sectorsData, sortMode }: {
-  partner: TradePartner
-  isHovered: boolean
-  isSelected: boolean
-  onHover: (code: string | null) => void
-  onSelect: (code: string | null) => void
-  maxForBar: number
-  sectorFilter: string | null
-  sectorsData: SectorsData | null
-  sortMode: 'share' | 'volume'
-}) {
-  const sm = sectorFilter && sectorsData
-    ? sectorMetrics(partner, sectorsData.by_country, sectorFilter)
-    : null
-
-  const displayBalance = sm ? sm.balance : partner.balance
-  const displayExp     = sm ? sm.exp     : partner.exports
-  const displayImp     = sm ? sm.imp     : partner.imports
-  const displayVolume  = displayExp + displayImp
-
-  const barWidthPct   = Math.min(Math.round((displayVolume / maxForBar) * 100), 100)
-  const exportFrac    = displayVolume > 0 ? (displayExp / displayVolume) * 100 : 50
-  const badgeShare    = sm ? Math.max(sm.expShare, sm.impShare) : null
-
-  return (
-    <button
-      className={`w-full rounded px-2 py-1.5 text-left text-xs transition-colors ${
-        isSelected ? 'bg-muted ring-1 ring-primary/40' : isHovered ? 'bg-muted/70' : 'hover:bg-muted/50'
-      }`}
-      onMouseEnter={() => onHover(partner.country_code)}
-      onMouseLeave={() => onHover(null)}
-      onClick={() => onSelect(partner.country_code)}
-    >
-      <div className="flex items-center justify-between gap-1">
-        <span className="truncate font-medium">{partner.country}</span>
-        <div className="flex shrink-0 items-center gap-1.5">
-          {badgeShare !== null && sortMode === 'share' && (
-            <span className="rounded bg-muted px-1 py-px text-[10px] font-semibold">
-              {badgeShare.toFixed(0)}%
-            </span>
-          )}
-          <span className={`text-xs font-semibold ${displayBalance >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-500'}`}>
-            {displayBalance >= 0 ? '+' : ''}{fmtB(displayBalance)}
-          </span>
-        </div>
-      </div>
-      <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-muted">
-        <div className="h-full rounded-full" style={{
-          width: `${barWidthPct}%`,
-          background: `linear-gradient(to right, #16a34a ${exportFrac}%, #dc2626 ${exportFrac}%)`,
-        }} />
-      </div>
-      <div className="mt-0.5 flex justify-between text-[10px] text-muted-foreground">
-        {sm ? (
-          <>
-            <span>↑ {fmtB(displayExp)} <span className="opacity-60">({sm.expShare.toFixed(0)}%)</span></span>
-            <span>↓ {fmtB(displayImp)} <span className="opacity-60">({sm.impShare.toFixed(0)}%)</span></span>
-          </>
-        ) : (
-          <>
-            <span>↑{fmtB(displayExp)}</span>
-            <span>↓{fmtB(displayImp)}</span>
-          </>
-        )}
-      </div>
-    </button>
-  )
-}
-
-// ── Main component ─────────────────────────────────────────────────────────────
 
 interface TradeSidebarProps {
   isOpen: boolean
@@ -307,16 +93,6 @@ export function TradeSidebar({
 
   const selectedPartner = data?.partners.find(p => p.country_code === selectedCode) ?? null
 
-  function YoyBadge({ pct }: { pct: number | null }) {
-    if (pct === null) return null
-    const up = pct >= 0
-    return (
-      <span className={`text-[9px] font-medium ${up ? 'text-green-600 dark:text-green-400' : 'text-red-500'}`}>
-        {up ? '▲' : '▼'}{Math.abs(pct).toFixed(1)}%
-      </span>
-    )
-  }
-
   return (
     <aside className={`
       absolute inset-y-0 left-0 z-20 flex w-72 flex-col border-r bg-background shadow-lg transition-transform
@@ -325,7 +101,9 @@ export function TradeSidebar({
     `}>
       <div className="flex shrink-0 items-center justify-between border-b px-4 py-3">
         <h2 className="text-sm font-semibold">{t.trade.title}</h2>
-        <button onClick={onClose} className="rounded p-1 hover:bg-muted md:hidden">✕</button>
+        <Button variant="ghost" size="icon-xs" onClick={onClose} className="md:hidden">
+          <X className="h-4 w-4" />
+        </Button>
       </div>
 
       {/* Sticky top */}
@@ -338,7 +116,7 @@ export function TradeSidebar({
             <div className="rounded-lg bg-muted/50 p-2">
               <div className="grid grid-cols-3 gap-1 text-center text-xs mb-2">
                 <div>
-                  <div className="font-semibold text-green-600 dark:text-green-400">{fmtB(data.metadata.total_exports)}</div>
+                  <div className="font-semibold text-green-700 dark:text-green-400">{fmtB(data.metadata.total_exports)}</div>
                   <div className="flex items-center justify-center gap-0.5 text-muted-foreground">
                     <span>{t.trade.exports}</span>
                     <YoyBadge pct={yoyExp} />
@@ -362,7 +140,7 @@ export function TradeSidebar({
               {annual.length > 1 && (
                 <div className="px-1">
                   <TradeSparkline annual={annual} />
-                  <div className="mt-0.5 flex justify-between text-[9px] text-muted-foreground opacity-60">
+                  <div className="mt-0.5 flex justify-between text-[9px] text-muted-foreground">
                     <span className="flex items-center gap-1"><span className="inline-block h-px w-3 bg-green-600" />Exports</span>
                     <span className="flex items-center gap-1"><span className="inline-block h-px w-3 bg-red-600" />Imports</span>
                   </div>
@@ -383,19 +161,19 @@ export function TradeSidebar({
             <div>
               <p className="mb-1.5 text-xs font-medium text-muted-foreground">Sector</p>
               <div className="flex flex-wrap gap-1">
-                <button
+                <SelectButton
+                  active={!sectorFilter}
                   onClick={() => onSectorFilter(null)}
-                  className={`rounded px-2 py-0.5 text-xs transition-colors ${!sectorFilter ? 'bg-primary text-primary-foreground' : 'bg-muted hover:bg-muted/80'}`}
+                  className="px-2 py-0.5 text-xs"
+                  inactiveClassName="bg-muted hover:bg-muted/80"
                 >
                   All
-                </button>
+                </SelectButton>
                 {SECTORS.map(s => (
                   <button key={s.code}
                     onClick={() => onSectorFilter(sectorFilter === s.code ? null : s.code)}
-                    className="rounded px-2 py-0.5 text-xs transition-colors"
-                    style={sectorFilter === s.code
-                      ? { backgroundColor: s.color, color: '#fff' }
-                      : { backgroundColor: 'var(--muted)', color: 'inherit' }}
+                    className={`rounded px-2 py-0.5 text-xs transition-colors ${sectorFilter === s.code ? '' : 'bg-muted hover:bg-muted/80'}`}
+                    style={sectorFilter === s.code ? { backgroundColor: s.color, color: '#fff' } : undefined}
                   >
                     {s.label}
                   </button>
@@ -408,12 +186,15 @@ export function TradeSidebar({
               <p className="mb-1.5 text-xs font-medium text-muted-foreground">Agreement</p>
               <div className="flex flex-wrap gap-1">
                 {FTA_OPTIONS.map(opt => (
-                  <button key={opt.value}
+                  <SelectButton
+                    key={opt.value}
+                    active={ftaFilter === opt.value}
                     onClick={() => onFtaFilter(opt.value)}
-                    className={`rounded px-2 py-0.5 text-xs transition-colors ${ftaFilter === opt.value ? 'bg-primary text-primary-foreground' : 'bg-muted hover:bg-muted/80'}`}
+                    className="px-2 py-0.5 text-xs"
+                    inactiveClassName="bg-muted hover:bg-muted/80"
                   >
                     {opt.label}
-                  </button>
+                  </SelectButton>
                 ))}
               </div>
             </div>
@@ -456,7 +237,7 @@ export function TradeSidebar({
           </div>
 
           {sorted.length === 0 && search && (
-            <p className="py-4 text-center text-xs text-muted-foreground">No match for "{search}"</p>
+            <p className="py-4 text-center text-xs text-muted-foreground">No match for &quot;{search}&quot;</p>
           )}
 
           <div className="space-y-0.5">

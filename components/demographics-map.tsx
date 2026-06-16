@@ -8,32 +8,37 @@ import type { ExpressionSpecification, StyleSpecification } from 'maplibre-gl'
 import type { FeatureCollection } from 'geojson'
 import type { DemographicTopic } from '@/lib/demographics'
 import { useLanguage } from '@/contexts/language'
-import { loadStrippedStyle, MAP_STYLE_URL } from '@/lib/map-style'
+import { loadMapStyle, MAP_STYLE_URL, HOVER_OPACITY } from '@/lib/map-style'
+import { MapTooltip } from './map-tooltip'
 const SWISS_BOUNDS: [[number, number], [number, number]] = [
   [5.96, 45.82],
   [10.49, 47.81],
 ]
 const NO_DATA = -9999
 
-const HOVER_OPACITY: ExpressionSpecification = [
-  'case', ['boolean', ['feature-state', 'hover'], false], 0.95, 0.8,
-]
+// Per-topic colour palettes for categorical scales, keyed by category value
+const CATEGORY_PALETTES: Record<string, Record<number, string>> = {
+  urban_rural: { 1: '#1d4ed8', 2: '#60a5fa', 3: '#bfdbfe' },
+  official_language_region: { 1: '#2563eb', 2: '#dc2626', 3: '#16a34a', 4: '#9333ea' },
+}
+const DEFAULT_CATEGORY_COLORS = ['#1d4ed8', '#60a5fa', '#bfdbfe', '#fbbf24', '#9333ea']
 
-// Colors for the 3-class typology
-const TYPOLOGY_COLORS: Record<number, string> = { 1: '#1d4ed8', 2: '#60a5fa', 3: '#bfdbfe' }
+function getCategoryColor(topicId: string, key: number): string {
+  return CATEGORY_PALETTES[topicId]?.[key] ?? DEFAULT_CATEGORY_COLORS[key - 1] ?? '#94a3b8'
+}
 
 function buildPaint(topic: DemographicTopic): ExpressionSpecification {
   const [lo, hi] = topic.domain
   const noDataCheck: ExpressionSpecification = ['<=', ['get', 'demo_value'], NO_DATA + 1]
 
   if (topic.color_scale === 'categorical') {
-    return [
-      'match', ['round', ['get', 'demo_value']],
-      1, TYPOLOGY_COLORS[1],
-      2, TYPOLOGY_COLORS[2],
-      3, TYPOLOGY_COLORS[3],
-      '#cbd5e1',
-    ]
+    const keys = topic.categories ? Object.keys(topic.categories).map(Number) : []
+    const matchExpr: unknown[] = ['match', ['round', ['get', 'demo_value']]]
+    for (const k of keys) {
+      matchExpr.push(k, getCategoryColor(topic.id, k))
+    }
+    matchExpr.push('#cbd5e1')
+    return matchExpr as unknown as ExpressionSpecification
   }
 
   if (topic.color_scale === 'diverging') {
@@ -96,7 +101,7 @@ export default function DemographicsMap({ communes, topic }: DemographicsMapProp
   const [tooltip, setTooltip] = useState<TooltipState | null>(null)
 
   useEffect(() => {
-    loadStrippedStyle().then(setBaseStyle)
+    loadMapStyle(true).then(setBaseStyle)
   }, [])
 
   useEffect(() => {
@@ -155,6 +160,9 @@ export default function DemographicsMap({ communes, topic }: DemographicsMapProp
       const key = String(Math.round(value))
       return topic.categories[key]?.[lang] ?? topic.categories[key]?.['en'] ?? String(value)
     }
+    if (topic?.unit === 'CHF') {
+      return `${Math.round(value).toLocaleString(lang)} CHF`
+    }
     return `${value.toFixed(1)}${topic?.unit ? ` ${topic.unit}` : ''}`
   }
 
@@ -187,10 +195,7 @@ export default function DemographicsMap({ communes, topic }: DemographicsMapProp
 
       {/* Tooltip */}
       {tooltip && (
-        <div
-          className="pointer-events-none absolute z-10 min-w-36 rounded bg-popover px-3 py-2 text-sm text-popover-foreground shadow-md"
-          style={{ left: tooltip.x + 12, top: tooltip.y - 40 }}
-        >
+        <MapTooltip x={tooltip.x} y={tooltip.y}>
           <p className="font-medium">{tooltip.name}</p>
           {tooltip.value > NO_DATA ? (
             <p className="mt-0.5 text-xs text-muted-foreground">
@@ -199,7 +204,7 @@ export default function DemographicsMap({ communes, topic }: DemographicsMapProp
           ) : (
             <p className="mt-0.5 text-xs text-muted-foreground">—</p>
           )}
-        </div>
+        </MapTooltip>
       )}
 
       {/* Legend */}
@@ -212,7 +217,7 @@ export default function DemographicsMap({ communes, topic }: DemographicsMapProp
                 <div key={key} className="flex items-center gap-1.5">
                   <div
                     className="h-2.5 w-2.5 rounded-sm shrink-0"
-                    style={{ backgroundColor: TYPOLOGY_COLORS[Number(key)] ?? '#cbd5e1' }}
+                    style={{ backgroundColor: getCategoryColor(topic.id, Number(key)) }}
                   />
                   <span className="text-muted-foreground">{labels[lang] ?? labels['en']}</span>
                 </div>
@@ -220,13 +225,13 @@ export default function DemographicsMap({ communes, topic }: DemographicsMapProp
             </div>
           ) : (
             <div className="flex items-center gap-2">
-              <span className="text-muted-foreground">{topic.domain[0].toFixed(1)}</span>
+              <span className="text-muted-foreground">{formatValue(topic.domain[0])}</span>
               {isDiverging ? (
                 <div className="h-2 w-24 rounded-full bg-gradient-to-r from-[#b91c1c] via-[#f1f5f9] to-[#1e3a8a]" />
               ) : (
                 <div className="h-2 w-24 rounded-full bg-gradient-to-r from-[#dbeafe] via-[#3b82f6] to-[#1e3a8a]" />
               )}
-              <span className="text-muted-foreground">{topic.domain[1].toFixed(1)}{topic.unit ? ` ${topic.unit}` : ''}</span>
+              <span className="text-muted-foreground">{formatValue(topic.domain[1])}</span>
             </div>
           )}
           {isDiverging && (

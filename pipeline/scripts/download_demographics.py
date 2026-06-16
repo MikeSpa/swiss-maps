@@ -38,6 +38,7 @@ GROUPS: list[dict] = [
     {"id": "economy",    "label": {"de": "Wirtschaft", "fr": "Économie", "it": "Economia", "rm": "Economia", "en": "Economy"}},
     {"id": "housing",    "label": {"de": "Wohnen", "fr": "Logement", "it": "Abitazioni", "rm": "Abitaziuns", "en": "Housing"}},
     {"id": "social",     "label": {"de": "Soziales", "fr": "Social", "it": "Sociale", "rm": "Social", "en": "Social"}},
+    {"id": "language",   "label": {"de": "Sprache", "fr": "Langue", "it": "Lingua", "rm": "Lingua", "en": "Language"}},
     {"id": "religion",   "label": {"de": "Religion (Volkszählung 2000)", "fr": "Religion (recensement 2000)", "it": "Religione (censimento 2000)", "rm": "Religiun (census 2000)", "en": "Religion (2000 census)"}},
     {"id": "politics",   "label": {"de": "Politik (NR-Wahlen 2019)", "fr": "Politique (CN 2019)", "it": "Politica (CN 2019)", "rm": "Politica (CN 2019)", "en": "Politics (2019 elections)"}},
 ]
@@ -46,6 +47,13 @@ TYPOLOGY_CATEGORIES = {
     "1": {"de": "Städtisch", "fr": "Urbain", "it": "Urbano", "rm": "Urban", "en": "Urban"},
     "2": {"de": "Periurban", "fr": "Périurbain", "it": "Periurbano", "rm": "Periurban", "en": "Periurban"},
     "3": {"de": "Ländlich", "fr": "Rural", "it": "Rurale", "rm": "Rural", "en": "Rural"},
+}
+
+LANGUAGE_REGION_CATEGORIES = {
+    "1": {"de": "Deutsch", "fr": "Allemand", "it": "Tedesco", "rm": "Tudestg", "en": "German"},
+    "2": {"de": "Französisch", "fr": "Français", "it": "Francese", "rm": "Franzos", "en": "French"},
+    "3": {"de": "Italienisch", "fr": "Italien", "it": "Italiano", "rm": "Talian", "en": "Italian"},
+    "4": {"de": "Rätoromanisch", "fr": "Romanche", "it": "Romancio", "rm": "Rumantsch", "en": "Romansh"},
 }
 
 # ── Direct indicators (read straight from the CSV) ────────────────────────────
@@ -340,6 +348,69 @@ def merge_typology(communes: dict[int, dict[str, float]]) -> list[dict] | None:
     }]
 
 
+def merge_income(communes: dict[int, dict[str, float]]) -> list[dict] | None:
+    """Merge median/average taxable income into communes. Returns topic specs or None."""
+    path = OUT_DIR / "income.json"
+    if not path.exists():
+        print("  income.json not found — run download_income.py first")
+        return None
+    data = json.loads(path.read_text())
+    count = 0
+    for bfs_str, row in data["communes"].items():
+        bfs = int(bfs_str)
+        if bfs in communes:
+            communes[bfs].update(row)
+            count += 1
+    print(f"  Income: {count} communes merged")
+    return [
+        {"id": "median_taxable_income_chf", "unit": "CHF",
+         "label": {"de": "Steuerbares Einkommen (Median)", "fr": "Revenu imposable (médiane)",
+                   "it": "Reddito imponibile (mediana)", "rm": "Renda taxabla (median)",
+                   "en": "Taxable income (median)"}},
+        {"id": "avg_taxable_income_chf", "unit": "CHF",
+         "label": {"de": "Steuerbares Einkommen (Durchschnitt)", "fr": "Revenu imposable (moyenne)",
+                   "it": "Reddito imponibile (media)", "rm": "Renda taxabla (media)",
+                   "en": "Taxable income (average)"}},
+    ]
+
+
+def merge_language(communes: dict[int, dict[str, float]]) -> list[dict] | None:
+    """Merge linguistic region + home language data into communes. Returns topic specs or None."""
+    path = OUT_DIR / "language.json"
+    if not path.exists():
+        print("  language.json not found — run download_language.py first")
+        return None
+    data = json.loads(path.read_text())
+    count = 0
+    for bfs_str, row in data["communes"].items():
+        bfs = int(bfs_str)
+        if bfs in communes:
+            communes[bfs].update(row)
+            count += 1
+    print(f"  Language: {count} communes merged")
+
+    region_topic = {
+        "id": "official_language_region",
+        "group": "language",
+        "unit": "",
+        "color_scale": "categorical",
+        "domain": [1.0, 4.0],
+        "categories": LANGUAGE_REGION_CATEGORIES,
+        "label": {"de": "Sprachgebiet", "fr": "Région linguistique", "it": "Regione linguistica",
+                  "rm": "Territori linguistic", "en": "Linguistic region"},
+        "source": "BFS Raumgliederungen der Gemeinden",
+        "year": 2020,
+    }
+    home_lang_topics = [
+        {"id": "lang_german_pct",  "label": {"de": "Hauptsprache Deutsch", "fr": "Langue principale allemand", "it": "Lingua principale tedesco", "rm": "Lingua principala tudestg", "en": "Main language German"}},
+        {"id": "lang_french_pct",  "label": {"de": "Hauptsprache Französisch", "fr": "Langue principale français", "it": "Lingua principale francese", "rm": "Lingua principala franzos", "en": "Main language French"}},
+        {"id": "lang_italian_pct", "label": {"de": "Hauptsprache Italienisch", "fr": "Langue principale italien", "it": "Lingua principale italiano", "rm": "Lingua principala talian", "en": "Main language Italian"}},
+        {"id": "lang_romansh_pct", "label": {"de": "Hauptsprache Rätoromanisch", "fr": "Langue principale romanche", "it": "Lingua principale romancio", "rm": "Lingua principala rumantsch", "en": "Main language Romansh"}},
+        {"id": "lang_other_pct",   "label": {"de": "Hauptsprache andere", "fr": "Langue principale autre", "it": "Lingua principale altra", "rm": "Autra lingua principala", "en": "Main language other"}},
+    ]
+    return [region_topic] + home_lang_topics
+
+
 def merge_religion(communes: dict[int, dict[str, float]]) -> list[dict] | None:
     """Merge religion percentages into communes. Returns list of topic specs or None."""
     path = OUT_DIR / "religion.json"
@@ -409,11 +480,17 @@ def main() -> None:
     print("Merging supplementary sources...")
     typo_topics = merge_typology(communes) or []
     reli_topics = merge_religion(communes) or []
+    income_topics = merge_income(communes) or []
+    lang_topics = merge_language(communes) or []
+    lang_region_topics = [t for t in lang_topics if "color_scale" in t]
+    lang_pct_topics = [t for t in lang_topics if "color_scale" not in t]
 
     canton_map = load_canton_mapping()
     all_topic_ids = [t["id"] for t in TOPICS + COMPUTED_TOPICS] + \
                     [t["id"] for t in typo_topics] + \
-                    [t["id"] for t in reli_topics]
+                    [t["id"] for t in reli_topics] + \
+                    [t["id"] for t in income_topics] + \
+                    [t["id"] for t in lang_topics]
 
     cantons: dict[int, dict[str, float]] = {}
     if canton_map:
@@ -423,8 +500,8 @@ def main() -> None:
     print("Computing colour domains...")
     topics_out = []
 
-    # Typology first (categorical — fixed domain, no P5/P95)
-    for t in typo_topics:
+    # Categorical topics first (fixed domain, no P5/P95)
+    for t in typo_topics + lang_region_topics:
         topics_out.append({
             "id": t["id"], "group": t["group"], "label": t["label"],
             "unit": t["unit"], "color_scale": t["color_scale"],
@@ -448,6 +525,26 @@ def main() -> None:
         domain = compute_domain(communes, t["id"])
         topics_out.append({
             "id": t["id"], "group": "religion", "label": t["label"],
+            "unit": "%", "color_scale": "sequential",
+            "domain": domain, "categories": None,
+            "source": "BFS Volkszählung 2000", "year": 2000,
+        })
+
+    # Income indicators (sequential, domains from data)
+    for t in income_topics:
+        domain = compute_domain(communes, t["id"])
+        topics_out.append({
+            "id": t["id"], "group": "economy", "label": t["label"],
+            "unit": t["unit"], "color_scale": "sequential",
+            "domain": domain, "categories": None,
+            "source": "ESTV Steuerstatistik direkte Bundessteuer 2022", "year": 2022,
+        })
+
+    # Home language indicators (sequential, domains from data)
+    for t in lang_pct_topics:
+        domain = compute_domain(communes, t["id"])
+        topics_out.append({
+            "id": t["id"], "group": "language", "label": t["label"],
             "unit": "%", "color_scale": "sequential",
             "domain": domain, "categories": None,
             "source": "BFS Volkszählung 2000", "year": 2000,

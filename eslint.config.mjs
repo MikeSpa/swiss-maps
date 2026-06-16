@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Python data pipeline (not linted by ESLint):
+    "pipeline/**",
   ]),
 ]);
 

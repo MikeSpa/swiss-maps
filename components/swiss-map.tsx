@@ -4,77 +4,17 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Map, { Layer, Source } from 'react-map-gl/maplibre'
 import type { MapRef, MapLayerMouseEvent } from 'react-map-gl/maplibre'
 import 'maplibre-gl/dist/maplibre-gl.css'
-import type { ExpressionSpecification, StyleSpecification } from 'maplibre-gl'
+import type { StyleSpecification } from 'maplibre-gl'
 import type { FeatureCollection } from 'geojson'
 import type { Resultat } from '@/lib/votation'
 import { useLanguage } from '@/contexts/language'
-import { loadStrippedStyle, MAP_STYLE_URL } from '@/lib/map-style'
+import { loadMapStyle, MAP_STYLE_URL, CHOROPLETH_COLOR, HOVER_OPACITY } from '@/lib/map-style'
+import { featureBounds, mergeResults } from '@/lib/map-utils'
+import { MapTooltip } from './map-tooltip'
+
 const SWISS_BOUNDS: [[number, number], [number, number]] = [
   [5.96, 45.82],
   [10.49, 47.81],
-]
-
-function featureBounds(geometry: GeoJSON.Geometry): [[number, number], [number, number]] {
-  const lngs: number[] = []
-  const lats: number[] = []
-  function walk(c: unknown) {
-    if (Array.isArray(c) && typeof c[0] === 'number') {
-      lngs.push(c[0] as number)
-      lats.push(c[1] as number)
-    } else if (Array.isArray(c)) {
-      c.forEach(walk)
-    }
-  }
-  walk((geometry as { coordinates: unknown }).coordinates)
-  return [
-    [Math.min(...lngs), Math.min(...lats)],
-    [Math.max(...lngs), Math.max(...lats)],
-  ]
-}
-
-/** Merges result data into a GeoJSON FeatureCollection.
- *  ja_pct = -1 is the sentinel for "no data" used in paint expressions. */
-function mergeResults(
-  collection: FeatureCollection,
-  results: Record<number, Resultat> | null,
-  keyProp: string,
-): FeatureCollection {
-  if (!results) return collection
-  return {
-    ...collection,
-    features: collection.features.map((f) => {
-      const r = results[f.properties?.[keyProp] as number]
-      return {
-        ...f,
-        properties: {
-          ...f.properties,
-          ja_pct: r?.jaStimmenInProzent ?? -1,
-          turnout: r?.stimmbeteiligungInProzent ?? -1,
-          ausgezaehlt: r?.gebietAusgezaehlt ?? false,
-        },
-      }
-    }),
-  }
-}
-
-// No-data: light slate. Scale: strong red → slate-400 midpoint → strong green.
-// Midpoint is a visible neutral (not white) so 40% vs 60% are clearly distinct.
-const CHOROPLETH_COLOR: ExpressionSpecification = [
-  'case',
-  ['<', ['get', 'ja_pct'], 0],
-  '#cbd5e1',
-  [
-    'interpolate', ['linear'], ['get', 'ja_pct'],
-    0,   '#b91c1c',
-    35,  '#f87171',
-    50,  '#94a3b8',
-    65,  '#4ade80',
-    100, '#15803d',
-  ],
-]
-
-const HOVER_OPACITY: ExpressionSpecification = [
-  'case', ['boolean', ['feature-state', 'hover'], false], 0.95, 0.8,
 ]
 
 interface TooltipState {
@@ -119,7 +59,7 @@ export default function SwissMap({
   const [tooltip, setTooltip] = useState<TooltipState | null>(null)
 
   useEffect(() => {
-    loadStrippedStyle().then(setBaseStyle)
+    loadMapStyle(true).then(setBaseStyle)
   }, [])
 
   useEffect(() => {
@@ -212,7 +152,7 @@ export default function SwissMap({
       setTooltip(null)
       map.getCanvas().style.cursor = ''
     }
-  }, [cantonResults, districtResults, municipalityResults, selectedCantonNum, setHover, clearHover])
+  }, [districtResults, municipalityResults, selectedCantonNum, setHover, clearHover])
 
   const onMouseLeave = useCallback(() => {
     clearHover()
@@ -329,10 +269,7 @@ export default function SwissMap({
       </Map>
 
       {tooltip && (
-        <div
-          className="pointer-events-none absolute z-10 min-w-36 rounded bg-popover px-3 py-2 text-sm text-popover-foreground shadow-md"
-          style={{ left: tooltip.x + 12, top: tooltip.y - 40 }}
-        >
+        <MapTooltip x={tooltip.x} y={tooltip.y}>
           <p className="font-medium">{tooltip.name}</p>
           <div className="mt-0.5 text-xs text-muted-foreground">
             {tooltip.ja_pct >= 0 ? (
@@ -349,7 +286,7 @@ export default function SwissMap({
               <span>{t.map.pending}</span>
             )}
           </div>
-        </div>
+        </MapTooltip>
       )}
 
       {selectedCantonNum !== null && (

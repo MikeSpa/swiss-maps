@@ -5,10 +5,9 @@ import Map from 'react-map-gl/maplibre'
 import type { MapRef } from 'react-map-gl/maplibre'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import type { StyleSpecification } from 'maplibre-gl'
-import { loadWorldStyle, MAP_STYLE_URL } from '@/lib/map-style'
+import { loadMapStyle, MAP_STYLE_URL } from '@/lib/map-style'
 import type { TradePartner, TradeData, FtaStatus, SectorsData } from '@/lib/trade'
-import { FTA_LABELS, sectorMetrics } from '@/lib/trade'
-import { SECTORS } from './trade-sidebar'
+import { FTA_LABELS, SECTORS, sectorMetrics } from '@/lib/trade'
 import { useLanguage } from '@/contexts/language'
 
 const CH_CENTROID: [number, number] = [8.2, 46.8]
@@ -60,12 +59,12 @@ export default function TradeMap({
   const { t } = useLanguage()
   const mapRef = useRef<MapRef>(null)
   const [baseStyle, setBaseStyle] = useState<string | StyleSpecification>(MAP_STYLE_URL)
-  const [mapReady, setMapReady] = useState(false)
+  const [map, setMap] = useState<maplibregl.Map | null>(null)
   const [showAll, setShowAll] = useState(false)
   const [tooltip, setTooltip] = useState<TooltipState | null>(null)
   const [, forceUpdate] = useReducer((x: number) => x + 1, 0)
 
-  useEffect(() => { loadWorldStyle().then(setBaseStyle) }, [])
+  useEffect(() => { loadMapStyle().then(setBaseStyle) }, [])
 
   const partners = ftaFilter === 'all'
     ? data.partners
@@ -83,7 +82,6 @@ export default function TradeMap({
     ? Math.max(...visiblePartners.map(p => sectorMetrics(p, sectorsData.by_country, sectorFilter).volume), 1)
     : 1
 
-  const map = mapReady ? mapRef.current?.getMap() : undefined
   const chProjected = map ? map.project(CH_CENTROID) : null
 
 
@@ -93,7 +91,7 @@ export default function TradeMap({
         ref={mapRef}
         mapStyle={baseStyle}
         initialViewState={{ bounds: WORLD_BOUNDS, fitBoundsOptions: { padding: 20 } }}
-        onLoad={() => setMapReady(true)}
+        onLoad={() => setMap(mapRef.current?.getMap() ?? null)}
         onMove={forceUpdate}
         style={{ width: '100%', height: '100%' }}
       />
@@ -136,9 +134,6 @@ export default function TradeMap({
             const proj = map.project(partner.centroid)
             const isHovered = hoveredCode === partner.country_code
             const isSelected = selectedCode === partner.country_code
-            const sm = sectorFilter && sectorsData
-              ? sectorMetrics(partner, sectorsData.by_country, sectorFilter)
-              : null
             const dotColor = sectorFilter
               ? (SECTORS.find(s => s.code === sectorFilter)?.color ?? '#94a3b8')
               : (partner.balance >= 0 ? '#16a34a' : '#dc2626')
