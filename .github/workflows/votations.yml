@@ -23,7 +23,7 @@ jobs:
         run: uv run python pipeline/scripts/download_votations.py --add ${{ inputs.date }}
 
       - name: Open pull request
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           commit-message: "data: add votation results for ${{ inputs.date }}"
           title: "Add votation results for ${{ inputs.date }}"
