@@ -40,14 +40,14 @@ describe('PartnerRow', () => {
     render(<PartnerRow {...baseProps} />)
     expect(screen.getByText('Germany')).toBeInTheDocument()
     const balance = screen.getByText('+200M')
-    expect(balance).toHaveClass('text-green-600')
+    expect(balance).toHaveClass('text-green-700')
   })
 
   it('renders a negative balance without a plus sign, in red', () => {
     const negPartner: TradePartner = { ...partner, balance: -200, exports: 400, imports: 600 }
     render(<PartnerRow {...baseProps} partner={negPartner} />)
     const balance = screen.getByText('-200M')
-    expect(balance).toHaveClass('text-red-500')
+    expect(balance).toHaveClass('text-red-600')
   })
 
   it('renders raw export/import totals when no sector filter is active', () => {
