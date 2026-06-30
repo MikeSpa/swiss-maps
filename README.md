@@ -2,6 +2,26 @@
 
 Interactive visualization of Swiss federal votation results and demographic statistics on a geographic map.
 
+## Screenshots
+
+**Votation map — canton overview**
+![Votation map showing choropleth of % yes votes by canton, with hover tooltip on Bern](docs/screenshots/swiss-maps-1.png)
+
+**Votation map — municipality drill-down with correlation scatter**
+![Votation map zoomed into Valais showing municipality-level results and SVP/UDC correlation scatter](docs/screenshots/swiss-maps-2.png)
+
+**Demographics — urban/periurban/rural typology**
+![Demographics map showing urban, periurban, and rural classification across Swiss municipalities](docs/screenshots/swiss-maps-3.png)
+
+**Demographics — left–right political index**
+![Demographics map showing left-right political index as a diverging red/blue choropleth](docs/screenshots/swiss-maps-4.png)
+
+**Trade — world overview with arc lines**
+![Trade map showing Swiss export/import arcs to 96 trading partners, USA selected with sector breakdown](docs/screenshots/swiss-maps-5.png)
+
+**Trade — Europe zoomed, pharma sector filter**
+![Trade map zoomed into Europe with Germany selected and pharma sector filter active](docs/screenshots/swiss-maps-6.png)
+
 ## Features
 
 **Votation map (`/`)**
