@@ -33,7 +33,8 @@
   },
   "pnpm": {
     "overrides": {
-      "hono": ">=4.12.25"
+      "hono": ">=4.12.25",
+      "undici": ">=7.28.0 <8"
     }
   },
   "devDependencies": {
