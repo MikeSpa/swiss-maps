@@ -1,5 +1,7 @@
 import { defineConfig } from '@playwright/test'
 
+const PORT = process.env.PORT ?? '3000'
+
 export default defineConfig({
   testDir: './e2e',
   fullyParallel: true,
@@ -8,7 +10,7 @@ export default defineConfig({
   workers: 2,
   reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : 'list',
   use: {
-    baseURL: 'http://localhost:3000',
+    baseURL: `http://localhost:${PORT}`,
     // Required for MapLibre's WebGL canvas (and feature queries on click)
     // to work in headless Chromium.
     launchOptions: { args: ['--use-gl=angle', '--use-angle=swiftshader'] },
@@ -23,8 +25,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'pnpm dev',
-    url: 'http://localhost:3000',
+    command: `pnpm dev -p ${PORT}`,
+    url: `http://localhost:${PORT}`,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
   },

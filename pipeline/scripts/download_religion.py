@@ -201,7 +201,7 @@ def compute_religion_pcts(
             results.append(None)
             continue
 
-        def pct(key: str) -> float:
+        def pct(key: str, row: dict = row, total: int = total) -> float:
             return round(max(0.0, min(100.0, row[key] / total * 100)), 2)
 
         reformed = pct("reformed")

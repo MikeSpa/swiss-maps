@@ -188,7 +188,7 @@ def compute_lang_pcts(values: list[int], commune_count: int) -> list[dict[str, f
             results.append(None)
             continue
 
-        def pct(key: str) -> float:
+        def pct(key: str, row: dict = row, total: int = total) -> float:
             return round(max(0.0, min(100.0, row[key] / total * 100)), 2)
 
         german = pct("german")

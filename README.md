@@ -28,6 +28,7 @@ Interactive visualization of Swiss federal votation results and demographic stat
 - Choropleth map colored by % yes votes at canton, district, and municipality level
 - Click a canton to zoom in and see district/municipality breakdown
 - Hover tooltips with result details
+- Shareable links: date, proposal and canton are kept in the URL (`/?d=20260927&v=6880&c=5`)
 - Votation dates from 2020 onwards; upcoming dates (no results yet) are shown greyed out and disabled
 - Defaults to the most recent past votation (skips upcoming dates). Re-download a date with `--add YYYYMMDD --force` once results are published
 
@@ -57,6 +58,7 @@ Interactive visualization of Swiss federal votation results and demographic stat
 - Topic picker groups match the demographics page
 
 **Shared**
+- Mobile: hamburger menu to switch pages, separate button for the page sidebar
 - Full i18n: DE / FR / IT / RM / EN (UI + votation titles from official data)
 - Mobile-responsive with collapsible sidebar
 - English as default language
@@ -83,6 +85,8 @@ uv run python scripts/export_geo.py
 # Votation results
 uv run python scripts/download_votations.py
 uv run python scripts/download_votations.py --add YYYYMMDD   # add a new date
+# (warns when a past date has no counted results yet; re-run with --add YYYYMMDD --force)
+uv run python scripts/download_erlaeuterungen.py --date YYYYMMDD   # Federal Council booklet summaries (BK)
 
 # Trade data (BAZG official 2024 actuals — re-run to refresh)
 uv run python scripts/download_trade.py

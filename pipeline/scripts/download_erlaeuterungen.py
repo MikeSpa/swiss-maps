@@ -47,30 +47,44 @@ EMPFEHLUNG_OLD_YES = r"Empfehlung\s*\n[^\n]*\n\s*Ja\b"
 EMPFEHLUNG_OLD_NO  = r"Empfehlung\s*\n[^\n]*\n\s*Nein\b"
 
 
+BK_PAGES = {
+    "de": "/de/sammlung-der-abstimmungsbuechlein-seit-1978",
+    "fr": "/fr/compilation-des-explications-du-conseil-federal-depuis-1978",
+    "it": "/it/raccolta-delle-spiegazioni-del-consiglio-federale-dal-1978",
+}
+
+
+def _date_from_link_text(text: str) -> str | None:
+    """Parse the vote date from link text: '2026-09-27 - …' (current) or '… (DD.MM.YY)' (legacy)."""
+    m = re.search(r"(\d{4})-(\d{2})-(\d{2})", text)
+    if m:
+        return "".join(m.groups())
+    m = re.search(r"\((\d{1,2})\.(\d{1,2})\.(\d{2,4})\)", text)
+    if m:
+        dd, mm, yy = m.groups()
+        yyyy = f"20{yy}" if len(yy) == 2 else yy
+        return f"{yyyy}{mm.zfill(2)}{dd.zfill(2)}"
+    return None
+
+
 def scrape_bk_pdf_map(lang: str) -> dict[str, str]:
     """Scrape BK page for given language and return {date_YYYYMMDD: pdf_url}."""
-    url = f"{BK_BASE}/bk/{lang}/home/dokumentation/abstimmungsbuechlein.html"
-    resp = requests.get(url, headers=HEADERS, timeout=15)
+    resp = requests.get(BK_BASE + BK_PAGES[lang], headers=HEADERS, timeout=30)
     resp.raise_for_status()
     html = resp.text
 
-    # Anchor: href="/dam/bk/.../xxx.pdf..." text: "Erläuterungen des BR (DD.MM.YY)"
+    # Anchor: href=".../dam/.../xxx.pdf" with text starting "YYYY-MM-DD - Erläuterungen des Bundesrates"
     anchors = re.findall(
-        r'<a[^>]*href="(/dam/bk/[^"]+\.pdf[^"]*)"[^>]*>(.*?)</a>',
-        html, re.S,
+        r'<a[^>]*href="((?:https://www\.bk\.admin\.ch)?/dam/[^"]+\.pdf[^"]*)"[^>]*>(.*?)</a>',
+        html, re.DOTALL,
     )
     pdf_map: dict[str, str] = {}
-    for path, raw_text in anchors:
-        text = re.sub(r"<[^>]+>", "", raw_text)
-        text = text.replace("&auml;", "ä").replace("&uuml;", "ü").replace("&eacute;", "é").strip()
-        m = re.search(r"\((\d{1,2})\.(\d{1,2})\.(\d{2,4})\)", text)
-        if not m:
+    for href, raw_text in anchors:
+        text = re.sub(r"<[^>]+>", "", raw_text).strip()
+        date = _date_from_link_text(text)
+        if not date or date in pdf_map:
             continue
-        dd, mm, yy = m.groups()
-        yyyy = f"20{yy}" if len(yy) == 2 else yy
-        date = f"{yyyy}{mm.zfill(2)}{dd.zfill(2)}"
-        if date not in pdf_map:
-            pdf_map[date] = BK_BASE + path
+        pdf_map[date] = href if href.startswith("http") else BK_BASE + href
     return pdf_map
 
 
@@ -101,7 +115,7 @@ def clean_text(text: str) -> str:
     # Re-join hyphenated line breaks
     text = re.sub(r"-\n(\w)", lambda m: m.group(1), text)
     # Remove isolated page numbers (lines that are just a number)
-    text = re.sub(r"^\s*\d+\s*$", "", text, flags=re.M)
+    text = re.sub(r"^\s*\d+\s*$", "", text, flags=re.MULTILINE)
     # Collapse excess blank lines
     text = re.sub(r"\n{3,}", "\n\n", text)
     return text.strip()
@@ -173,8 +187,8 @@ def extract_recommendation(pages: list[str], proposal_idx: int, n_proposals: int
     reject_pat = EMPFEHLUNG_REJECT.get(lang, EMPFEHLUNG_REJECT["de"])
 
     # Find all accept/reject mentions and pick the one at the right position
-    accepts = [(m.start(), "accept") for m in re.finditer(accept_pat, full_text, re.S | re.I)]
-    rejects = [(m.start(), "reject") for m in re.finditer(reject_pat, full_text, re.S | re.I)]
+    accepts = [(m.start(), "accept") for m in re.finditer(accept_pat, full_text, re.DOTALL | re.IGNORECASE)]
+    rejects = [(m.start(), "reject") for m in re.finditer(reject_pat, full_text, re.DOTALL | re.IGNORECASE)]
     all_recs = sorted(accepts + rejects, key=lambda x: x[0])
 
     if len(all_recs) >= n_proposals and proposal_idx < len(all_recs):
@@ -183,8 +197,8 @@ def extract_recommendation(pages: list[str], proposal_idx: int, n_proposals: int
         return all_recs[min(proposal_idx, len(all_recs) - 1)][1]
 
     # Strategy 2: older format — "Empfehlung\n...\nJa/Nein" blocks
-    old_yes = [(m.start(), "accept") for m in re.finditer(EMPFEHLUNG_OLD_YES, full_text, re.S)]
-    old_no  = [(m.start(), "reject") for m in re.finditer(EMPFEHLUNG_OLD_NO, full_text, re.S)]
+    old_yes = [(m.start(), "accept") for m in re.finditer(EMPFEHLUNG_OLD_YES, full_text, re.DOTALL)]
+    old_no  = [(m.start(), "reject") for m in re.finditer(EMPFEHLUNG_OLD_NO, full_text, re.DOTALL)]
     old_all = sorted(old_yes + old_no, key=lambda x: x[0])
 
     if old_all and proposal_idx < len(old_all):

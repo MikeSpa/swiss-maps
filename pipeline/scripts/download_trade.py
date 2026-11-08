@@ -18,10 +18,11 @@ Output:
 """
 
 import json
-import requests
-import openpyxl
 from io import BytesIO
 from pathlib import Path
+
+import openpyxl
+import requests
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT_DIR = ROOT / "public" / "trade"

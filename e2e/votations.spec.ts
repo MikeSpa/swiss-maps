@@ -1,6 +1,18 @@
 import { test, expect } from '@playwright/test'
 
 test.describe('votations', () => {
+  test('desktop sidebar sits directly below the header and fits the viewport', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 })
+    await page.goto('/')
+
+    const aside = page.locator('aside').first()
+    await expect(aside).toBeVisible()
+    const box = await aside.boundingBox()
+    const header = await page.locator('header').first().boundingBox()
+    expect(box!.y).toBeCloseTo(header!.y + header!.height, 0)
+    expect(box!.y + box!.height).toBeLessThanOrEqual(900)
+  })
+
   test('switching the vote date loads its proposals', async ({ page }) => {
     await page.goto('/')
 
