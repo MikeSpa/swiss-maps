@@ -35,6 +35,11 @@
     "overrides": {
       "hono": ">=4.12.25",
       "undici": ">=7.28.0 <8"
+    },
+    "auditConfig": {
+      "ignoreGhsas": [
+        "GHSA-jrc7-96c5-q579"
+      ]
     }
   },
   "devDependencies": {

@@ -213,4 +213,6 @@ uv run python scripts/download_votations.py     # refresh all votation JSONs
 - **Municipality size**: `municipalities.geojson` is 4.2MB. It's lazy-loaded only on first canton click. Keep it that way
 - **Votation JSON CORS**: The external votation URLs block browser CORS. Files must be downloaded and served from `/public/votations/`. Never fetch the external URL directly from client code
 - **`as const` on paint expressions**: MapLibre type expressions need `ExpressionSpecification` type or `as const` — the linter enforces this
+- **MapLibre stays on 5.x**: v6 loads its worker as a real URL, which fails under Next ("Worker failed to load") and the map disappears. Advisory GHSA-jrc7-96c5-q579 (v6-only fix, attribution XSS) is therefore ignored via `pnpm.auditConfig.ignoreGhsas` in `package.json`. Revisit when upgrading MapLibre
+- **Mobile header**: below `md` the hamburger opens a page menu and a separate panel icon (`Toggle sidebar`) opens the page's sidebar
 - **Romansh**: `rm` translations are Rumantsch Grischun approximations, not verified by a native speaker
