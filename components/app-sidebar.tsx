@@ -58,7 +58,7 @@ export function AppSidebar({
   return (
     <aside className={[
       // Desktop: always visible inline
-      'md:relative md:flex md:w-72 md:shrink-0 md:translate-x-0',
+      'md:relative md:inset-y-auto md:flex md:w-72 md:shrink-0 md:translate-x-0',
       // Mobile: fixed overlay that slides in
       'fixed bottom-0 top-12 z-50 w-72',
       'transition-transform duration-200 ease-in-out',
