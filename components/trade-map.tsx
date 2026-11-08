@@ -4,7 +4,7 @@ import { useEffect, useReducer, useRef, useState } from 'react'
 import Map from 'react-map-gl/maplibre'
 import type { MapRef } from 'react-map-gl/maplibre'
 import 'maplibre-gl/dist/maplibre-gl.css'
-import type { StyleSpecification } from 'maplibre-gl'
+import type { Map as MaplibreMap, StyleSpecification } from 'maplibre-gl'
 import { loadMapStyle, MAP_STYLE_URL } from '@/lib/map-style'
 import type { TradePartner, TradeData, FtaStatus, SectorsData } from '@/lib/trade'
 import { FTA_LABELS, SECTORS, sectorMetrics } from '@/lib/trade'
@@ -14,7 +14,7 @@ const CH_CENTROID: [number, number] = [8.2, 46.8]
 const WORLD_BOUNDS: [[number, number], [number, number]] = [[-130, 1], [145, 58]]
 
 
-function buildArcPath(map: maplibregl.Map, from: [number, number], to: [number, number]): string {
+function buildArcPath(map: MaplibreMap, from: [number, number], to: [number, number]): string {
   const p1 = map.project(from)
   const p2 = map.project(to)
   const mx = (p1.x + p2.x) / 2
@@ -59,7 +59,7 @@ export default function TradeMap({
   const { t } = useLanguage()
   const mapRef = useRef<MapRef>(null)
   const [baseStyle, setBaseStyle] = useState<string | StyleSpecification>(MAP_STYLE_URL)
-  const [map, setMap] = useState<maplibregl.Map | null>(null)
+  const [map, setMap] = useState<MaplibreMap | null>(null)
   const [showAll, setShowAll] = useState(false)
   const [tooltip, setTooltip] = useState<TooltipState | null>(null)
   const [, forceUpdate] = useReducer((x: number) => x + 1, 0)
