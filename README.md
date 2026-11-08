@@ -58,6 +58,7 @@ Interactive visualization of Swiss federal votation results and demographic stat
 - Topic picker groups match the demographics page
 
 **Shared**
+- Mobile: hamburger menu to switch pages, separate button for the page sidebar
 - Full i18n: DE / FR / IT / RM / EN (UI + votation titles from official data)
 - Mobile-responsive with collapsible sidebar
 - English as default language
