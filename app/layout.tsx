@@ -6,9 +6,26 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { LanguageProvider } from "@/contexts/language"
 import { cn } from "@/lib/utils";
 
+const DESCRIPTION =
+  'Interactive visualization of Swiss federal votation results, demographics, and trade statistics.'
+
 export const metadata: Metadata = {
+  metadataBase: new URL('https://swiss-maps-zeta.vercel.app'),
   title: 'Swiss Maps',
-  description: 'Interactive visualization of Swiss federal votation results, demographics, and trade statistics.',
+  description: DESCRIPTION,
+  openGraph: {
+    type: 'website',
+    siteName: 'Swiss Maps',
+    title: 'Swiss Maps',
+    description: DESCRIPTION,
+    images: [{ url: '/og.jpg', width: 1200, height: 630, alt: 'Choropleth map of Swiss votation results by canton' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Swiss Maps',
+    description: DESCRIPTION,
+    images: ['/og.jpg'],
+  },
 }
 
 const inter = Inter({subsets:['latin'],variable:'--font-sans'})

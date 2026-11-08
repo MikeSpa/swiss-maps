@@ -12,6 +12,7 @@ import argparse
 import json
 import re
 import sys
+from datetime import date as _date
 from pathlib import Path
 
 import requests
@@ -81,10 +82,29 @@ def resolve_url(date: str, source_url: str | None) -> str:
     return FALLBACK_URL_PATTERN.format(date=date)
 
 
+def warn_if_no_results(date: str, path: Path) -> None:
+    """Warn if a votation that already took place has no counted results in `path`.
+
+    Files fetched before the vote day contain the proposals but only null results;
+    they must be re-downloaded with --force once the results are published.
+    """
+    if date > _date.today().strftime("%Y%m%d"):
+        return  # upcoming: no results expected yet
+    data = json.loads(path.read_text())
+    root = data.get("schweiz") or data
+    vorlagen = root.get("vorlagen", [])
+    if not any((v.get("resultat") or {}).get("gebietAusgezaehlt") for v in vorlagen):
+        print(
+            f"  WARNING: {path.name} has no counted results although {date} is in the past. "
+            f"Re-download with: --add {date} --force"
+        )
+
+
 def download(date: str, source_url: str | None, force: bool = False) -> bool:
     dest = OUT_DIR / f"{date}.json"
     if dest.exists() and not force:
         print(f"  {date}.json already exists (--force to re-download)")
+        warn_if_no_results(date, dest)
         return False
     url = resolve_url(date, source_url)
     print(f"  Downloading {url}")
@@ -92,6 +112,7 @@ def download(date: str, source_url: str | None, force: bool = False) -> bool:
     resp.raise_for_status()
     dest.write_bytes(resp.content)
     print(f"  Saved {dest.name} ({dest.stat().st_size // 1024} KB)")
+    warn_if_no_results(date, dest)
     return True
 
 

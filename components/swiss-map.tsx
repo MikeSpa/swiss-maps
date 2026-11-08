@@ -51,6 +51,7 @@ export default function SwissMap({
   const { t } = useLanguage()
   const mapRef = useRef<MapRef>(null)
   const hoveredRef = useRef<HoveredFeature | null>(null)
+  const fittedCantonRef = useRef<number | null>(null)
 
   const [baseStyle, setBaseStyle] = useState<string | StyleSpecification>(MAP_STYLE_URL)
   const [rawCantons, setRawCantons] = useState<FeatureCollection | null>(null)
@@ -72,6 +73,16 @@ export default function SwissMap({
       fetch('/geo/municipalities.geojson').then((r) => r.json()).then(setRawMunicipalities)
     }
   }, [selectedCantonNum, rawMunicipalities])
+
+  // Restore a canton selected via URL: zoom to it and resolve its name once geometry is available
+  useEffect(() => {
+    if (!rawCantons || selectedCantonNum === null || fittedCantonRef.current === selectedCantonNum) return
+    const feature = rawCantons.features.find((f) => f.properties?.kantonsnummer === selectedCantonNum)
+    if (!feature) return
+    fittedCantonRef.current = selectedCantonNum
+    onSelect(selectedCantonNum, feature.properties?.name as string)
+    mapRef.current?.fitBounds(featureBounds(feature.geometry), { padding: 60, duration: 0 })
+  }, [rawCantons, selectedCantonNum, onSelect])
 
   const cantons = useMemo(
     () => rawCantons ? mergeResults(rawCantons, cantonResults, 'kantonsnummer') : null,
@@ -168,11 +179,13 @@ export default function SwissMap({
     const features = map.queryRenderedFeatures(e.point, { layers: ['cantons-fill'] })
     if (features.length === 0) return
     const feature = features[0]
+    fittedCantonRef.current = feature.properties?.kantonsnummer as number
     onSelect(feature.properties?.kantonsnummer as number, feature.properties?.name as string)
     map.fitBounds(featureBounds(feature.geometry), { padding: 60, duration: 600 })
   }, [onSelect])
 
   const resetView = useCallback(() => {
+    fittedCantonRef.current = null
     onReset()
     mapRef.current?.fitBounds(SWISS_BOUNDS, { padding: 20, duration: 600 })
   }, [onReset])
