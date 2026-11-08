@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import {
   getTitle,
   formatDate,
+  isUpcoming,
   staendeYes,
   buildCantonResultMap,
   buildDistrictResultMap,
@@ -139,5 +140,18 @@ describe('buildMunicipalityResultMap', () => {
 
   it('returns an empty map for a canton that is not present', () => {
     expect(buildMunicipalityResultMap(vorlage, 2)).toEqual({})
+  })
+})
+
+describe('isUpcoming', () => {
+  const now = new Date(2026, 10, 8) // 08.11.2026 local
+  it('is false for past dates', () => {
+    expect(isUpcoming('20260927', now)).toBe(false)
+  })
+  it('is false on the vote day itself', () => {
+    expect(isUpcoming('20261108', now)).toBe(false)
+  })
+  it('is true for future dates', () => {
+    expect(isUpcoming('20261129', now)).toBe(true)
   })
 })

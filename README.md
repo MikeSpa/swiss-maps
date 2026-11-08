@@ -28,8 +28,8 @@ Interactive visualization of Swiss federal votation results and demographic stat
 - Choropleth map colored by % yes votes at canton, district, and municipality level
 - Click a canton to zoom in and see district/municipality breakdown
 - Hover tooltips with result details
-- 4 past and upcoming votation dates (Sep/Nov 2025, Mar/Jun 2026)
-- Defaults to the most recent past votation (skips future dates with no data)
+- Votation dates from 2020 onwards; upcoming dates (no results yet) are shown greyed out and disabled
+- Defaults to the most recent past votation (skips upcoming dates). Re-download a date with `--add YYYYMMDD --force` once results are published
 
 **Demographics map (`/demographics`)**
 - 45 indicators across 11 groups: context (urban/periurban/rural typology), population, age, vital statistics (birth/death/marriage/divorce), land use, economy (employment by sector + taxable income), housing, social, religion (2000 census), language (official linguistic region + 2000 census home language), and politics

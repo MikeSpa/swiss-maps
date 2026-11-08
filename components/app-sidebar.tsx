@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { CheckCircle, XCircle, Clock, ChevronRight, AlertCircle, Info } from 'lucide-react'
 import { useLanguage } from '@/contexts/language'
-import { type VotationData, type VotationEntry, type Vorlage, type Resultat, getTitle } from '@/lib/votation'
+import { type VotationData, type VotationEntry, type Vorlage, type Resultat, getTitle, isUpcoming } from '@/lib/votation'
 import type { DemographicData } from '@/lib/demographics'
 import type { ErlaeuterungenData } from '@/lib/erlaeuterungen'
 import { VotationScatter } from './votation-scatter'
@@ -71,17 +71,22 @@ export function AppSidebar({
           {t.sidebar.voteDate}
         </p>
         <div className="flex flex-wrap gap-1.5">
-          {index.map((entry) => (
-            <SelectButton
-              key={entry.date}
-              active={selectedDate === entry.date}
-              onClick={() => { onSelectDate(entry.date); onClose() }}
-              className="px-2.5 py-1 text-xs font-medium"
-              inactiveClassName="bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
-            >
-              {entry.label}
-            </SelectButton>
-          ))}
+          {index.map((entry) => {
+            const upcoming = isUpcoming(entry.date)
+            return (
+              <SelectButton
+                key={entry.date}
+                active={selectedDate === entry.date}
+                onClick={() => { onSelectDate(entry.date); onClose() }}
+                disabled={upcoming}
+                title={upcoming ? t.sidebar.upcoming : undefined}
+                className="px-2.5 py-1 text-xs font-medium disabled:cursor-not-allowed disabled:opacity-50"
+                inactiveClassName="bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground disabled:hover:bg-muted disabled:hover:text-muted-foreground"
+              >
+                {entry.label}
+              </SelectButton>
+            )
+          })}
         </div>
       </div>
 
