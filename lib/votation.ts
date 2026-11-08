@@ -72,6 +72,13 @@ export interface VotationEntry {
 
 // ----- helpers -----
 
+/** True if the votation date (YYYYMMDD) is after today (local time), i.e. no results yet. */
+export function isUpcoming(date: string, now: Date = new Date()): boolean {
+  const pad = (n: number) => String(n).padStart(2, '0')
+  const today = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}`
+  return date > today
+}
+
 export function getTitle(titles: VorlageTitle[], lang = 'de'): string {
   return titles.find((t) => t.langKey === lang)?.text ?? titles[0]?.text ?? ''
 }

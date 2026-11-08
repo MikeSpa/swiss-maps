@@ -1,5 +1,17 @@
 [
   {
+    "date": "20261129",
+    "label": "29.11.2026",
+    "file": "/votations/20261129.json",
+    "source_url": "https://ogd-static.voteinfo-app.ch/v1/ogd/sd-t-17-02-20261129-eidgAbstimmung.json"
+  },
+  {
+    "date": "20260927",
+    "label": "27.09.2026",
+    "file": "/votations/20260927.json",
+    "source_url": "https://ogd-static.voteinfo-app.ch/v1/ogd/sd-t-17-02-20260927-eidgAbstimmung.json"
+  },
+  {
     "date": "20260614",
     "label": "14.06.2026",
     "file": "/votations/20260614.json",

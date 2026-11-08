@@ -42,6 +42,7 @@ const de = {
   },
   sidebar: {
     voteDate: 'Abstimmung',
+    upcoming: 'Bevorstehende Abstimmung – Ergebnisse noch nicht verfügbar',
     proposals: 'Vorlagen',
     nationalResult: 'Resultat Schweiz',
     cantonalVotes: 'Ständemehr',
@@ -120,6 +121,7 @@ const fr: Translations = {
   },
   sidebar: {
     voteDate: 'Votation',
+    upcoming: 'Votation à venir – résultats pas encore disponibles',
     proposals: 'Objets',
     nationalResult: 'Résultat national',
     cantonalVotes: 'Vote des cantons',
@@ -196,6 +198,7 @@ const it: Translations = {
   },
   sidebar: {
     voteDate: 'Votazione',
+    upcoming: 'Votazione in arrivo – risultati non ancora disponibili',
     proposals: 'Oggetti',
     nationalResult: 'Risultato nazionale',
     cantonalVotes: 'Voto dei cantoni',
@@ -272,6 +275,7 @@ const rm: Translations = {
   },
   sidebar: {
     voteDate: 'Votaziun',
+    upcoming: 'Votaziun proxima – resultats betg anc disponibels',
     proposals: 'Objects',
     nationalResult: 'Resultat Svizra',
     cantonalVotes: 'Vut dals chantuns',
@@ -348,6 +352,7 @@ const en: Translations = {
   },
   sidebar: {
     voteDate: 'Vote date',
+    upcoming: 'Upcoming vote – results not yet available',
     proposals: 'Proposals',
     nationalResult: 'National result',
     cantonalVotes: 'Cantonal votes',

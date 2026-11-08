@@ -127,6 +127,21 @@ describe('AppSidebar', () => {
     expect(onClose).toHaveBeenCalledOnce()
   })
 
+  it('disables upcoming dates and does not call onSelectDate', async () => {
+    const onSelectDate = vi.fn()
+    const upcomingIndex: VotationEntry[] = [
+      { date: '29991231', label: 'Dec 2999', file: '29991231.json' },
+      ...index,
+    ]
+    renderWithProviders(<AppSidebar {...baseProps} index={upcomingIndex} onSelectDate={onSelectDate} />)
+    const btn = screen.getByText('Dec 2999')
+    expect(btn).toBeDisabled()
+    expect(btn).toHaveAttribute('title', 'Upcoming vote – results not yet available')
+    await userEvent.click(btn)
+    expect(onSelectDate).not.toHaveBeenCalled()
+    expect(screen.getByText('Nov 2025')).toBeEnabled()
+  })
+
   it('renders proposal titles and types', () => {
     renderWithProviders(<AppSidebar {...baseProps} votation={votation} />)
     expect(screen.getByText('Proposal One')).toBeInTheDocument()

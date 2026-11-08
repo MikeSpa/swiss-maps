@@ -11,6 +11,7 @@ import {
   buildCantonResultMap,
   buildDistrictResultMap,
   buildMunicipalityResultMap,
+  isUpcoming,
 } from '@/lib/votation'
 import { fetchDemographics, type DemographicData } from '@/lib/demographics'
 import { fetchErlaeuterungen, type ErlaeuterungenData } from '@/lib/erlaeuterungen'
@@ -57,8 +58,8 @@ export function MapShell({ sidebarOpen, onCloseSidebar }: MapShellProps) {
       .then((r) => r.json())
       .then((entries: VotationEntry[]) => {
         setIndex(entries)
-        const today = new Date().toISOString().slice(0, 10).replace(/-/g, '')
-        const defaultEntry = entries.find((e) => e.date <= today) ?? entries[entries.length - 1]
+        // Index is sorted newest-first: default to the latest votation that already has results
+        const defaultEntry = entries.find((e) => !isUpcoming(e.date)) ?? entries[entries.length - 1]
         if (defaultEntry) setSelectedDate(defaultEntry.date)
       })
       .catch(() => setLoadError('Could not load votation index.'))
